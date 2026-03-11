@@ -1,0 +1,18 @@
+{
+  "name": "CONKT",
+  "short_name": "CONKT",
+  "description": "Sistema de Gestão de Obras e Relatórios Diários",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#D81B60",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/baixa_logomarca.jpg-removebg-preview copy.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
