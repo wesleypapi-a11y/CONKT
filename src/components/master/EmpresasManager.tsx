@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Building2, Plus, CreditCard as Edit, Trash2, Search, Check, X, AlertCircle } from 'lucide-react';
+import { Building2, Plus, CreditCard as Edit, Trash2, Search, Check, X, AlertCircle, Power, PowerOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAlert } from '../../hooks/useAlert';
 import { Empresa } from '../../types/empresa';
 import ConfirmModal from '../common/ConfirmModal';
 
-export default function EmpresasManager() {
+function EmpresasManagerContent() {
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,24 +71,34 @@ export default function EmpresasManager() {
           .update(formData)
           .eq('id', editingEmpresa.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error updating empresa:', error);
+          throw error;
+        }
         showAlert('Empresa atualizada com sucesso!', 'success');
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('empresas')
-          .insert([formData]);
+          .insert([formData])
+          .select();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error inserting empresa:', error);
+          throw error;
+        }
+
+        console.log('Empresa cadastrada:', data);
         showAlert('Empresa cadastrada com sucesso!', 'success');
       }
 
       setShowModal(false);
       setEditingEmpresa(null);
       resetForm();
-      loadEmpresas();
+      await loadEmpresas();
     } catch (error: any) {
-      showAlert(error.message || 'Erro ao salvar empresa', 'error');
-      console.error(error);
+      const errorMsg = error.message || 'Erro ao salvar empresa';
+      showAlert(errorMsg, 'error');
+      console.error('Error in handleSubmit:', error);
     }
   };
 
@@ -105,6 +115,25 @@ export default function EmpresasManager() {
       status: empresa.status,
     });
     setShowModal(true);
+  };
+
+  const handleToggleStatus = async (empresa: Empresa) => {
+    try {
+      const newStatus = empresa.status === 'ativa' ? 'inativa' : 'ativa';
+
+      const { error } = await supabase
+        .from('empresas')
+        .update({ status: newStatus })
+        .eq('id', empresa.id);
+
+      if (error) throw error;
+
+      showAlert(`Empresa ${newStatus === 'ativa' ? 'ativada' : 'desativada'} com sucesso!`, 'success');
+      loadEmpresas();
+    } catch (error: any) {
+      showAlert(error.message || 'Erro ao alterar status da empresa', 'error');
+      console.error(error);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -138,11 +167,18 @@ export default function EmpresasManager() {
     });
   };
 
-  const filteredEmpresas = empresas.filter(empresa =>
-    empresa.razao_social.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    empresa.nome_fantasia.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    empresa.cnpj.includes(searchTerm)
-  );
+  const filteredEmpresas = (empresas || []).filter(empresa => {
+    if (!empresa) return false;
+
+    const searchLower = searchTerm.toLowerCase();
+    const razaoSocial = (empresa.razao_social || '').toLowerCase();
+    const nomeFantasia = (empresa.nome_fantasia || '').toLowerCase();
+    const cnpj = empresa.cnpj || '';
+
+    return razaoSocial.includes(searchLower) ||
+           nomeFantasia.includes(searchLower) ||
+           cnpj.includes(searchTerm);
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -259,56 +295,85 @@ export default function EmpresasManager() {
                   </td>
                 </tr>
               ) : (
-                filteredEmpresas.map((empresa) => (
-                  <tr key={empresa.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {empresa.razao_social}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {empresa.nome_fantasia}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">
-                      {empresa.cnpj}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      <div className="flex flex-col">
-                        <span>{new Date(empresa.data_inicio_vigencia).toLocaleDateString('pt-BR')}</span>
-                        <span className={`text-xs ${isVigenciaExpired(empresa.data_fim_vigencia) ? 'text-red-600 font-semibold' : 'text-gray-500'}`}>
-                          até {new Date(empresa.data_fim_vigencia).toLocaleDateString('pt-BR')}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(empresa.status)}`}>
-                        {empresa.status}
-                      </span>
-                      {isVigenciaExpired(empresa.data_fim_vigencia) && empresa.status === 'ativa' && (
-                        <div className="flex items-center gap-1 mt-1 text-xs text-red-600">
-                          <AlertCircle size={12} />
-                          Vigência expirada
+                filteredEmpresas.map((empresa) => {
+                  if (!empresa || !empresa.id) return null;
+
+                  return (
+                    <tr key={empresa.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {empresa.razao_social || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {empresa.nome_fantasia || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">
+                        {empresa.cnpj || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <div className="flex flex-col">
+                          <span>
+                            {empresa.data_inicio_vigencia
+                              ? new Date(empresa.data_inicio_vigencia).toLocaleDateString('pt-BR')
+                              : '-'}
+                          </span>
+                          <span className={`text-xs ${
+                            empresa.data_fim_vigencia && isVigenciaExpired(empresa.data_fim_vigencia)
+                              ? 'text-red-600 font-semibold'
+                              : 'text-gray-500'
+                          }`}>
+                            até {empresa.data_fim_vigencia
+                              ? new Date(empresa.data_fim_vigencia).toLocaleDateString('pt-BR')
+                              : '-'}
+                          </span>
                         </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleEdit(empresa)}
-                          className="text-blue-600 hover:text-blue-900"
-                          title="Editar"
-                        >
-                          <Edit size={18} />
-                        </button>
-                        <button
-                          onClick={() => setConfirmDelete(empresa.id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Excluir"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(empresa.status || 'inativa')}`}>
+                          {empresa.status || 'inativa'}
+                        </span>
+                        {empresa.data_fim_vigencia && isVigenciaExpired(empresa.data_fim_vigencia) && empresa.status === 'ativa' && (
+                          <div className="flex items-center gap-1 mt-1 text-xs text-red-600">
+                            <AlertCircle size={12} />
+                            Vigência expirada
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleToggleStatus(empresa)}
+                            className={`p-2 rounded-lg transition-all ${
+                              empresa.status === 'ativa'
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                            }`}
+                            title={empresa.status === 'ativa' ? 'Desativar empresa' : 'Ativar empresa'}
+                          >
+                            {empresa.status === 'ativa' ? (
+                              <Power size={18} />
+                            ) : (
+                              <PowerOff size={18} />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => handleEdit(empresa)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            title="Editar"
+                          >
+                            <Edit size={18} />
+                          </button>
+                          <button
+                            onClick={() => setConfirmDelete(empresa.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            title="Excluir"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -477,4 +542,64 @@ export default function EmpresasManager() {
       )}
     </div>
   );
+}
+
+export default function EmpresasManager() {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const errorHandler = (error: ErrorEvent) => {
+      console.error('Error caught by EmpresasManager:', error);
+      setHasError(true);
+    };
+
+    window.addEventListener('error', errorHandler);
+    return () => window.removeEventListener('error', errorHandler);
+  }, []);
+
+  if (hasError) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
+        <AlertCircle size={48} className="mx-auto text-red-400 mb-4" />
+        <h3 className="text-lg font-semibold text-red-900 mb-2">
+          Erro ao carregar Gerenciamento de Empresas
+        </h3>
+        <p className="text-red-600 mb-4">
+          Ocorreu um erro inesperado ao renderizar a página de empresas.
+        </p>
+        <button
+          onClick={() => {
+            setHasError(false);
+            window.location.reload();
+          }}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Recarregar Página
+        </button>
+      </div>
+    );
+  }
+
+  try {
+    return <EmpresasManagerContent />;
+  } catch (error) {
+    console.error('Render error in EmpresasManager:', error);
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
+        <AlertCircle size={48} className="mx-auto text-red-400 mb-4" />
+        <h3 className="text-lg font-semibold text-red-900 mb-2">
+          Erro ao renderizar componente
+        </h3>
+        <p className="text-red-600 mb-4">
+          Ocorreu um erro ao renderizar a lista de empresas.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Recarregar Página
+        </button>
+      </div>
+    );
+  }
 }
