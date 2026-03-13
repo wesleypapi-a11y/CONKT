@@ -460,7 +460,12 @@ function EmpresasManagerContent() {
                             <Edit size={14} />
                           </button>
                           <button
-                            onClick={() => setConfirmDelete(empresa.id)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('Botão de exclusão clicado! ID:', empresa.id);
+                              setConfirmDelete(empresa.id);
+                            }}
                             className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-all"
                             title="Excluir"
                           >
@@ -629,14 +634,24 @@ function EmpresasManagerContent() {
         </div>
       )}
 
-      {confirmDelete && (
-        <ConfirmModal
-          title="Confirmar Exclusão"
-          message="Tem certeza que deseja excluir esta empresa? Esta ação não pode ser desfeita e todos os dados relacionados serão perdidos."
-          onConfirm={() => handleDelete(confirmDelete)}
-          onCancel={() => setConfirmDelete(null)}
-        />
-      )}
+      <ConfirmModal
+        isOpen={!!confirmDelete}
+        title="Confirmar Exclusão"
+        message="Tem certeza que deseja excluir esta empresa? Esta ação não pode ser desfeita e todos os dados relacionados serão perdidos."
+        type="danger"
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        onConfirm={() => {
+          console.log('Modal confirmado! Executando handleDelete...');
+          if (confirmDelete) {
+            handleDelete(confirmDelete);
+          }
+        }}
+        onCancel={() => {
+          console.log('Modal cancelado!');
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }
