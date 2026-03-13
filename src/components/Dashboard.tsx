@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Home, Users as UsersIcon, Building2, Calculator, Truck, ShoppingCart,
-  DollarSign, FileCheck, Menu, LogOut, User, Calendar, CalendarClock, LayoutDashboard, FileText, ListTodo, Settings, BarChart3, UserCog, Briefcase
+  DollarSign, FileCheck, Menu, LogOut, User, Calendar, CalendarClock, LayoutDashboard, FileText, ListTodo, Settings, BarChart3, UserCog, Briefcase, Shield
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { conktColors } from '../styles/colors';
@@ -25,6 +25,7 @@ import ClientPortalManager from './clientPortal/ClientPortalManager';
 import { CompanyCashflow } from './company/CompanyCashflow';
 import { CompanyEmployees } from './company/CompanyEmployees';
 import { CompanyFilesManager } from './company/CompanyFilesManager';
+import MasterPanel from './master/MasterPanel';
 
 type MenuItem = {
   id: string;
@@ -33,7 +34,7 @@ type MenuItem = {
   badge?: string;
 };
 
-const menuItems: MenuItem[] = [
+const baseMenuItems: MenuItem[] = [
   { id: 'inicio', label: 'Início', icon: Home },
   { id: 'clientes', label: 'Clientes', icon: UsersIcon },
   { id: 'obras', label: 'Obras', icon: Building2 },
@@ -53,6 +54,13 @@ const menuItems: MenuItem[] = [
   { id: 'configuracao', label: 'Configuração', icon: Settings },
 ];
 
+const masterMenuItem: MenuItem = {
+  id: 'painel-usuarios',
+  label: 'Painel de Usuários',
+  icon: Shield,
+  badge: 'MASTER',
+};
+
 export default function Dashboard() {
   const [activeMenu, setActiveMenu] = useState('inicio');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -65,6 +73,9 @@ export default function Dashboard() {
     menu_bg_color: conktColors.sidebar.main,
     menu_text_color: '#ffffff',
   });
+
+  const isMasterUser = profile?.role === 'master';
+  const menuItems = isMasterUser ? [masterMenuItem, ...baseMenuItems] : baseMenuItems;
 
   useEffect(() => {
     const handleResize = () => {
@@ -214,10 +225,10 @@ export default function Dashboard() {
                             </span>
                             {item.badge && (
                               <span
-                                className="px-2 py-0.5 text-xs rounded-full"
+                                className="px-2 py-0.5 text-xs rounded-full font-semibold"
                                 style={{
-                                  backgroundColor: conktColors.primary.lime,
-                                  color: '#000000'
+                                  backgroundColor: item.id === 'painel-usuarios' ? '#9333ea' : conktColors.primary.lime,
+                                  color: item.id === 'painel-usuarios' ? '#ffffff' : '#000000'
                                 }}
                               >
                                 {item.badge}
@@ -296,6 +307,10 @@ export default function Dashboard() {
 function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { activeMenu: string; onNavigateHome: () => void; homeImageUrl: string | null }) {
   if (activeMenu === 'inicio') {
     return <HomeContent homeImageUrl={homeImageUrl} />;
+  }
+
+  if (activeMenu === 'painel-usuarios') {
+    return <MasterPanel />;
   }
 
   if (activeMenu === 'clientes') {
