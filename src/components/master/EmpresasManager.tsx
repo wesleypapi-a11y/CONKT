@@ -74,44 +74,61 @@ function EmpresasManagerContent() {
 
   const handleDeleteLegacyEmpresas = async () => {
     try {
-      console.log('=== DELETANDO EMPRESAS LEGADAS ===');
+      console.log('=== BOTÃO CLICADO - DELETANDO EMPRESAS LEGADAS ===');
+      alert('Iniciando exclusão das empresas teste...');
 
-      const { data: legacyEmpresas } = await supabase
+      const { data: legacyEmpresas, error: selectError } = await supabase
         .from('empresas')
-        .select('id, nome_fantasia')
-        .in('nome_fantasia', ['OMEGA', 'BETA', 'ALPHA', 'CONKT']);
+        .select('id, nome_fantasia, nome, razao_social')
+        .or('nome_fantasia.in.(OMEGA,BETA,ALPHA,CONKT),nome.in.(OMEGA,BETA,ALPHA,CONKT),razao_social.in.(OMEGA,BETA,ALPHA,CONKT)');
 
-      console.log('Empresas a deletar:', legacyEmpresas);
+      console.log('Empresas encontradas:', legacyEmpresas);
+      console.log('Erro na busca:', selectError);
+
+      if (selectError) {
+        throw selectError;
+      }
 
       if (!legacyEmpresas || legacyEmpresas.length === 0) {
+        alert('Nenhuma empresa legada encontrada no banco!');
         showAlert('Nenhuma empresa legada encontrada', 'info');
         return;
       }
 
-      for (const empresa of legacyEmpresas) {
-        console.log(`Deletando empresa: ${empresa.nome_fantasia} (${empresa.id})`);
+      alert(`Encontrei ${legacyEmpresas.length} empresas para deletar`);
 
-        await supabase
+      for (const empresa of legacyEmpresas) {
+        console.log(`Deletando empresa: ${empresa.nome_fantasia || empresa.nome} (${empresa.id})`);
+
+        const { error: updateError } = await supabase
           .from('profiles')
           .update({ empresa_id: null })
           .eq('empresa_id', empresa.id);
 
-        const { error } = await supabase
+        if (updateError) {
+          console.error('Erro ao desvincular profiles:', updateError);
+        }
+
+        const { error: deleteError } = await supabase
           .from('empresas')
           .delete()
           .eq('id', empresa.id);
 
-        if (error) {
-          console.error(`Erro ao deletar ${empresa.nome_fantasia}:`, error);
-          throw error;
+        if (deleteError) {
+          console.error(`Erro ao deletar ${empresa.nome_fantasia}:`, deleteError);
+          throw deleteError;
         }
+
+        console.log(`Empresa ${empresa.nome_fantasia || empresa.nome} deletada com sucesso`);
       }
 
+      alert('Todas as empresas teste foram deletadas!');
       showAlert('Empresas legadas deletadas com sucesso!', 'success');
       await loadEmpresas();
 
     } catch (error: any) {
       console.error('Erro ao deletar empresas legadas:', error);
+      alert(`ERRO: ${error.message}`);
       showAlert(`Erro: ${error.message}`, 'error');
     }
   };
