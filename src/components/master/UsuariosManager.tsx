@@ -17,10 +17,12 @@ interface Usuario {
   created_at: string;
 }
 
-interface Empresa {
+interface EmpresaSelectSelect {
   id: string;
-  nome_fantasia: string;
-  razao_social: string;
+  nome?: string;
+  nome_fantasia?: string;
+  razao_social?: string;
+  status?: string;
 }
 
 interface NovoUsuarioForm {
@@ -33,13 +35,13 @@ interface NovoUsuarioForm {
 export default function UsuariosManager() {
   const { showAlert } = useAlert();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  const [empresas, setEmpresaSelects] = useState<EmpresaSelect[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterEmpresa, setFilterEmpresa] = useState('');
+  const [filterEmpresaSelect, setFilterEmpresaSelect] = useState('');
   const [filterRole, setFilterRole] = useState('');
 
   const [formData, setFormData] = useState<NovoUsuarioForm>({
@@ -51,7 +53,7 @@ export default function UsuariosManager() {
 
   useEffect(() => {
     loadUsuarios();
-    loadEmpresas();
+    loadEmpresaSelects();
   }, []);
 
   const loadUsuarios = async () => {
@@ -76,7 +78,7 @@ export default function UsuariosManager() {
     }
   };
 
-  const loadEmpresas = async () => {
+  const loadEmpresaSelects = async () => {
     try {
       const { data, error } = await supabase
         .from('empresas')
@@ -85,7 +87,7 @@ export default function UsuariosManager() {
         .order('nome_fantasia');
 
       if (error) throw error;
-      setEmpresas(data || []);
+      setEmpresaSelects(data || []);
     } catch (error: any) {
       console.error('Erro ao carregar empresas:', error);
     }
@@ -190,9 +192,9 @@ export default function UsuariosManager() {
   const filteredUsuarios = usuarios.filter(usuario => {
     const matchesSearch = usuario.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          usuario.nome_completo?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesEmpresa = !filterEmpresa || usuario.empresa_id === filterEmpresa;
+    const matchesEmpresaSelect = !filterEmpresaSelect || usuario.empresa_id === filterEmpresaSelect;
     const matchesRole = !filterRole || usuario.role === filterRole;
-    return matchesSearch && matchesEmpresa && matchesRole;
+    return matchesSearch && matchesEmpresaSelect && matchesRole;
   });
 
   const getRoleLabel = (role: string) => {
@@ -265,8 +267,8 @@ export default function UsuariosManager() {
           </div>
 
           <select
-            value={filterEmpresa}
-            onChange={(e) => setFilterEmpresa(e.target.value)}
+            value={filterEmpresaSelect}
+            onChange={(e) => setFilterEmpresaSelect(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Todas as empresas</option>
@@ -293,7 +295,7 @@ export default function UsuariosManager() {
           <button
             onClick={() => {
               setSearchTerm('');
-              setFilterEmpresa('');
+              setFilterEmpresaSelect('');
               setFilterRole('');
             }}
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
@@ -316,7 +318,7 @@ export default function UsuariosManager() {
                   Senha
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Empresa
+                  EmpresaSelect
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Perfil
@@ -467,7 +469,7 @@ export default function UsuariosManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Empresa vinculada *
+                  EmpresaSelect vinculada *
                 </label>
                 <select
                   value={formData.empresa_id}

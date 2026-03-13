@@ -62,11 +62,6 @@ export default function Dashboard() {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const { profile, signOut, user } = useAuth();
 
-  const [appearance, setAppearance] = useState({
-    logo_menu: null as string | null,
-    logo_inicio: null as string | null,
-  });
-
   const menuItems = allMenuItems.filter(item => hasAccess(profile?.role, item.id));
 
   useEffect(() => {
@@ -83,33 +78,6 @@ export default function Dashboard() {
     return () => window.removeEventListener('resize', handleResize);
   }, [activeMenu]);
 
-  useEffect(() => {
-    loadAppearancePreferences();
-  }, [user]);
-
-  const loadAppearancePreferences = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('appearance_preferences')
-        .select('logo_menu, logo_inicio')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data) {
-        setAppearance({
-          logo_menu: data.logo_menu || null,
-          logo_inicio: data.logo_inicio || null,
-        });
-      }
-    } catch (error: any) {
-      console.error('Erro ao carregar preferências de aparência:', error);
-    }
-  };
-
   return (
     <>
       <div className="min-h-screen bg-gray-50 flex">
@@ -123,7 +91,7 @@ export default function Dashboard() {
             <div className="p-4 flex items-center justify-center border-b border-white/10 relative">
               {sidebarOpen && (
                 <img
-                  src={appearance.logo_menu || "/logo_conkt-removebg-preview.png"}
+                  src="/logo_conkt-removebg-preview.png"
                   alt="Logo"
                   className="h-12 mx-auto object-contain"
                 />

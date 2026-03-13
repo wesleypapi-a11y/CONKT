@@ -100,11 +100,23 @@ function EmpresasManagerContent() {
 
       console.log('Perfil do usuário:', profile);
 
+      const dbData = {
+        nome: formData.nome,
+        cnpj: formData.cnpj,
+        telefone: formData.telefone,
+        email: formData.email,
+        endereco: formData.endereco,
+        responsavel: formData.responsavel,
+        data_inicio: formData.data_inicio,
+        data_fim: formData.data_fim,
+        status: formData.status,
+      };
+
       if (editingEmpresa) {
         console.log('Modo EDIÇÃO - atualizando empresa:', editingEmpresa.id);
         const { error } = await supabase
           .from('empresas')
-          .update(formData)
+          .update(dbData)
           .eq('id', editingEmpresa.id);
 
         if (error) {
@@ -121,11 +133,11 @@ function EmpresasManagerContent() {
         showAlert('Empresa atualizada com sucesso!', 'success');
       } else {
         console.log('Modo CADASTRO - inserindo nova empresa');
-        console.log('Tentando inserir:', formData);
+        console.log('Tentando inserir:', dbData);
 
         const { data, error } = await supabase
           .from('empresas')
-          .insert([formData])
+          .insert([dbData])
           .select();
 
         if (error) {
@@ -167,14 +179,17 @@ function EmpresasManagerContent() {
   const handleEdit = (empresa: Empresa) => {
     setEditingEmpresa(empresa);
     setFormData({
-      razao_social: empresa.razao_social,
-      nome_fantasia: empresa.nome_fantasia,
+      nome: empresa.nome || '',
+      razao_social: empresa.razao_social || empresa.nome || '',
+      nome_fantasia: empresa.nome || '',
       cnpj: empresa.cnpj,
       telefone: empresa.telefone || '',
       email: empresa.email || '',
-      data_inicio_vigencia: empresa.data_inicio_vigencia,
-      data_fim_vigencia: empresa.data_fim_vigencia,
-      status: empresa.status,
+      endereco: empresa.endereco || '',
+      responsavel: empresa.responsavel || '',
+      data_inicio: empresa.data_inicio || '',
+      data_fim: empresa.data_fim || '',
+      status: empresa.status as any,
     });
     setShowModal(true);
   };
@@ -218,23 +233,37 @@ function EmpresasManagerContent() {
 
   const resetForm = () => {
     setFormData({
+      nome: '',
       razao_social: '',
       nome_fantasia: '',
       cnpj: '',
       telefone: '',
       email: '',
-      data_inicio_vigencia: new Date().toISOString().split('T')[0],
-      data_fim_vigencia: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      status: 'ativa',
+      endereco: '',
+      responsavel: '',
+      data_inicio: new Date().toISOString().split('T')[0],
+      data_fim: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: 'ativo',
     });
+  };
+
+  const calculateDaysRemaining = (empresa: Empresa) => {
+    const dataFim = empresa.data_fim;
+    if (!dataFim) return null;
+
+    const today = new Date();
+    const endDate = new Date(dataFim);
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
   const filteredEmpresas = (empresas || []).filter(empresa => {
     if (!empresa) return false;
 
     const searchLower = searchTerm.toLowerCase();
-    const razaoSocial = (empresa.razao_social || '').toLowerCase();
-    const nomeFantasia = (empresa.nome_fantasia || '').toLowerCase();
+    const razaoSocial = (empresa.razao_social || empresa.nome || '').toLowerCase();
+    const nomeFantasia = (empresa.nome || '').toLowerCase();
     const cnpj = empresa.cnpj || '';
 
     return razaoSocial.includes(searchLower) ||
@@ -324,10 +353,13 @@ function EmpresasManagerContent() {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Item
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Razão Social
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nome Fantasia
+                  Nome
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   CNPJ
@@ -336,7 +368,7 @@ function EmpresasManagerContent() {
                   Vigência
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  Dias Restantes
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ações
@@ -346,27 +378,34 @@ function EmpresasManagerContent() {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     Carregando...
                   </td>
                 </tr>
               ) : filteredEmpresas.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     Nenhuma empresa encontrada
                   </td>
                 </tr>
               ) : (
-                filteredEmpresas.map((empresa) => {
+                filteredEmpresas.map((empresa, index) => {
                   if (!empresa || !empresa.id) return null;
+
+                  const diasRestantes = calculateDaysRemaining(empresa);
+                  const isExpired = diasRestantes !== null && diasRestantes < 0;
+                  const isExpiringSoon = diasRestantes !== null && diasRestantes <= 30 && diasRestantes >= 0;
 
                   return (
                     <tr key={empresa.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                        #{index + 1}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {empresa.razao_social || '-'}
+                        {empresa.razao_social || empresa.nome || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {empresa.nome_fantasia || '-'}
+                        {empresa.nome || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">
                         {empresa.cnpj || '-'}
@@ -374,30 +413,34 @@ function EmpresasManagerContent() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         <div className="flex flex-col">
                           <span>
-                            {empresa.data_inicio_vigencia
-                              ? new Date(empresa.data_inicio_vigencia).toLocaleDateString('pt-BR')
+                            {empresa.data_inicio
+                              ? new Date(empresa.data_inicio).toLocaleDateString('pt-BR')
                               : '-'}
                           </span>
                           <span className={`text-xs ${
-                            empresa.data_fim_vigencia && isVigenciaExpired(empresa.data_fim_vigencia)
+                            empresa.data_fim && isVigenciaExpired(empresa.data_fim)
                               ? 'text-red-600 font-semibold'
                               : 'text-gray-500'
                           }`}>
-                            até {empresa.data_fim_vigencia
-                              ? new Date(empresa.data_fim_vigencia).toLocaleDateString('pt-BR')
+                            até {empresa.data_fim
+                              ? new Date(empresa.data_fim).toLocaleDateString('pt-BR')
                               : '-'}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(empresa.status || 'inativa')}`}>
-                          {empresa.status || 'inativa'}
-                        </span>
-                        {empresa.data_fim_vigencia && isVigenciaExpired(empresa.data_fim_vigencia) && empresa.status === 'ativa' && (
-                          <div className="flex items-center gap-1 mt-1 text-xs text-red-600">
-                            <AlertCircle size={12} />
-                            Vigência expirada
-                          </div>
+                        {diasRestantes !== null ? (
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            isExpired
+                              ? 'bg-red-100 text-red-800'
+                              : isExpiringSoon
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-green-100 text-green-800'
+                          }`}>
+                            {isExpired ? `Expirado há ${Math.abs(diasRestantes)} dias` : `${diasRestantes} dias`}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">-</span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
