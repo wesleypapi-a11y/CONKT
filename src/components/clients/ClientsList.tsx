@@ -81,7 +81,7 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
         .from('works')
         .select('id, name')
         .eq('client_id', clientId)
-        .eq('deleted', false);
+        .is('deleted_at', null);
 
       if (checkError) throw checkError;
 
