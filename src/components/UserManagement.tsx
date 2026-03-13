@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Users, Plus, Edit2, Trash2, X, Save, Shield, User as UserIcon, Mail, Lock, Eye, EyeOff, CheckCircle, XCircle, Camera } from 'lucide-react';
+import { Users, Plus, CreditCard as Edit2, Trash2, X, Save, Shield, User as UserIcon, Mail, Lock, Eye, EyeOff, CheckCircle, XCircle, Camera } from 'lucide-react';
 import { conktColors } from '../styles/colors';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
-type UserRole = 'colaborador' | 'cliente' | 'administrador';
+type UserRole = 'master' | 'administrador' | 'financeiro' | 'colaborador' | 'cliente';
 
 interface UserProfile {
   id: string;
@@ -281,16 +281,20 @@ export default function UserManagement() {
 
   const getRoleColor = (role: UserRole) => {
     const colors = {
-      administrador: '#ef4444',
-      colaborador: '#3b82f6',
-      cliente: '#10b981'
+      master: '#dc2626',
+      administrador: '#3b82f6',
+      financeiro: '#10b981',
+      colaborador: '#6b7280',
+      cliente: '#eab308'
     };
     return colors[role] || '#6b7280';
   };
 
   const getRoleLabel = (role: UserRole) => {
     const labels = {
+      master: 'Master',
       administrador: 'Administrador',
+      financeiro: 'Financeiro',
       colaborador: 'Colaborador',
       cliente: 'Cliente'
     };
@@ -298,7 +302,9 @@ export default function UserManagement() {
   };
 
   const getRoleIcon = (role: UserRole) => {
+    if (role === 'master') return Shield;
     if (role === 'administrador') return Shield;
+    if (role === 'financeiro') return Shield;
     if (role === 'cliente') return Users;
     return UserIcon;
   };
@@ -587,13 +593,17 @@ export default function UserManagement() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="colaborador">Colaborador</option>
-                    <option value="cliente">Cliente</option>
                     <option value="administrador">Administrador</option>
+                    <option value="financeiro">Financeiro</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="master">Master</option>
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
-                    {formData.role === 'administrador' && 'Acesso total ao sistema'}
-                    {formData.role === 'colaborador' && 'Acesso às obras e tarefas'}
-                    {formData.role === 'cliente' && 'Acesso limitado para visualização'}
+                    {formData.role === 'master' && 'Acesso global ao sistema e todas as empresas'}
+                    {formData.role === 'administrador' && 'Gerente da empresa - acesso total aos módulos'}
+                    {formData.role === 'financeiro' && 'Responsável financeiro - acesso a compras e contratos'}
+                    {formData.role === 'colaborador' && 'Usuário operacional - acesso às obras e tarefas'}
+                    {formData.role === 'cliente' && 'Acesso apenas ao Portal do Cliente'}
                   </p>
                 </div>
 
