@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { JWTManager } from '../utils/jwtManager';
+import { clearEmpresaContext } from '../utils/empresaContext';
 
 interface Profile {
   id: string;
@@ -10,8 +11,9 @@ interface Profile {
   funcao?: string | null;
   telefone?: string | null;
   avatar_url: string | null;
-  role: 'admin' | 'user';
+  role: 'master' | 'admin' | 'user';
   is_active: boolean;
+  empresa_id?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -250,6 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    clearEmpresaContext();
     await supabase.auth.signOut();
     setProfile(null);
   };
