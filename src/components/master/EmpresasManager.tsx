@@ -211,34 +211,32 @@ function EmpresasManagerContent() {
 
   const handleDelete = async (id: string) => {
     try {
-      const { data: usuariosVinculados, error: checkError } = await supabase
-        .from('profiles')
-        .select('id, email')
-        .eq('empresa_id', id);
-
-      if (checkError) throw checkError;
-
-      if (usuariosVinculados && usuariosVinculados.length > 0) {
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ empresa_id: null })
-          .eq('empresa_id', id);
-
-        if (updateError) throw updateError;
-      }
+      console.log('=== INICIANDO EXCLUSÃO DE EMPRESA ===');
+      console.log('ID da empresa:', id);
 
       const { error } = await supabase
         .from('empresas')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao excluir empresa:', error);
+        throw error;
+      }
+
+      console.log('Empresa excluída com sucesso!');
       showAlert('Empresa excluída com sucesso!', 'success');
-      loadEmpresas();
+      setConfirmDelete(null);
+      await loadEmpresas();
     } catch (error: any) {
+      console.error('=== ERRO NA EXCLUSÃO ===');
+      console.error('Erro completo:', error);
+      console.error('Message:', error.message);
+      console.error('Details:', error.details);
+      console.error('Hint:', error.hint);
+      console.error('Code:', error.code);
+
       showAlert(error.message || 'Erro ao excluir empresa', 'error');
-      console.error(error);
-    } finally {
       setConfirmDelete(null);
     }
   };
