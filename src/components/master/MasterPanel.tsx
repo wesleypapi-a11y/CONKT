@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Building2, Users, Shield, Bug } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Building2, Users, Shield, Bug, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import EmpresasManager from './EmpresasManager';
 import DebugPanel from './DebugPanel';
@@ -8,7 +8,14 @@ type MasterTab = 'empresas' | 'usuarios' | 'perfis' | 'debug';
 
 export default function MasterPanel() {
   const { profile, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState<MasterTab>('empresas');
+  const [activeTab, setActiveTab] = useState<MasterTab>('debug');
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (profile && profile.role !== 'master') {
+      setError('Acesso negado: perfil não é master');
+    }
+  }, [profile]);
 
   if (loading) {
     return (
@@ -20,18 +27,39 @@ export default function MasterPanel() {
 
   if (!profile || profile.role !== 'master') {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="bg-white rounded-xl border border-red-200 p-8 text-center max-w-md">
+      <div className="flex items-center justify-center h-full p-4">
+        <div className="bg-white rounded-xl border border-red-200 p-8 text-center max-w-lg">
           <Shield size={48} className="mx-auto text-red-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Acesso Restrito
           </h3>
-          <p className="text-gray-500">
+          <p className="text-gray-600 mb-4">
             Apenas usuários master podem acessar este painel.
           </p>
-          <p className="text-sm text-gray-400 mt-2">
-            Seu perfil atual: {profile?.role || 'Desconhecido'}
-          </p>
+          <div className="bg-gray-50 rounded-lg p-4 mb-4">
+            <p className="text-sm text-gray-700">
+              <strong>Seu perfil atual:</strong> {profile?.role || 'Desconhecido'}
+            </p>
+            <p className="text-sm text-gray-700">
+              <strong>Email:</strong> {profile?.email || 'N/A'}
+            </p>
+          </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
+            <div className="flex items-start gap-2">
+              <AlertCircle size={20} className="text-yellow-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-yellow-900 mb-1">
+                  Para resolver este problema:
+                </p>
+                <ol className="text-sm text-yellow-800 space-y-1 list-decimal list-inside">
+                  <li>Acesse o Supabase Dashboard</li>
+                  <li>Vá em SQL Editor</li>
+                  <li>Execute: <code className="bg-yellow-100 px-1 rounded">UPDATE profiles SET role = 'master', empresa_id = NULL WHERE email = '{profile?.email}';</code></li>
+                  <li>Faça logout e login novamente</li>
+                </ol>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -33,18 +33,24 @@ export default function EmpresasManager() {
   const loadEmpresas = async () => {
     try {
       setError(null);
+      setLoading(true);
+
       const { data, error } = await supabase
         .from('empresas')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading empresas:', error);
+        throw error;
+      }
+
       setEmpresas(data || []);
     } catch (error: any) {
       const errorMsg = error.message || 'Erro ao carregar empresas';
       setError(errorMsg);
-      showAlert(errorMsg, 'error');
-      console.error('Error loading empresas:', error);
+      console.error('Error in loadEmpresas:', error);
+      setEmpresas([]);
     } finally {
       setLoading(false);
     }

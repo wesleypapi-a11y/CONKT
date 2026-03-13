@@ -26,14 +26,15 @@ export default function DebugPanel() {
       if (profileError) throw profileError;
       setProfileFromDb(profileData);
 
-      const { data: empresasData, error: empresasError } = await supabase
+      const { count, error: empresasError } = await supabase
         .from('empresas')
-        .select('id', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true });
 
       if (empresasError) {
         setEmpresasError(empresasError.message);
+        setEmpresasCount(null);
       } else {
-        setEmpresasCount(empresasData ? 0 : 0);
+        setEmpresasCount(count || 0);
       }
     } catch (error: any) {
       console.error('Debug error:', error);
