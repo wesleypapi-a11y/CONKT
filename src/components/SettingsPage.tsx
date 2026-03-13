@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Users, Palette } from 'lucide-react';
+import { Users, Palette, Server } from 'lucide-react';
 import UserManagement from './UserManagement';
 import AppearanceSettings from './AppearanceSettings';
+import SystemSettings from './SystemSettings';
 
-type SettingsTab = 'users' | 'appearance';
+type SettingsTab = 'users' | 'appearance' | 'system';
 
 interface SettingsPageProps {
   onNavigateHome: () => void;
@@ -14,7 +15,8 @@ export default function SettingsPage({}: SettingsPageProps) {
 
   const tabs = [
     { id: 'users' as SettingsTab, label: 'Usuários', icon: Users },
-    { id: 'appearance' as SettingsTab, label: 'Aparência', icon: Palette }
+    { id: 'appearance' as SettingsTab, label: 'Aparência', icon: Palette },
+    { id: 'system' as SettingsTab, label: 'Sistema', icon: Server }
   ];
 
   return (
@@ -46,6 +48,7 @@ export default function SettingsPage({}: SettingsPageProps) {
         <div className="p-6">
           {activeTab === 'users' && <UserManagement />}
           {activeTab === 'appearance' && <AppearanceSettings />}
+          {activeTab === 'system' && <SystemSettings />}
         </div>
       </div>
     </div>
