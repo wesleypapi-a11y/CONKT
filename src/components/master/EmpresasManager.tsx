@@ -214,18 +214,20 @@ function EmpresasManagerContent() {
       console.log('=== INICIANDO EXCLUSÃO DE EMPRESA ===');
       console.log('ID da empresa:', id);
 
-      const profilesDeleteResult = await supabase
+      console.log('Passo 1: Desvinculando profiles da empresa...');
+      const updateResult = await supabase
         .from('profiles')
-        .delete()
+        .update({ empresa_id: null })
         .eq('empresa_id', id);
 
-      if (profilesDeleteResult.error) {
-        console.error('Erro ao excluir profiles:', profilesDeleteResult.error);
-        throw profilesDeleteResult.error;
+      if (updateResult.error) {
+        console.error('Erro ao desvincular profiles:', updateResult.error);
+        throw updateResult.error;
       }
 
-      console.log('Profiles excluídos com sucesso!');
+      console.log('Profiles desvinculados com sucesso!');
 
+      console.log('Passo 2: Deletando empresa...');
       const { error } = await supabase
         .from('empresas')
         .delete()
