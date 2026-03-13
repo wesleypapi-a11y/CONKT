@@ -177,6 +177,7 @@ Deno.serve(async (req: Request) => {
         approved_at: new Date().toISOString(),
         origem: origem,
         request_id: request_id,
+        quotation_id: quotation_id,
         budget_id: budget_id
       })
       .select()
