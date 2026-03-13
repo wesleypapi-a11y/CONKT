@@ -35,17 +35,33 @@ function EmpresasManagerContent() {
       setError(null);
       setLoading(true);
 
-      const { data, error } = await supabase
+      console.log('=== CARREGANDO EMPRESAS ===');
+
+      const { data, error, count } = await supabase
         .from('empresas')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('created_at', { ascending: false });
 
+      console.log('Resposta do Supabase:');
+      console.log('- Error:', error);
+      console.log('- Count:', count);
+      console.log('- Data length:', data?.length);
+      console.log('- Data:', data);
+
       if (error) {
-        console.error('Error loading empresas:', error);
+        console.error('ERRO ao carregar empresas:', error);
         throw error;
       }
 
+      if (data) {
+        console.log('=== EMPRESAS CARREGADAS ===');
+        data.forEach((emp, idx) => {
+          console.log(`${idx + 1}. ${emp.nome_fantasia || 'SEM NOME'} | CNPJ: ${emp.cnpj || 'SEM CNPJ'} | Status: ${emp.status}`);
+        });
+      }
+
       setEmpresas(data || []);
+      console.log('=== FIM CARREGAMENTO ===');
     } catch (error: any) {
       const errorMsg = error.message || 'Erro ao carregar empresas';
       setError(errorMsg);
