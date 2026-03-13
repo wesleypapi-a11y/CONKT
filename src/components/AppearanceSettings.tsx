@@ -15,6 +15,9 @@ export default function AppearanceSettings() {
   const { user } = useAuth();
   const { showAlert } = useAlert();
   const [saving, setSaving] = useState(false);
+  const [savingLogo, setSavingLogo] = useState(false);
+  const [savingHome, setSavingHome] = useState(false);
+  const [savingColors, setSavingColors] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingHome, setUploadingHome] = useState(false);
@@ -25,6 +28,9 @@ export default function AppearanceSettings() {
     menu_bg_color: '#1e3a8a',
     menu_text_color: '#ffffff',
   });
+
+  const [previewLogo, setPreviewLogo] = useState<string | null>(null);
+  const [previewHome, setPreviewHome] = useState<string | null>(null);
 
   useEffect(() => {
     loadPreferences();
@@ -65,9 +71,20 @@ export default function AppearanceSettings() {
       return;
     }
 
-    setUploadingLogo(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPreviewLogo(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveLogo = async () => {
+    if (!previewLogo) return;
+
+    setSavingLogo(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const blob = await fetch(previewLogo).then(r => r.blob());
+      const fileExt = blob.type.split('/')[1];
       const fileName = `logo-${user?.id}-${Date.now()}.${fileExt}`;
 
       if (preferences.logo_url) {
@@ -79,7 +96,7 @@ export default function AppearanceSettings() {
 
       const { error: uploadError } = await supabase.storage
         .from('company-branding')
-        .upload(fileName, file, { upsert: true });
+        .upload(fileName, blob, { upsert: true });
 
       if (uploadError) throw uploadError;
 
@@ -87,13 +104,32 @@ export default function AppearanceSettings() {
         .from('company-branding')
         .getPublicUrl(fileName);
 
+      const { error } = await supabase
+        .from('appearance_preferences')
+        .upsert({
+          user_id: user!.id,
+          logo_url: data.publicUrl,
+          home_image_url: preferences.home_image_url,
+          menu_bg_color: preferences.menu_bg_color,
+          menu_text_color: preferences.menu_text_color,
+        }, {
+          onConflict: 'user_id'
+        });
+
+      if (error) throw error;
+
       setPreferences({ ...preferences, logo_url: data.publicUrl });
-      showAlert('Logo enviada com sucesso!', 'success');
+      setPreviewLogo(null);
+      showAlert('Logo salva com sucesso!', 'success');
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error: any) {
-      showAlert('Erro ao enviar logo', 'error');
+      showAlert('Erro ao salvar logo', 'error');
       console.error(error);
     } finally {
-      setUploadingLogo(false);
+      setSavingLogo(false);
     }
   };
 
@@ -107,9 +143,20 @@ export default function AppearanceSettings() {
       return;
     }
 
-    setUploadingHome(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPreviewHome(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveHome = async () => {
+    if (!previewHome) return;
+
+    setSavingHome(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const blob = await fetch(previewHome).then(r => r.blob());
+      const fileExt = blob.type.split('/')[1];
       const fileName = `home-${user?.id}-${Date.now()}.${fileExt}`;
 
       if (preferences.home_image_url) {
@@ -121,7 +168,7 @@ export default function AppearanceSettings() {
 
       const { error: uploadError } = await supabase.storage
         .from('company-branding')
-        .upload(fileName, file, { upsert: true });
+        .upload(fileName, blob, { upsert: true });
 
       if (uploadError) throw uploadError;
 
@@ -129,20 +176,39 @@ export default function AppearanceSettings() {
         .from('company-branding')
         .getPublicUrl(fileName);
 
+      const { error } = await supabase
+        .from('appearance_preferences')
+        .upsert({
+          user_id: user!.id,
+          logo_url: preferences.logo_url,
+          home_image_url: data.publicUrl,
+          menu_bg_color: preferences.menu_bg_color,
+          menu_text_color: preferences.menu_text_color,
+        }, {
+          onConflict: 'user_id'
+        });
+
+      if (error) throw error;
+
       setPreferences({ ...preferences, home_image_url: data.publicUrl });
-      showAlert('Imagem da página inicial enviada com sucesso!', 'success');
+      setPreviewHome(null);
+      showAlert('Imagem da página inicial salva com sucesso!', 'success');
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error: any) {
-      showAlert('Erro ao enviar imagem', 'error');
+      showAlert('Erro ao salvar imagem', 'error');
       console.error(error);
     } finally {
-      setUploadingHome(false);
+      setSavingHome(false);
     }
   };
 
-  const handleSave = async () => {
+  const handleSaveColors = async () => {
     if (!user) return;
 
-    setSaving(true);
+    setSavingColors(true);
     try {
       const { error } = await supabase
         .from('appearance_preferences')
@@ -158,47 +224,26 @@ export default function AppearanceSettings() {
 
       if (error) throw error;
 
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
-      showAlert('Configurações salvas com sucesso! Recarregue a página para ver as alterações.', 'success');
+      showAlert('Cores salvas com sucesso!', 'success');
 
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error: any) {
-      showAlert('Erro ao salvar configurações', 'error');
+      showAlert('Erro ao salvar cores', 'error');
       console.error(error);
     } finally {
-      setSaving(false);
+      setSavingColors(false);
     }
   };
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Palette size={28} className="text-blue-600" />
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Aparência</h2>
-            <p className="text-sm text-gray-500">Personalize a identidade visual do sistema</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {showSuccess && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg font-medium animate-pulse">
-              <Check size={18} />
-              Salvo!
-            </div>
-          )}
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
-          >
-            <Save size={18} />
-            {saving ? 'Salvando...' : 'Salvar'}
-          </button>
+      <div className="flex items-center gap-3">
+        <Palette size={28} className="text-blue-600" />
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Aparência</h2>
+          <p className="text-sm text-gray-500">Personalize a identidade visual do sistema</p>
         </div>
       </div>
 
@@ -215,10 +260,10 @@ export default function AppearanceSettings() {
 
         <div className="p-6">
           <div className="space-y-4">
-            {preferences.logo_url && (
+            {(previewLogo || preferences.logo_url) && (
               <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <img
-                  src={preferences.logo_url}
+                  src={previewLogo || preferences.logo_url || ''}
                   alt="Logo da empresa"
                   className="max-h-16 object-contain"
                 />
@@ -229,13 +274,7 @@ export default function AppearanceSettings() {
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Upload className="w-8 h-8 mb-2 text-gray-400" />
                 <p className="mb-2 text-sm text-gray-500">
-                  {uploadingLogo ? (
-                    <span className="font-semibold">Enviando...</span>
-                  ) : (
-                    <>
-                      <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
-                    </>
-                  )}
+                  <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
                 </p>
                 <p className="text-xs text-gray-500">PNG, JPG, JPEG ou SVG</p>
               </div>
@@ -244,9 +283,19 @@ export default function AppearanceSettings() {
                 className="hidden"
                 accept=".png,.jpg,.jpeg,.svg"
                 onChange={handleLogoUpload}
-                disabled={uploadingLogo}
               />
             </label>
+
+            {previewLogo && (
+              <button
+                onClick={handleSaveLogo}
+                disabled={savingLogo}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                <Save size={18} />
+                {savingLogo ? 'Salvando...' : 'Salvar Logo'}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -264,10 +313,10 @@ export default function AppearanceSettings() {
 
         <div className="p-6">
           <div className="space-y-4">
-            {preferences.home_image_url && (
+            {(previewHome || preferences.home_image_url) && (
               <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <img
-                  src={preferences.home_image_url}
+                  src={previewHome || preferences.home_image_url || ''}
                   alt="Imagem da página inicial"
                   className="max-h-32 object-contain"
                 />
@@ -278,13 +327,7 @@ export default function AppearanceSettings() {
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Upload className="w-8 h-8 mb-2 text-gray-400" />
                 <p className="mb-2 text-sm text-gray-500">
-                  {uploadingHome ? (
-                    <span className="font-semibold">Enviando...</span>
-                  ) : (
-                    <>
-                      <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
-                    </>
-                  )}
+                  <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
                 </p>
                 <p className="text-xs text-gray-500">PNG, JPG ou JPEG</p>
               </div>
@@ -293,9 +336,19 @@ export default function AppearanceSettings() {
                 className="hidden"
                 accept=".png,.jpg,.jpeg"
                 onChange={handleHomeImageUpload}
-                disabled={uploadingHome}
               />
             </label>
+
+            {previewHome && (
+              <button
+                onClick={handleSaveHome}
+                disabled={savingHome}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                <Save size={18} />
+                {savingHome ? 'Salvando...' : 'Salvar Imagem'}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -388,12 +441,21 @@ export default function AppearanceSettings() {
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">Preview das cores do menu</p>
           </div>
+
+          <button
+            onClick={handleSaveColors}
+            disabled={savingColors}
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 mt-6"
+          >
+            <Save size={18} />
+            {savingColors ? 'Salvando...' : 'Salvar Cores'}
+          </button>
         </div>
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          <strong>Importante:</strong> Após salvar, a página será recarregada automaticamente para aplicar as alterações visuais.
+          <strong>Importante:</strong> Após salvar cada alteração, a página será recarregada automaticamente para aplicar as mudanças visuais.
         </p>
       </div>
     </div>

@@ -139,32 +139,42 @@ export default function Dashboard() {
 
             {sidebarOpen && (
               <div className="px-4 py-3 border-b border-white/10">
-                <button
-                  onClick={() => setProfileModalOpen(true)}
-                  className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-all"
-                >
-                  {profile?.avatar_url ? (
-                    <img
-                      src={`${profile.avatar_url}?t=${Date.now()}`}
-                      alt={profile.nome_completo}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
-                      key={profile.avatar_url}
-                    />
-                  ) : (
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                      style={{ backgroundColor: conktColors.primary.cyan }}
-                    >
-                      <User size={18} />
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setProfileModalOpen(true)}
+                    className="flex-1 flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-all"
+                  >
+                    {profile?.avatar_url ? (
+                      <img
+                        src={`${profile.avatar_url}?t=${Date.now()}`}
+                        alt={profile.nome_completo}
+                        className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
+                        key={profile.avatar_url}
+                      />
+                    ) : (
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+                        style={{ backgroundColor: conktColors.primary.cyan }}
+                      >
+                        <User size={18} />
+                      </div>
+                    )}
+                    <div className="text-left flex-1" style={{ color: appearance.menu_text_color }}>
+                      <p className="font-medium text-sm truncate">
+                        {profile?.nome_completo || 'Usuário'}
+                      </p>
+                      <p className="text-xs opacity-70 capitalize">{profile?.funcao || profile?.role}</p>
                     </div>
-                  )}
-                  <div className="text-left flex-1" style={{ color: appearance.menu_text_color }}>
-                    <p className="font-medium text-sm truncate">
-                      {profile?.nome_completo || 'Usuário'}
-                    </p>
-                    <p className="text-xs opacity-70 capitalize">{profile?.funcao || profile?.role}</p>
-                  </div>
-                </button>
+                  </button>
+                  <button
+                    onClick={signOut}
+                    className="p-2 rounded-lg hover:bg-white/10 transition-all"
+                    style={{ color: appearance.menu_text_color }}
+                    title="Sair"
+                  >
+                    <LogOut size={18} />
+                  </button>
+                </div>
               </div>
             )}
 
