@@ -95,6 +95,15 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
         return;
       }
 
+      if (obrasCount > 0) {
+        const { error: deleteWorksError } = await supabase
+          .from('works')
+          .delete()
+          .eq('client_id', clientId);
+
+        if (deleteWorksError) throw deleteWorksError;
+      }
+
       const { error } = await supabase
         .from('clients')
         .delete()
