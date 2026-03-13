@@ -85,13 +85,12 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
 
       if (checkError) throw checkError;
 
-      if (obras && obras.length > 0) {
-        alert(`Não é possível excluir este cliente pois existem ${obras.length} obra(s) vinculada(s). Exclua as obras primeiro.`);
-        setLoading(false);
-        return;
-      }
+      const obrasCount = obras?.length || 0;
+      const obrasMsg = obrasCount > 0
+        ? ` ATENÇÃO: ${obrasCount} obra(s) vinculada(s) também será(ão) excluída(s).`
+        : '';
 
-      if (!confirm('Deseja realmente excluir este cliente? Esta ação não pode ser desfeita.')) {
+      if (!confirm(`Deseja realmente excluir este cliente?${obrasMsg}\n\nEsta ação não pode ser desfeita.`)) {
         setLoading(false);
         return;
       }
