@@ -89,10 +89,6 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
     }
   }, [isOpen, budgetId]);
 
-  useEffect(() => {
-    console.log('BudgetInfo state:', budgetInfo);
-    console.log('Areas array:', budgetInfo.areas);
-  }, [budgetInfo]);
 
   useEffect(() => {
     if (isOpen && budgetId && items.length === 0) {
@@ -116,7 +112,6 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
       }
 
       if (data && data.itens && Array.isArray(data.itens) && data.itens.length > 0) {
-        console.log('Applying default template:', data.nome);
         applyTemplateItems(data.itens);
       }
     } catch (err) {
@@ -243,8 +238,6 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
               { nome: '', area: 0 },
             ];
 
-        console.log('Budget areas loaded:', areasData);
-
         setBudgetInfo({
           titulo: data.titulo || '',
           validade: data.validade || '',
@@ -352,14 +345,9 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
     }
 
     try {
-      console.log('[BudgetEditor] Sincronizando pedidos com realizado...');
       const result = await syncAllPurchaseOrdersToRealized(user.id);
 
-      if (result.success && result.synced > 0) {
-        console.log(`[BudgetEditor] ✅ ${result.synced} pedido(s) sincronizado(s) com sucesso!`);
-      } else if (result.success) {
-        console.log('[BudgetEditor] Todos os pedidos já estão sincronizados');
-      } else {
+      if (!result.success) {
         console.error('[BudgetEditor] Erro na sincronização:', result.error);
       }
     } catch (error) {
@@ -369,8 +357,6 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
 
   const loadRealizedValues = async () => {
     try {
-      console.log('[BudgetEditor] Carregando valores realizados para budget:', budgetId);
-
       await syncPurchaseOrders();
 
       const { data: entriesData, error } = await supabase
@@ -381,19 +367,15 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
 
       if (error) throw error;
 
-      console.log('[BudgetEditor] Entradas do realizado encontradas:', entriesData?.length || 0);
-
       const realized: { [key: string]: number } = {};
 
       for (const entry of entriesData || []) {
         const key = entry.subphase_id || entry.phase_id;
         if (key) {
           realized[key] = (realized[key] || 0) + (entry.amount || 0);
-          console.log(`[BudgetEditor] Realizado acumulado para ${key}:`, realized[key]);
         }
       }
 
-      console.log('[BudgetEditor] Valores realizados totais:', realized);
       setRealizedValues(realized);
     } catch (error) {
       console.error('Error loading realized values:', error);
@@ -727,8 +709,6 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
     setLoading(true);
     try {
       const valorTotal = calculateGrandTotal();
-      console.log('Saving budget with valor_total:', valorTotal);
-
       const { error: updateError } = await supabase
         .from('budgets')
         .update({
@@ -748,8 +728,6 @@ export default function BudgetEditor({ isOpen, onClose, budgetId, readOnly = fal
         console.error('Error updating budget:', updateError);
         throw updateError;
       }
-
-      console.log('Budget updated successfully');
 
       const { error: deleteError } = await supabase
         .from('budget_items')

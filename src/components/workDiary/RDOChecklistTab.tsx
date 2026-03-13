@@ -123,7 +123,7 @@ export default function RDOChecklistTab({ rdoId }: RDOChecklistTabProps) {
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold" style={{ color: conktColors.text }}>
+          <h3 className="text-lg font-semibold" style={{ color: conktColors.text.primary }}>
             Checklist
           </h3>
           {!showForm && (

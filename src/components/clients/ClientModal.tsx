@@ -78,10 +78,10 @@ export default function ClientModal({ isOpen, onClose, clientId, onSave, onNavig
       const clientData = { ...client };
 
       if (clientData.type === 'juridica') {
-        clientData.birth_date = null;
-        clientData.marital_status = null;
-        clientData.profession = null;
-        clientData.nationality = null;
+        clientData.birth_date = undefined;
+        clientData.marital_status = undefined;
+        clientData.profession = undefined;
+        clientData.nationality = undefined;
       }
 
       if (clientId) {

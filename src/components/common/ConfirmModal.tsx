@@ -92,10 +92,7 @@ export default function ConfirmModal({
                 {cancelText}
               </button>
               <button
-                onClick={() => {
-                  console.log('[ConfirmModal] Botão Confirmar clicado');
-                  onConfirm();
-                }}
+                onClick={onConfirm}
                 className="flex-1 px-6 py-3 rounded-lg text-white font-semibold hover:opacity-90 transition-all shadow-md"
                 style={{ backgroundColor: getConfirmButtonColor() }}
               >

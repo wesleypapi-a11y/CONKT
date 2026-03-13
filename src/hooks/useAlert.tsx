@@ -22,9 +22,13 @@ export function useAlert() {
   const [confirmOptions, setConfirmOptions] = useState<ConfirmOptions>({});
   const confirmCallbackRef = useRef<(() => void | Promise<void>) | null>(null);
 
-  const showAlert = useCallback((msg: string, opts: AlertOptions = {}) => {
+  const showAlert = useCallback((msg: string, typeOrOpts?: 'success' | 'error' | 'info' | 'warning' | AlertOptions) => {
     setMessage(msg);
-    setAlertOptions(opts);
+    if (typeof typeOrOpts === 'string') {
+      setAlertOptions({ type: typeOrOpts as 'success' | 'error' | 'info' });
+    } else {
+      setAlertOptions(typeOrOpts || {});
+    }
     setIsAlertOpen(true);
   }, []);
 

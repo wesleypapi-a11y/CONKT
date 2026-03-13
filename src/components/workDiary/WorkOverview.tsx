@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Image as ImageIcon, Video, Paperclip, ArrowLeft, TrendingUp, Edit2, Trash2, AlertTriangle, MessageSquare, Printer } from 'lucide-react';
+import { FileText, Image as ImageIcon, Video, Paperclip, ArrowLeft, CreditCard as Edit2, Trash2, AlertTriangle, MessageSquare, Printer } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { Work } from '../../types/work';
 import { supabase } from '../../lib/supabase';
@@ -8,9 +8,6 @@ import { generateRDOPDF, generateBatchRDOPDF } from '../../utils/rdoPdfGenerator
 interface WorkOverviewProps {
   work: Work;
   onNavigateBack: () => void;
-  onEditWork: () => void;
-  onDeleteWork: () => void;
-  onViewAllReports: () => void;
   onOpenReport: (rdoId: string) => void;
 }
 
@@ -29,9 +26,6 @@ interface Stats {
 const WorkOverview: React.FC<WorkOverviewProps> = ({
   work,
   onNavigateBack,
-  onEditWork,
-  onDeleteWork,
-  onViewAllReports,
   onOpenReport
 }) => {
   const [activeMenu, setActiveMenu] = useState<MenuItemType>('overview');

@@ -9,16 +9,6 @@ interface ReportOptions {
   mode: 'client' | 'internal';
 }
 
-const COLORS = {
-  primary: '#2980b9',
-  secondary: '#34495e',
-  text: '#2c3e50',
-  light: '#95a5a6',
-  success: '#27ae60',
-  warning: '#f39c12',
-  danger: '#e74c3c'
-};
-
 export async function generateConsolidatedReport(options: ReportOptions) {
   const { workId, modules, startDate, endDate, mode } = options;
 
@@ -47,12 +37,12 @@ export async function generateConsolidatedReport(options: ReportOptions) {
   pdf.addPage();
   const tocPageNumbers = await addTableOfContents(pdf, modules, pageWidth);
 
-  let currentPage = pdf.internal.getCurrentPageInfo().pageNumber + 1;
+  let currentPage = (pdf as any).internal.getCurrentPageInfo().pageNumber + 1;
 
   for (let i = 0; i < modules.length; i++) {
     const module = modules[i];
     pdf.addPage();
-    currentPage = pdf.internal.getCurrentPageInfo().pageNumber;
+    currentPage = (pdf as any).internal.getCurrentPageInfo().pageNumber;
     tocPageNumbers[module] = currentPage;
 
     try {
@@ -179,8 +169,7 @@ async function addDashboardSection(
   pdf: jsPDF,
   workId: string,
   mode: string,
-  pageWidth: number,
-  pageHeight: number
+  pageWidth: number
 ) {
   addSectionHeader(pdf, 'DASHBOARD GERAL', pageWidth);
 
@@ -306,8 +295,7 @@ async function addBudgetSection(
   pdf: jsPDF,
   workId: string,
   mode: string,
-  pageWidth: number,
-  pageHeight: number
+  pageWidth: number
 ) {
   addSectionHeader(pdf, 'ORÇADO VS REALIZADO', pageWidth);
 
@@ -411,8 +399,7 @@ async function addPaymentsSection(
   startDate: string,
   endDate: string,
   mode: string,
-  pageWidth: number,
-  pageHeight: number
+  pageWidth: number
 ) {
   addSectionHeader(pdf, 'PAGAMENTOS REALIZADOS', pageWidth);
 
@@ -513,8 +500,7 @@ async function addDiarySection(
   startDate: string,
   endDate: string,
   mode: string,
-  pageWidth: number,
-  pageHeight: number
+  pageWidth: number
 ) {
   addSectionHeader(pdf, 'DIÁRIO DE OBRAS', pageWidth);
 
@@ -604,8 +590,7 @@ async function addPhotosSection(
   startDate: string,
   endDate: string,
   mode: string,
-  pageWidth: number,
-  pageHeight: number
+  pageWidth: number
 ) {
   addSectionHeader(pdf, 'FOTOS DA OBRA', pageWidth);
 
@@ -653,8 +638,7 @@ async function addScheduleSection(
   pdf: jsPDF,
   workId: string,
   mode: string,
-  pageWidth: number,
-  pageHeight: number
+  pageWidth: number
 ) {
   addSectionHeader(pdf, 'CRONOGRAMA', pageWidth);
 
@@ -731,8 +715,7 @@ async function addCashflowSection(
   startDate: string,
   endDate: string,
   mode: string,
-  pageWidth: number,
-  pageHeight: number
+  pageWidth: number
 ) {
   addSectionHeader(pdf, 'FLUXO DE CAIXA', pageWidth);
 

@@ -174,7 +174,6 @@ export async function generateDashboardPdf(
           .filter(i => i.status === 'pago')
           .reduce((sum, i) => sum + (i.paid_amount || i.amount), 0);
 
-        const totalPending = contract.valor_total - totalPaid;
         const pct = contract.valor_total > 0 ? (totalPaid / contract.valor_total) * 100 : 0;
 
         pdf.text(`${contract.contract_number || ''} - ${contract.supplier_name || 'Sem fornecedor'}`, margin, y);

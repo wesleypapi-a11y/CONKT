@@ -1,4 +1,4 @@
-import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { CheckCircle, AlertCircle, Info } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 
 interface AlertModalProps {

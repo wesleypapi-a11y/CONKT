@@ -110,7 +110,6 @@ export default function RDOPhotosTab({ rdoId }: RDOPhotosTabProps) {
 
         const compressedFile = await compressImage(file);
 
-        const fileExt = compressedFile.name.split('.').pop();
         const timestamp = Date.now();
         const fileName = `work_diaries/${rdoId}/photos/${timestamp}_${compressedFile.name}`;
 
@@ -219,7 +218,7 @@ export default function RDOPhotosTab({ rdoId }: RDOPhotosTabProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
           Fotos
         </h3>
 

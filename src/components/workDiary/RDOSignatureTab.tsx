@@ -16,7 +16,7 @@ export default function RDOSignatureTab({ rdo, onChange }: RDOSignatureTabProps)
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
           Assinatura manual e Status
         </h3>
 
@@ -65,7 +65,7 @@ export default function RDOSignatureTab({ rdo, onChange }: RDOSignatureTabProps)
                 className="text-2xl text-center italic"
                 style={{
                   fontFamily: 'cursive',
-                  color: conktColors.text
+                  color: conktColors.text.primary
                 }}
               >
                 {rdo.manual_signature}
@@ -76,7 +76,7 @@ export default function RDOSignatureTab({ rdo, onChange }: RDOSignatureTabProps)
       </div>
 
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
           Status do relatório
         </h3>
 

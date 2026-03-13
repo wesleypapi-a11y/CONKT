@@ -109,12 +109,6 @@ export default function TemplateImportModal({ isOpen, onClose, onApplyTemplate }
             raw: false
           });
 
-          console.log(`📊 ${file.name}: ${jsonData.length} linhas encontradas`);
-          if (jsonData.length > 0 && typeof jsonData[0] === 'object' && jsonData[0] !== null) {
-            console.log('🔍 Chaves disponíveis:', Object.keys(jsonData[0] as object));
-            console.log('🔍 Primeira linha:', jsonData[0]);
-          }
-
           // Função auxiliar para encontrar valor em múltiplas variações de chave
           const findValue = (row: any, keys: string[]) => {
             for (const key of keys) {
@@ -146,23 +140,12 @@ export default function TemplateImportModal({ isOpen, onClose, onApplyTemplate }
               OBS: findValue(row, ['OBS', 'obs', 'Obs', 'Observação', 'Observacao', 'observacao'])
             };
 
-            if (index < 5) {
-              console.log(`  🔍 Linha ${index + 1}:`, {
-                'ETAPA (original)': row.ETAPA || row.etapa || row.Etapa || 'NÃO ENCONTRADO',
-                'ETAPA (normalizado)': normalized.ETAPA,
-                'Descrição': normalized.Descrição?.substring(0, 50),
-                'MACRO': normalized.MACRO,
-                'Todas as chaves da linha': Object.keys(row)
-              });
-            }
-
             return normalized;
           });
 
-          console.log(`✅ ${file.name}: ${normalizedData.length} itens normalizados`);
           resolve(normalizedData);
         } catch (err) {
-          console.error(`❌ Erro ao processar ${file.name}:`, err);
+          console.error('Erro ao processar arquivo:', err);
           reject(err);
         }
       };
@@ -186,25 +169,21 @@ export default function TemplateImportModal({ isOpen, onClose, onApplyTemplate }
     setError('');
 
     try {
-      console.log(`📄 Iniciando importação de ${selectedFiles.length} arquivo(s)...`);
-
       let successCount = 0;
       let errorCount = 0;
 
       for (const file of selectedFiles) {
         try {
-          console.log(`\n📄 Processando: ${file.name}`);
           const itensData = await parseExcelFile(file);
 
           const fileName = `${user.id}/${Date.now()}_${file.name}`;
-          console.log(`📤 Fazendo upload: ${file.name}`);
 
           const { error: uploadError } = await supabase.storage
             .from('budget-templates')
             .upload(fileName, file);
 
           if (uploadError) {
-            console.error(`❌ Erro no upload de ${file.name}:`, uploadError);
+            console.error(`Erro no upload de ${file.name}:`, uploadError);
             errorCount++;
             continue;
           }
@@ -217,7 +196,6 @@ export default function TemplateImportModal({ isOpen, onClose, onApplyTemplate }
             ? templateName.trim()
             : (templateName.trim() ? `${templateName.trim()} - ${file.name.replace(/\.(xlsx|xls)$/i, '')}` : file.name.replace(/\.(xlsx|xls)$/i, ''));
 
-          console.log(`💾 Salvando template: ${templateNameToUse}`);
           const { error: insertError } = await supabase
             .from('budget_templates')
             .insert({
@@ -231,20 +209,17 @@ export default function TemplateImportModal({ isOpen, onClose, onApplyTemplate }
             });
 
           if (insertError) {
-            console.error(`❌ Erro ao salvar ${file.name}:`, insertError);
+            console.error(`Erro ao salvar ${file.name}:`, insertError);
             errorCount++;
             continue;
           }
 
-          console.log(`✅ ${file.name} importado com sucesso!`);
           successCount++;
         } catch (fileErr: any) {
-          console.error(`❌ Erro ao processar ${file.name}:`, fileErr);
+          console.error('Erro ao processar arquivo:', fileErr);
           errorCount++;
         }
       }
-
-      console.log(`\n📊 Resumo: ${successCount} sucesso(s), ${errorCount} erro(s)`);
 
       setSelectedFiles([]);
       setTemplateName('');
@@ -259,7 +234,7 @@ export default function TemplateImportModal({ isOpen, onClose, onApplyTemplate }
         alert(`${successCount} template(s) importado(s) com sucesso.\n${errorCount} arquivo(s) com erro.`);
       }
     } catch (err: any) {
-      console.error('❌ Erro completo:', err);
+      console.error('Erro completo:', err);
       setError(err.message || 'Erro ao fazer upload dos templates');
     } finally {
       setUploading(false);
@@ -376,7 +351,14 @@ export default function TemplateImportModal({ isOpen, onClose, onApplyTemplate }
     }
 
     try {
-      const itens = template.itens || [];
+      // Download the template file
+      const response = await fetch(template.arquivo_url);
+      const blob = await response.blob();
+      const file = new File([blob], template.arquivo_nome, { type: blob.type });
+
+      // Parse the Excel file
+      const itens = await parseExcelFile(file);
+
       if (Array.isArray(itens) && itens.length > 0) {
         onApplyTemplate(itens);
         alert(`Template "${template.nome}" aplicado com sucesso!`);

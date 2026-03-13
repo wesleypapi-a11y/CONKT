@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package, Search, Eye, Printer, FileText, Edit, Trash2 } from 'lucide-react';
+import { Package, Search, Eye, Printer, FileText, CreditCard as Edit, Trash2 } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { PurchaseOrder } from '../../types/purchase';
@@ -334,8 +334,8 @@ export default function PurchaseOrdersManager({ onNavigateHome }: PurchaseOrders
           isOpen={!!deletingOrder}
           title="Excluir Pedido"
           message={`Tem certeza que deseja excluir o pedido ${deletingOrder.order_number}? Esta ação não pode ser desfeita.`}
-          confirmLabel="Excluir"
-          cancelLabel="Cancelar"
+          confirmText="Excluir"
+          cancelText="Cancelar"
           onConfirm={handleDeleteOrder}
           onCancel={() => setDeletingOrder(null)}
           type="danger"
@@ -347,8 +347,8 @@ export default function PurchaseOrdersManager({ onNavigateHome }: PurchaseOrders
           isOpen={showBulkDeleteConfirm}
           title="Excluir Pedidos Selecionados"
           message={`Tem certeza que deseja excluir ${selectedOrders.size} pedido(s) selecionado(s)? Esta ação não pode ser desfeita.`}
-          confirmLabel="Excluir Todos"
-          cancelLabel="Cancelar"
+          confirmText="Excluir Todos"
+          cancelText="Cancelar"
           onConfirm={handleBulkDelete}
           onCancel={() => setShowBulkDeleteConfirm(false)}
           type="danger"

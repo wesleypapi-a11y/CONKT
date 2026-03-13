@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { FileText, Calendar, Users, Sun, Cloud, CloudRain, Image as ImageIcon } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 
 interface DiaryEntry {

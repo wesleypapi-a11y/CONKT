@@ -85,7 +85,7 @@ export default function SupplierCategoriasTab({ supplierId }: SupplierCategorias
   return (
     <div className="space-y-4 relative">
       <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <h3 className="text-base font-semibold mb-4" style={{ color: conktColors.text }}>
+        <h3 className="text-base font-semibold mb-4" style={{ color: conktColors.text.primary }}>
           Categorias de fornecimento
         </h3>
         <p className="text-sm text-gray-600 mb-4">

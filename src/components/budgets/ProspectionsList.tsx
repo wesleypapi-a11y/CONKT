@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Phone, Mail, Calendar, DollarSign, Building2, Filter, FileText } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, Phone, Mail, Calendar, DollarSign, Building2, Filter, FileText } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import ProspectionModal from './ProspectionModal';
@@ -104,7 +104,7 @@ export default function ProspectionsList() {
     return acc;
   }, {} as Record<string, number>);
 
-  const canDelete = profile?.role === 'admin';
+  const canDelete = profile?.role === 'master' || profile?.role === 'administrador';
 
   return (
     <div className="space-y-6">

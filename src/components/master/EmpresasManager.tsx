@@ -35,33 +35,17 @@ function EmpresasManagerContent() {
       setError(null);
       setLoading(true);
 
-      console.log('=== CARREGANDO EMPRESAS ===');
-
       const { data, error, count } = await supabase
         .from('empresas')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false });
-
-      console.log('Resposta do Supabase:');
-      console.log('- Error:', error);
-      console.log('- Count:', count);
-      console.log('- Data length:', data?.length);
-      console.log('- Data:', data);
 
       if (error) {
         console.error('ERRO ao carregar empresas:', error);
         throw error;
       }
 
-      if (data) {
-        console.log('=== EMPRESAS CARREGADAS ===');
-        data.forEach((emp, idx) => {
-          console.log(`${idx + 1}. ${emp.nome_fantasia || 'SEM NOME'} | CNPJ: ${emp.cnpj || 'SEM CNPJ'} | Status: ${emp.status}`);
-        });
-      }
-
       setEmpresas(data || []);
-      console.log('=== FIM CARREGAMENTO ===');
     } catch (error: any) {
       const errorMsg = error.message || 'Erro ao carregar empresas';
       setError(errorMsg);
@@ -74,32 +58,21 @@ function EmpresasManagerContent() {
 
   const handleDeleteLegacyEmpresas = async () => {
     try {
-      console.log('=== BOTÃO CLICADO - DELETANDO EMPRESAS LEGADAS ===');
-      alert('Iniciando exclusão das empresas teste...');
-
       const { data: legacyEmpresas, error: selectError } = await supabase
         .from('empresas')
         .select('id, nome_fantasia, nome, razao_social')
         .or('nome_fantasia.in.(OMEGA,BETA,ALPHA,CONKT),nome.in.(OMEGA,BETA,ALPHA,CONKT),razao_social.in.(OMEGA,BETA,ALPHA,CONKT)');
-
-      console.log('Empresas encontradas:', legacyEmpresas);
-      console.log('Erro na busca:', selectError);
 
       if (selectError) {
         throw selectError;
       }
 
       if (!legacyEmpresas || legacyEmpresas.length === 0) {
-        alert('Nenhuma empresa legada encontrada no banco!');
         showAlert('Nenhuma empresa legada encontrada', 'info');
         return;
       }
 
-      alert(`Encontrei ${legacyEmpresas.length} empresas para deletar`);
-
       for (const empresa of legacyEmpresas) {
-        console.log(`Deletando empresa: ${empresa.nome_fantasia || empresa.nome} (${empresa.id})`);
-
         const { error: updateError } = await supabase
           .from('profiles')
           .update({ empresa_id: null })
@@ -118,17 +91,13 @@ function EmpresasManagerContent() {
           console.error(`Erro ao deletar ${empresa.nome_fantasia}:`, deleteError);
           throw deleteError;
         }
-
-        console.log(`Empresa ${empresa.nome_fantasia || empresa.nome} deletada com sucesso`);
       }
 
-      alert('Todas as empresas teste foram deletadas!');
       showAlert('Empresas legadas deletadas com sucesso!', 'success');
       await loadEmpresas();
 
     } catch (error: any) {
       console.error('Erro ao deletar empresas legadas:', error);
-      alert(`ERRO: ${error.message}`);
       showAlert(`Erro: ${error.message}`, 'error');
     }
   };
@@ -136,31 +105,12 @@ function EmpresasManagerContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('=== INICIANDO CADASTRO DE EMPRESA ===');
-    console.log('Dados do formulário:', formData);
-
     if (!formData.razao_social || !formData.nome_fantasia || !formData.cnpj) {
-      console.log('Validação falhou - campos obrigatórios vazios');
       showAlert('Preencha todos os campos obrigatórios', 'error');
       return;
     }
 
-    console.log('Validação OK - todos os campos obrigatórios preenchidos');
-
     try {
-      // Verificar usuário logado
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log('Usuário logado:', user?.email, 'ID:', user?.id);
-
-      // Verificar perfil do usuário
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user?.id)
-        .single();
-
-      console.log('Perfil do usuário:', profile);
-
       const dbData = {
         razao_social: formData.razao_social,
         nome_fantasia: formData.nome_fantasia,
@@ -173,7 +123,6 @@ function EmpresasManagerContent() {
       };
 
       if (editingEmpresa) {
-        console.log('Modo EDIÇÃO - atualizando empresa:', editingEmpresa.id);
         const { error } = await supabase
           .from('empresas')
           .update(dbData)
@@ -181,20 +130,10 @@ function EmpresasManagerContent() {
 
         if (error) {
           console.error('Erro ao atualizar empresa:', error);
-          console.error('Detalhes do erro:', {
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code
-          });
           throw error;
         }
-        console.log('Empresa atualizada com sucesso!');
         showAlert('Empresa atualizada com sucesso!', 'success');
       } else {
-        console.log('Modo CADASTRO - inserindo nova empresa');
-        console.log('Tentando inserir:', dbData);
-
         const { data, error } = await supabase
           .from('empresas')
           .insert([dbData])
@@ -202,50 +141,33 @@ function EmpresasManagerContent() {
 
         if (error) {
           console.error('ERRO AO INSERIR EMPRESA:', error);
-          console.error('Detalhes completos do erro:', {
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code
-          });
           throw error;
         }
 
-        console.log('Empresa cadastrada com sucesso! Dados retornados:', data);
         showAlert('Empresa cadastrada com sucesso!', 'success');
       }
 
-      console.log('Fechando modal e recarregando lista...');
       setShowModal(false);
       setEditingEmpresa(null);
       resetForm();
       await loadEmpresas();
-      console.log('=== CADASTRO FINALIZADO COM SUCESSO ===');
     } catch (error: any) {
-      console.error('=== ERRO NO CADASTRO ===');
-      console.error('Tipo do erro:', typeof error);
-      console.error('Erro completo:', error);
-      console.error('Error.message:', error.message);
-      console.error('Error.details:', error.details);
-      console.error('Error.hint:', error.hint);
-      console.error('Error.code:', error.code);
-
+      console.error('Erro no cadastro de empresa:', error);
       const errorMsg = error.message || 'Erro ao salvar empresa';
       showAlert(`Erro: ${errorMsg}`, 'error');
-      console.error('=== FIM DO ERRO ===');
     }
   };
 
   const handleEdit = (empresa: Empresa) => {
     setEditingEmpresa(empresa);
     setFormData({
-      razao_social: empresa.razao_social || empresa.nome || '',
-      nome_fantasia: empresa.nome_fantasia || empresa.nome || '',
+      razao_social: empresa.razao_social || '',
+      nome_fantasia: empresa.nome_fantasia || '',
       cnpj: empresa.cnpj,
       telefone: empresa.telefone || '',
       email: empresa.email || '',
-      data_inicio_vigencia: empresa.data_inicio_vigencia || empresa.data_inicio || '',
-      data_fim_vigencia: empresa.data_fim_vigencia || empresa.data_fim || '',
+      data_inicio_vigencia: empresa.data_inicio_vigencia || '',
+      data_fim_vigencia: empresa.data_fim_vigencia || '',
       status: empresa.status as any,
     });
     setShowModal(true);
@@ -272,10 +194,6 @@ function EmpresasManagerContent() {
 
   const handleDelete = async (id: string) => {
     try {
-      console.log('=== INICIANDO EXCLUSÃO DE EMPRESA ===');
-      console.log('ID da empresa:', id);
-
-      console.log('Passo 1: Desvinculando profiles da empresa...');
       const updateResult = await supabase
         .from('profiles')
         .update({ empresa_id: null })
@@ -286,9 +204,6 @@ function EmpresasManagerContent() {
         throw updateResult.error;
       }
 
-      console.log('Profiles desvinculados com sucesso!');
-
-      console.log('Passo 2: Deletando empresa...');
       const { error } = await supabase
         .from('empresas')
         .delete()
@@ -299,18 +214,11 @@ function EmpresasManagerContent() {
         throw error;
       }
 
-      console.log('Empresa excluída com sucesso!');
       showAlert('Empresa excluída com sucesso!', 'success');
       setConfirmDelete(null);
       await loadEmpresas();
     } catch (error: any) {
-      console.error('=== ERRO NA EXCLUSÃO ===');
-      console.error('Erro completo:', error);
-      console.error('Message:', error.message);
-      console.error('Details:', error.details);
-      console.error('Hint:', error.hint);
-      console.error('Code:', error.code);
-
+      console.error('Erro ao excluir empresa:', error);
       showAlert(error.message || 'Erro ao excluir empresa', 'error');
       setConfirmDelete(null);
     }
@@ -330,7 +238,7 @@ function EmpresasManagerContent() {
   };
 
   const calculateDaysRemaining = (empresa: Empresa) => {
-    const dataFim = empresa.data_fim;
+    const dataFim = empresa.data_fim_vigencia;
     if (!dataFim) return null;
 
     const today = new Date();
@@ -344,8 +252,8 @@ function EmpresasManagerContent() {
     if (!empresa) return false;
 
     const searchLower = searchTerm.toLowerCase();
-    const razaoSocial = (empresa.razao_social || empresa.nome || '').toLowerCase();
-    const nomeFantasia = (empresa.nome || '').toLowerCase();
+    const razaoSocial = (empresa.razao_social || '').toLowerCase();
+    const nomeFantasia = (empresa.nome_fantasia || '').toLowerCase();
     const cnpj = empresa.cnpj || '';
 
     return razaoSocial.includes(searchLower) ||
@@ -493,10 +401,10 @@ function EmpresasManagerContent() {
                         #{index + 1}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-xs font-medium text-gray-900">
-                        {empresa.razao_social || empresa.nome || '-'}
+                        {empresa.razao_social || '-'}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-600">
-                        {empresa.nome || '-'}
+                        {empresa.nome_fantasia || '-'}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-600 font-mono">
                         {empresa.cnpj || '-'}
@@ -504,17 +412,17 @@ function EmpresasManagerContent() {
                       <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-600">
                         <div className="flex flex-col">
                           <span>
-                            {empresa.data_inicio
-                              ? new Date(empresa.data_inicio).toLocaleDateString('pt-BR')
+                            {empresa.data_inicio_vigencia
+                              ? new Date(empresa.data_inicio_vigencia).toLocaleDateString('pt-BR')
                               : '-'}
                           </span>
                           <span className={`text-[10px] ${
-                            empresa.data_fim && isVigenciaExpired(empresa.data_fim)
+                            empresa.data_fim_vigencia && isVigenciaExpired(empresa.data_fim_vigencia)
                               ? 'text-red-600 font-semibold'
                               : 'text-gray-500'
                           }`}>
-                            até {empresa.data_fim
-                              ? new Date(empresa.data_fim).toLocaleDateString('pt-BR')
+                            até {empresa.data_fim_vigencia
+                              ? new Date(empresa.data_fim_vigencia).toLocaleDateString('pt-BR')
                               : '-'}
                           </span>
                         </div>
@@ -547,7 +455,6 @@ function EmpresasManagerContent() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              console.log('Botão de exclusão clicado! ID:', empresa.id);
                               setConfirmDelete(empresa.id);
                             }}
                             className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-all"
@@ -726,13 +633,11 @@ function EmpresasManagerContent() {
         confirmText="Excluir"
         cancelText="Cancelar"
         onConfirm={() => {
-          console.log('Modal confirmado! Executando handleDelete...');
           if (confirmDelete) {
             handleDelete(confirmDelete);
           }
         }}
         onCancel={() => {
-          console.log('Modal cancelado!');
           setConfirmDelete(null);
         }}
       />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { TrendingUp, DollarSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface BudgetData {

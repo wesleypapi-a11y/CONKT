@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { XCircle, Plus, Trash2, Save, Edit, FileText } from 'lucide-react';
+import { XCircle, Plus, Trash2, Save, CreditCard as Edit, FileText } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { PurchaseOrder } from '../../types/purchase';
@@ -23,7 +23,11 @@ interface ExtendedPurchaseOrder extends PurchaseOrder {
   supplier_name?: string;
   work_name?: string;
   work_id?: string;
-  request_id?: string;
+  phase_id?: string;
+  subphase_id?: string;
+  freight_value?: number;
+  discount_value?: number;
+  notes?: string;
 }
 
 interface Work {

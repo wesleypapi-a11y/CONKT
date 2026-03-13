@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Home, FileText, ArrowLeft, Settings, Edit2, Trash2, Eye, Camera, Video, Paperclip } from 'lucide-react';
+import { Plus, Home, FileText, ArrowLeft, CreditCard as Edit2, Trash2, Camera, Video, Paperclip } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Work } from '../../types/work';
@@ -202,15 +202,6 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
       'pos_obra': 'Pós-obra',
     };
     return labels[status] || status;
-  };
-
-  const getRdoStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      'preenchendo': '#f59e0b',
-      'revisar': '#3b82f6',
-      'aprovado': '#10b981',
-    };
-    return colors[status] || '#6b7280';
   };
 
   const getRdoStatusLabel = (status: string) => {

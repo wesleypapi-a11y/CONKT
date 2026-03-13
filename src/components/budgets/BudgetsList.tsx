@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, FileText, Calendar, Printer, Zap, FileSpreadsheet, Users, CheckCircle, Eye } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, FileText, Calendar, Printer, Zap, FileSpreadsheet, Users, CheckCircle, Eye } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Budget } from '../../types/budget';
 import { useAuth } from '../../contexts/AuthContext';
@@ -145,7 +145,7 @@ export default function BudgetsList({ onNavigateHome }: BudgetsListProps) {
     loadBudgets();
   };
 
-  const handleQuickWorkCreated = (workId: string) => {
+  const handleQuickWorkCreated = () => {
     setQuickWorkModalOpen(false);
     alert('Obra cadastrada com sucesso! Você pode agora criar um orçamento vinculado a ela.');
   };

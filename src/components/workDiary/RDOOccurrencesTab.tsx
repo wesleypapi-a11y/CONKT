@@ -99,7 +99,7 @@ export default function RDOOccurrencesTab({ rdoId }: RDOOccurrencesTabProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
           Ocorrências
         </h3>
 

@@ -258,8 +258,6 @@ export async function generateRDOPDF(rdoId: string): Promise<void> {
   doc.setDrawColor(220, 220, 220);
   doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 2, 2);
 
-  const climaColWidth = (pageWidth - 2 * margin) / 2;
-
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(70, 70, 70);
@@ -543,7 +541,6 @@ export async function generateBatchRDOPDF(rdoIds: string[]): Promise<void> {
 
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 15;
 
   for (let i = 0; i < rdoIds.length; i++) {
@@ -697,7 +694,7 @@ export async function generateBatchRDOPDF(rdoIds: string[]): Promise<void> {
 
       y += 8;
       const colWidth = (pageWidth - 2 * margin - 60) / labor.length;
-      labor.forEach((l) => {
+      labor.forEach((l, idx) => {
         doc.setFillColor(255, 255, 255);
         doc.rect(margin + idx * colWidth, y, colWidth, 8);
         doc.setFont('helvetica', 'normal');
@@ -706,7 +703,7 @@ export async function generateBatchRDOPDF(rdoIds: string[]): Promise<void> {
       });
 
       y += 8;
-      labor.forEach((l) => {
+      labor.forEach((l, idx) => {
         doc.setFillColor(240, 240, 240);
         doc.rect(margin + idx * colWidth, y, colWidth, 8, 'F');
         doc.setFont('helvetica', 'bold');

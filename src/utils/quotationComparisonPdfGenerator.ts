@@ -209,7 +209,6 @@ export async function generateQuotationComparisonPDF(data: QuotationComparisonDa
     return total;
   };
 
-  const numCols = 4 + quotations.length;
   const colWidths = {
     item: 75,
     qty: 18,
@@ -266,7 +265,7 @@ export async function generateQuotationComparisonPDF(data: QuotationComparisonDa
     const lowestPrice = getLowestPrice(item.id);
     const rowHeight = 8;
 
-    const rowBg = index % 2 === 0 ? [255, 255, 255] : [245, 247, 250];
+    const rowBg: [number, number, number] = index % 2 === 0 ? [255, 255, 255] : [245, 247, 250];
     doc.setFillColor(...rowBg);
     doc.rect(margin, y, pageWidth - 2 * margin, rowHeight, 'F');
 

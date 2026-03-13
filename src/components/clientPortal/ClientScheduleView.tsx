@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 

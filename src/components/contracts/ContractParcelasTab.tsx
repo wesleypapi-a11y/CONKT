@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Calendar, DollarSign, Check, X, AlertCircle, RefreshCw } from 'lucide-react';
+import { Trash2, Calendar, DollarSign, Check, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { ContractInstallment, Contract } from '../../types/contract';
 
@@ -62,7 +62,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
     }
   };
 
-
   const handleUpdateStatus = async (installmentId: string, newStatus: string) => {
     try {
       const installment = installments.find(i => i.id === installmentId);
@@ -123,8 +122,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
     }
 
     try {
-      console.log('[CreateOrder] Criando pedido para parcela paga...');
-
       const { count } = await supabase
         .from('purchase_orders')
         .select('id', { count: 'exact', head: true })
@@ -158,8 +155,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
         throw orderError;
       }
 
-      console.log('[CreateOrder] Pedido criado:', newOrder.id);
-
       // Atualizar parcela com o número do PC
       await supabase
         .from('contract_installments')
@@ -187,8 +182,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
         throw itemError;
       }
 
-      console.log('[CreateOrder] Item do pedido criado');
-
       // Criar lançamento no realizado (se houver orçamento)
       if (contract.budget_id && contract.budget_phase_id && contract.budget_subphase_id) {
         const { data: orderItemData } = await supabase
@@ -213,8 +206,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
 
           if (realizedError) {
             console.error('[CreateOrder] Erro ao lançar no realizado:', realizedError);
-          } else {
-            console.log('[CreateOrder] Lançamento no realizado criado');
           }
         }
       }
@@ -226,38 +217,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
       console.error('[CreateOrder] Erro ao criar pedido:', error);
       alert(`Parcela marcada como paga, mas houve erro ao criar pedido: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
-  };
-
-  const handleEdit = (installment: ContractInstallment) => {
-    setEditingId(installment.id);
-    setEditForm(installment);
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editingId) return;
-
-    try {
-      const { error } = await supabase
-        .from('contract_installments')
-        .update({
-          ...editForm,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', editingId);
-
-      if (error) throw error;
-      setEditingId(null);
-      setEditForm({});
-      await loadInstallments();
-    } catch (error) {
-      console.error('Error saving edit:', error);
-      alert('Erro ao salvar alterações');
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditForm({});
   };
 
   const handleToggleSelect = (installmentId: string) => {
@@ -275,23 +234,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
       setSelectedInstallments(new Set());
     } else {
       setSelectedInstallments(new Set(filteredInstallments.map(i => i.id)));
-    }
-  };
-
-  const handleDelete = async (installmentId: string) => {
-    if (!confirm('Deseja realmente excluir esta parcela?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('contract_installments')
-        .delete()
-        .eq('id', installmentId);
-
-      if (error) throw error;
-      await loadInstallments();
-    } catch (error) {
-      console.error('Error deleting installment:', error);
-      alert('Erro ao excluir parcela');
     }
   };
 

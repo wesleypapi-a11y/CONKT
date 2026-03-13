@@ -74,7 +74,18 @@ export function CompanyFilesManager() {
         });
 
       if (error) throw error;
-      setFiles(data?.filter(file => file.name !== '.emptyFolderPlaceholder') || []);
+      const companyFiles: CompanyFile[] = (data || [])
+        .filter(file => file.name !== '.emptyFolderPlaceholder')
+        .map(file => ({
+          name: file.name,
+          id: file.id,
+          created_at: file.created_at || new Date().toISOString(),
+          metadata: {
+            size: (file.metadata as any)?.size || 0,
+            mimetype: (file.metadata as any)?.mimetype || 'application/octet-stream'
+          }
+        }));
+      setFiles(companyFiles);
     } catch (error: any) {
       console.error('Erro ao carregar arquivos:', error);
     }
@@ -90,7 +101,7 @@ export function CompanyFilesManager() {
     let currentId: string | null = folderId;
 
     while (currentId) {
-      const { data } = await supabase
+      const { data }: { data: CompanyFolder | null } = await supabase
         .from('company_folders')
         .select('*')
         .eq('id', currentId)
@@ -262,7 +273,7 @@ export function CompanyFilesManager() {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = profile?.role === 'master' || profile?.role === 'administrador';
 
   return (
     <div className="space-y-6">
@@ -303,7 +314,7 @@ export function CompanyFilesManager() {
           <Home className="w-4 h-4" />
           Raiz
         </button>
-        {folderPath.map((folder, index) => (
+        {folderPath.map((folder) => (
           <React.Fragment key={folder.id}>
             <ChevronRight className="w-4 h-4" />
             <button

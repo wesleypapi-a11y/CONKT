@@ -358,7 +358,6 @@ export async function generatePurchaseOrderPDF(orderId: string): Promise<Blob | 
 
   y += 10;
 
-  const startY = y;
   let totalValue = 0;
 
   const maxItemsPerPage = 12;
@@ -378,7 +377,7 @@ export async function generatePurchaseOrderPDF(orderId: string): Promise<Blob | 
     const maxLines = Math.max(description.length, phaseText.length, subphaseText.length);
     const rowHeight = Math.max(7, 4 + (maxLines * 3));
 
-    const rowBg = index % 2 === 0 ? [255, 255, 255] : [245, 247, 250];
+    const rowBg: [number, number, number] = index % 2 === 0 ? [255, 255, 255] : [245, 247, 250];
     doc.setFillColor(...rowBg);
     doc.rect(margin, y - 1, pageWidth - 2 * margin, rowHeight, 'F');
 

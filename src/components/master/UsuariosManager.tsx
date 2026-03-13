@@ -510,10 +510,11 @@ export default function UsuariosManager() {
       {/* Modal de Confirmação */}
       {confirmDelete && (
         <ConfirmModal
+          isOpen={!!confirmDelete}
           title="Excluir Usuário"
           message="Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita."
-          confirmLabel="Excluir"
-          cancelLabel="Cancelar"
+          confirmText="Excluir"
+          cancelText="Cancelar"
           onConfirm={() => handleDelete(confirmDelete)}
           onCancel={() => setConfirmDelete(null)}
           type="danger"

@@ -90,7 +90,7 @@ export default function FinanceManager() {
             <option value="todos">Todas as Obras</option>
             {works.map(work => (
               <option key={work.id} value={work.id}>
-                {work.nome}
+                {work.name}
               </option>
             ))}
           </select>

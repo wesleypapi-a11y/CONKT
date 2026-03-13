@@ -742,7 +742,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
       work_diary_id: rdoId || '',
       name: laborForm.name,
       quantity: 1,
-      observation: null,
+      observation: undefined,
       created_at: new Date().toISOString()
     };
 
@@ -762,8 +762,8 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
       id: `temp-${Date.now()}-${Math.random()}`,
       work_diary_id: rdoId || '',
       description: activityForm.description,
-      progress: null,
-      observation: null,
+      progress: undefined,
+      observation: undefined,
       created_at: new Date().toISOString()
     };
 
@@ -783,7 +783,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
       id: `temp-${Date.now()}-${Math.random()}`,
       work_diary_id: rdoId || '',
       description: occurrenceForm.description,
-      type: null,
+      type: undefined,
       created_at: new Date().toISOString()
     };
 
@@ -815,8 +815,6 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
   };
 
   if (!isOpen) return null;
-
-  const dateInfo = calculateDates();
 
   const weatherOptions: { value: WeatherType; label: string }[] = [
     { value: 'claro', label: 'Claro' },

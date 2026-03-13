@@ -238,32 +238,10 @@ export default function BudgetModal({ isOpen, onClose, budgetId, onBudgetCreated
     try {
       const template = templates.find(t => t.id === templateId);
       if (!template || !template.itens || template.itens.length === 0) {
-        console.log('Nenhum item no template selecionado');
         return;
       }
 
-      console.log('📋 Copiando template:', template.nome);
-      console.log('📊 Total de itens:', template.itens.length);
-      console.log('🔍 Template completo:', JSON.stringify(template.itens[0], null, 2));
-      console.log('🔍 Chaves disponíveis:', Object.keys(template.itens[0]));
-
       const newItems = template.itens.map((item: any, index: number) => {
-        // Log de debug para ver exatamente o que está vindo
-        if (index < 5) {
-          console.log(`\n🔎 DEBUG ITEM ${index + 1}:`, {
-            'Item completo': item,
-            'item.ETAPA': item.ETAPA,
-            'item.etapa': item.etapa,
-            'item.Etapa': item.Etapa,
-            'Descrição': item.Descrição?.substring(0, 50),
-            'MACRO': item.MACRO,
-            'UNIDADE': item.UNIDADE,
-            'OBS': item.OBS,
-            'Todas as chaves': Object.keys(item)
-          });
-        }
-
-        // Estrutura esperada: ITEM, ETAPA, Descrição, MACRO, UNIDADE, QUANTIDADE, VALOR UNIT, TOTAL, ORÇAMENTO, OBS
         const isMacro = item.MACRO === 'Sim' || item.MACRO === 'SIM' || item.MACRO === 'sim';
 
         const descricao = item.Descrição || item['Descrição'] || item.descricao || item.DESCRIÇÃO || '';
@@ -271,7 +249,7 @@ export default function BudgetModal({ isOpen, onClose, budgetId, onBudgetCreated
         const unidade = item.UNIDADE || item.unidade || 'vb';
         const obs = item.OBS || item.obs || '';
 
-        const itemData = {
+        return {
           budget_id: newBudgetId,
           descricao: descricao.toString().trim(),
           quantidade: 0,
@@ -283,35 +261,16 @@ export default function BudgetModal({ isOpen, onClose, budgetId, onBudgetCreated
           etapa: etapa.toString().trim(),
           obs: obs.toString(),
         };
-
-        if (index < 5) {
-          console.log(`✅ ITEM ${index + 1} PROCESSADO:`, {
-            'original_etapa': item.ETAPA || item.etapa || item.Etapa || 'VAZIO',
-            'final_etapa': itemData.etapa,
-            'etapa_length': itemData.etapa.length,
-            'original_descricao': (item.Descrição || '').substring(0, 50),
-            'final_descricao': itemData.descricao.substring(0, 50),
-            'tipo': itemData.tipo,
-            'unidade': itemData.unidade
-          });
-        }
-
-        return itemData;
       });
-
-      console.log('💾 Inserindo', newItems.length, 'itens no banco de dados...');
-      console.log('🔍 Primeiros 2 itens finais:', JSON.stringify(newItems.slice(0, 2), null, 2));
 
       const { error: insertError } = await supabase
         .from('budget_items')
         .insert(newItems);
 
       if (insertError) {
-        console.error('❌ Erro ao inserir itens:', insertError);
+        console.error('Erro ao inserir itens do template:', insertError);
         throw insertError;
       }
-
-      console.log(`✅ Template importado: ${newItems.length} itens (quantidade e valores zerados)`);
     } catch (error) {
       console.error('Error copying template items:', error);
       throw error;

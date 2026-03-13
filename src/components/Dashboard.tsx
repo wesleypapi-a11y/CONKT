@@ -5,8 +5,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { conktColors } from '../styles/colors';
-import { supabase } from '../lib/supabase';
-import { hasAccess, getRoleName, getRoleColor, type PageKey } from '../utils/accessControl';
+import { hasAccess, getRoleName, type PageKey } from '../utils/accessControl';
 import ProfileModal from './ProfileModal';
 import ClientsList from './clients/ClientsList';
 import WorksList from './works/WorksList';
@@ -60,7 +59,7 @@ export default function Dashboard() {
   const [activeMenu, setActiveMenu] = useState<PageKey>('inicio');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
-  const { profile, signOut, user } = useAuth();
+  const { profile, signOut } = useAuth();
 
   const menuItems = allMenuItems.filter(item => hasAccess(profile?.role, item.id));
 

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Users, Eye, Building2, TrendingUp, Calendar, FileText, BarChart3, DollarSign, Plus, Trash2, Edit, Lock, Unlock } from 'lucide-react';
+import { Users, Eye, TrendingUp, Calendar, FileText, BarChart3, DollarSign, Plus, Trash2, CreditCard as Edit, Lock, Unlock } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
 import ClientPortalAccessModal from './ClientPortalAccessModal';
 import ClientPortalView from './ClientPortalView';
 
@@ -37,7 +36,6 @@ interface PortalAccess {
 }
 
 export default function ClientPortalManager() {
-  const { user } = useAuth();
   const [view, setView] = useState<'list' | 'portal'>('list');
   const [accesses, setAccesses] = useState<PortalAccess[]>([]);
   const [clients, setClients] = useState<Client[]>([]);

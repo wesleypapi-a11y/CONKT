@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Calendar, ArrowLeft, FileDown } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, Calendar, ArrowLeft, FileDown } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Schedule } from '../../types/schedule';
@@ -156,7 +156,7 @@ export default function SchedulesList({ onNavigateHome, onEditSchedule }: Schedu
             onClick={() => setTemplateImportModalOpen(true)}
             className="px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-md text-sm"
             style={{
-              backgroundColor: conktColors.primary.yellow,
+              backgroundColor: conktColors.primary.amber,
               color: '#000000',
               border: '2px solid #000000'
             }}

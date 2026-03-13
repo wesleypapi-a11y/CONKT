@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, Calendar, Edit, Trash2, X, Save } from 'lucide-react';
+import { Check, Calendar, CreditCard as Edit, Trash2, X, Save } from 'lucide-react';
 import { Contract, ContractInstallment } from '../../types/contract';
 import { supabase } from '../../lib/supabase';
 import { useAlert } from '../../hooks/useAlert';
@@ -28,7 +28,6 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
   }, [contractId, contract.payment_method]);
 
   useEffect(() => {
-    console.log('ContractPagamentoTab - work_id changed:', contract.work_id);
     if (contract.work_id) {
       loadBudgetFromWork();
     } else {
@@ -69,8 +68,6 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
     if (!contract.work_id) return;
 
     try {
-      console.log('Loading budget for work_id:', contract.work_id);
-
       const { data: budget, error: budgetError } = await supabase
         .from('budgets')
         .select('id')
@@ -82,10 +79,8 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
       if (budgetError) throw budgetError;
 
       if (budget) {
-        console.log('Found budget:', budget.id);
         await loadBudgetPhases(budget.id);
       } else {
-        console.log('No budget found for work_id:', contract.work_id);
         setBudgetPhases([]);
       }
     } catch (error) {
@@ -110,7 +105,6 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
         return;
       }
 
-      console.log('Loaded phases:', data);
       setBudgetPhases(data || []);
     } catch (error) {
       console.error('Error loading budget phases:', error);
@@ -190,16 +184,6 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
         const paidAmount = installment.paid_amount || installment.amount;
         const paidDate = new Date().toISOString().split('T')[0];
 
-        console.log('Criando pedido de compra:', {
-          orderNumber,
-          supplier_id: fullContract.supplier_id,
-          total_value: paidAmount,
-          phase_id: fullContract.budget_phase_id,
-          subphase_id: fullContract.budget_subphase_id,
-          payment_date: paidDate,
-          is_paid: true
-        });
-
         const purchaseOrderData = {
           order_number: orderNumber,
           supplier_id: fullContract.supplier_id,
@@ -236,7 +220,6 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
           return;
         }
 
-        console.log('Pedido criado com sucesso:', newOrder);
         createdOrderNumber = orderNumber;
 
         const orderItemData = {
@@ -254,7 +237,7 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
           subphase_id: fullContract.budget_subphase_id || null
         };
 
-        const { data: createdItem, error: itemError } = await supabase
+        const { error: itemError } = await supabase
           .from('purchase_order_items')
           .insert(orderItemData)
           .select()
@@ -266,9 +249,6 @@ export default function ContractPagamentoTab({ contract, setContract, contractId
           showError('Erro ao criar item do pedido: ' + itemError.message);
           return;
         }
-
-        console.log('Item do pedido criado com sucesso');
-        console.log('Budget realized será inserido automaticamente pelo trigger do banco de dados');
       }
 
       const updateData: any = {

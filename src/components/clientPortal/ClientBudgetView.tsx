@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { TrendingUp, ChevronRight, ChevronDown } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 
 interface BudgetItem {

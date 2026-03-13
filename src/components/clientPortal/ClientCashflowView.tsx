@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface CashflowEntry {

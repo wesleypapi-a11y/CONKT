@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, Calendar, Clock, DollarSign, AlertCircle, CheckCircle } from 'lucide-react';
+import { TrendingUp, Calendar, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 
@@ -238,7 +238,7 @@ export default function ClientDashboardView({ workId }: ClientDashboardViewProps
                   className="h-3 rounded-full"
                   style={{
                     width: '100%',
-                    backgroundColor: conktColors.primary.purple
+                    backgroundColor: conktColors.primary.magenta
                   }}
                 />
               </div>

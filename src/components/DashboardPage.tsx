@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, DollarSign, AlertTriangle, Package, Users, Calendar, Download } from 'lucide-react';
+import { BarChart3, Download } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Work } from '../types/work';
 import { Contract } from '../types/contract';

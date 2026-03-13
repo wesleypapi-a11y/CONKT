@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Package, ShoppingCart, FileCheck, DollarSign, Calendar } from 'lucide-react';
+import { useEffect } from 'react';
+import { Package, ShoppingCart, FileCheck, DollarSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface PurchaseStats {
@@ -26,11 +26,6 @@ interface Props {
 }
 
 export default function PurchasesDashboard({ workId, dateRange }: Props) {
-  const [stats, setStats] = useState<PurchaseStats[]>([]);
-  const [orders, setOrders] = useState<PurchaseOrder[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [totalValue, setTotalValue] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     if (workId) {

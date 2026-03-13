@@ -43,8 +43,7 @@ export function clearEmpresaContext() {
 }
 
 export async function applyEmpresaFilter<T>(
-  query: any,
-  tableName: string
+  query: any
 ): Promise<typeof query> {
   const context = await getEmpresaContext();
 

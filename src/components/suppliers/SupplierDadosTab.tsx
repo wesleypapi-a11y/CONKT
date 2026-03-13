@@ -192,7 +192,7 @@ export default function SupplierDadosTab({ supplier, onChange }: SupplierDadosTa
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text }}>Contato</h3>
+        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>Contato</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
@@ -238,7 +238,7 @@ export default function SupplierDadosTab({ supplier, onChange }: SupplierDadosTa
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text }}>Localização</h3>
+        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>Localização</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>

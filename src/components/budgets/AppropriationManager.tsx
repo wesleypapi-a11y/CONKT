@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { X, Eye, Edit2, RefreshCw } from 'lucide-react';
+import { X, Eye, CreditCard as Edit2, RefreshCw } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
 import { useAlert } from '../../hooks/useAlert';
 
 interface Work {
@@ -279,18 +278,14 @@ function ReallocationModal({ isOpen, onClose, purchaseRealizedId, currentPhaseId
 
   const loadPhases = async () => {
     try {
-      console.log('🔍 Buscando orçamento para work_id:', workId);
-
       const { data: budget, error: budgetError } = await supabase
         .from('budgets')
         .select('id')
         .eq('work_id', workId)
         .maybeSingle();
 
-      console.log('📊 Orçamento encontrado:', budget, 'erro:', budgetError);
-
       if (!budget) {
-        console.warn('⚠️ Nenhum orçamento encontrado para work_id:', workId);
+        console.warn('Nenhum orçamento encontrado para work_id:', workId);
         return;
       }
 
@@ -302,16 +297,13 @@ function ReallocationModal({ isOpen, onClose, purchaseRealizedId, currentPhaseId
         .is('parent_id', null)
         .order('ordem');
 
-      console.log('📋 Fases carregadas:', data?.length, 'itens', 'erro:', error);
-      console.log('📋 Dados das fases:', data);
-
       setPhases((data || []).map(item => ({
         id: item.id,
         display_number: item.orcamento || '',
         descricao: item.descricao
       })));
     } catch (error) {
-      console.error('❌ Erro ao carregar fases:', error);
+      console.error('Erro ao carregar fases:', error);
     }
   };
 
@@ -332,8 +324,6 @@ function ReallocationModal({ isOpen, onClose, purchaseRealizedId, currentPhaseId
         .eq('parent_id', phaseId)
         .in('tipo', ['macro', 'item'])
         .order('ordem');
-
-      console.log('🔧 Subfases carregadas para fase:', phaseId, 'resultados:', data?.length);
 
       setSubphases((data || []).map(item => ({
         id: item.id,
@@ -401,7 +391,6 @@ function ReallocationModal({ isOpen, onClose, purchaseRealizedId, currentPhaseId
                   setSelectedSubphaseId('');
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-                style={{ focusRingColor: conktColors.primary.blue }}
               >
                 <option value="">Selecione a fase</option>
                 {phases.map(phase => (
@@ -421,7 +410,6 @@ function ReallocationModal({ isOpen, onClose, purchaseRealizedId, currentPhaseId
                 onChange={(e) => setSelectedSubphaseId(e.target.value)}
                 disabled={!selectedPhaseId || subphases.length === 0}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                style={{ focusRingColor: conktColors.primary.blue }}
               >
                 <option value="">
                   {!selectedPhaseId
@@ -607,7 +595,6 @@ function BulkReallocationModal({ isOpen, onClose, purchaseRealizedIds, workId, o
                   setSelectedSubphaseId('');
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-                style={{ focusRingColor: conktColors.primary.blue }}
               >
                 <option value="">Selecione a fase</option>
                 {phases.map(phase => (
@@ -627,7 +614,6 @@ function BulkReallocationModal({ isOpen, onClose, purchaseRealizedIds, workId, o
                 onChange={(e) => setSelectedSubphaseId(e.target.value)}
                 disabled={!selectedPhaseId || subphases.length === 0}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                style={{ focusRingColor: conktColors.primary.blue }}
               >
                 <option value="">
                   {!selectedPhaseId
@@ -673,7 +659,6 @@ function BulkReallocationModal({ isOpen, onClose, purchaseRealizedIds, workId, o
 }
 
 export default function AppropriationManager() {
-  const { user } = useAuth();
   const { showAlert } = useAlert();
 
   const [works, setWorks] = useState<Work[]>([]);
@@ -812,25 +797,12 @@ export default function AppropriationManager() {
           subphase: item.subphase || '',
         };
 
-        // Debug para ver o mapeamento
-        if (item.tipo === 'macro') {
-          console.log('Mapeando macro:', {
-            orcamento: item.orcamento,
-            display_number: displayNumber,
-            descricao: item.descricao,
-            tipo_original: item.tipo,
-            parent_id: item.parent_id,
-            hasDecimal: displayNumber?.includes('.'),
-            tipo_mapeado: tipo
-          });
-        }
-
         return mappedItem;
       });
 
       setItems(mappedItems);
 
-      await loadRealizedValues(budget.id, mappedItems);
+      await loadRealizedValues(budget.id);
     } catch (error) {
       console.error('Erro ao carregar dados do orçamento:', error);
       showAlert('Erro ao carregar dados do orçamento', 'error');
@@ -839,7 +811,7 @@ export default function AppropriationManager() {
     }
   };
 
-  const loadRealizedValues = async (budgetId: string, budgetItems: BudgetItem[]) => {
+  const loadRealizedValues = async (budgetId: string) => {
     try {
       const { data: realizedData } = await supabase
         .from('budget_realized')
@@ -889,14 +861,6 @@ export default function AppropriationManager() {
           .is('deleted_at', null)
           .order('created_at', { ascending: false });
 
-        console.log('🔍 Buscando FASE:', {
-          budget_id: budget.id,
-          phase_id: item.id,
-          fase_descricao: item.descricao,
-          resultados: data?.length || 0,
-          error
-        });
-
         realizedData = data;
       } else if (item.tipo === 'subfase') {
         // REGRA: Quando clicar na SUBFASE, buscar onde phase_id = fase pai E subphase_id = subfaseSelecionada
@@ -909,15 +873,6 @@ export default function AppropriationManager() {
           .is('deleted_at', null)
           .order('created_at', { ascending: false });
 
-        console.log('🔍 Buscando SUBFASE:', {
-          budget_id: budget.id,
-          phase_id: item.parent_id,
-          subphase_id: item.id,
-          subfase_descricao: item.descricao,
-          resultados: data?.length || 0,
-          error
-        });
-
         realizedData = data;
       } else if (item.tipo === 'item') {
         // REGRA: Para ITEM específico, buscar onde phase_id E subphase_id correspondem
@@ -929,15 +884,6 @@ export default function AppropriationManager() {
           .eq('subphase_id', item.id)
           .is('deleted_at', null)
           .order('created_at', { ascending: false });
-
-        console.log('🔍 Buscando ITEM:', {
-          budget_id: budget.id,
-          phase_id: item.parent_id,
-          subphase_id: item.id,
-          item_descricao: item.descricao,
-          resultados: data?.length || 0,
-          error
-        });
 
         realizedData = data;
       }
@@ -1148,8 +1094,7 @@ export default function AppropriationManager() {
           <select
             value={selectedWorkId}
             onChange={(e) => setSelectedWorkId(e.target.value)}
-            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-            style={{ focusRingColor: conktColors.primary.blue }}
+            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Selecione uma obra...</option>
             {works.map(work => (

@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrendingUp, AlertCircle } from 'lucide-react';
 
 export function CompanyCashflow() {

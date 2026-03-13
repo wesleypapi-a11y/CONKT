@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { AlertTriangle, TrendingDown } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
@@ -17,8 +16,6 @@ interface Props {
 }
 
 export default function OverrunDashboard({ workId }: Props) {
-  const [data, setData] = useState<OverrunData[]>([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (workId) {
