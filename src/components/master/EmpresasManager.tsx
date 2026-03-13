@@ -313,13 +313,6 @@ function EmpresasManagerContent() {
 
         <div className="flex gap-2">
           <button
-            onClick={handleDeleteLegacyEmpresas}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-          >
-            <Trash2 size={16} />
-            Limpar Empresas Teste
-          </button>
-          <button
             onClick={() => {
               setEditingEmpresa(null);
               resetForm();
