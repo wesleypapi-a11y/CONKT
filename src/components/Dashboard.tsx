@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Home, Users as UsersIcon, Building2, Calculator, Truck, ShoppingCart,
-  DollarSign, FileCheck, Menu, LogOut, User, Calendar, CalendarClock, LayoutDashboard, FileText, ListTodo, Settings, BarChart3, UserCog
+  DollarSign, FileCheck, Menu, LogOut, User, Calendar, CalendarClock, LayoutDashboard, FileText, ListTodo, Settings, BarChart3, UserCog, Briefcase
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { conktColors } from '../styles/colors';
@@ -21,6 +21,9 @@ import AppropriationManager from './budgets/AppropriationManager';
 import DashboardPage from './DashboardPage';
 import FinanceManager from './finance/FinanceManager';
 import ClientPortalManager from './clientPortal/ClientPortalManager';
+import { CompanyCashflow } from './company/CompanyCashflow';
+import { CompanyEmployees } from './company/CompanyEmployees';
+import { CompanyFilesManager } from './company/CompanyFilesManager';
 
 type MenuItem = {
   id: string;
@@ -38,6 +41,7 @@ const menuItems: MenuItem[] = [
   { id: 'contratos', label: 'Contratos', icon: FileText },
   { id: 'compras', label: 'Compras', icon: ShoppingCart },
   { id: 'financeiro', label: 'Financeiro', icon: DollarSign },
+  { id: 'minha-empresa', label: 'Minha Empresa', icon: Briefcase },
   { id: 'apropriacao', label: 'Apropriação', icon: FileCheck },
   { id: 'tarefas', label: 'Tarefas', icon: ListTodo },
   { id: 'diario-obra', label: 'Diário de obra', icon: Calendar },
@@ -271,6 +275,10 @@ function DashboardContent({ activeMenu, onNavigateHome }: { activeMenu: string; 
     return <FinanceManager />;
   }
 
+  if (activeMenu === 'minha-empresa') {
+    return <CompanyManager />;
+  }
+
   if (activeMenu === 'apropriacao') {
     return <AppropriationManager />;
   }
@@ -318,6 +326,44 @@ function DashboardContent({ activeMenu, onNavigateHome }: { activeMenu: string; 
         <p className="text-gray-600">
           Esta funcionalidade estará disponível em breve
         </p>
+      </div>
+    </div>
+  );
+}
+
+function CompanyManager() {
+  const [activeTab, setActiveTab] = useState('fluxo-caixa');
+
+  const tabs = [
+    { id: 'fluxo-caixa', label: 'Fluxo de Caixa' },
+    { id: 'colaboradores', label: 'Colaboradores' },
+    { id: 'arquivos', label: 'Arquivos da Empresa' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="flex border-b border-gray-200 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
+                activeTab === tab.id
+                  ? 'border-b-2 border-blue-600 text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="p-6">
+          {activeTab === 'fluxo-caixa' && <CompanyCashflow />}
+          {activeTab === 'colaboradores' && <CompanyEmployees />}
+          {activeTab === 'arquivos' && <CompanyFilesManager />}
+        </div>
       </div>
     </div>
   );
