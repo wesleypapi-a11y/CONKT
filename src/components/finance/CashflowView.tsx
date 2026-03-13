@@ -1,7 +1,11 @@
 import { BarChart3 } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 
-export default function CashflowView() {
+interface Props {
+  workId: string;
+}
+
+export default function CashflowView({ workId }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DollarSign,
   Building2,
@@ -10,6 +10,8 @@ import {
   Settings
 } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
+import { supabase } from '../../lib/supabase';
+import type { Work } from '../../types/work';
 import BankAccountsManager from './BankAccountsManager';
 import FinancialAccountsManager from './FinancialAccountsManager';
 import FinancialDocumentsManager from './FinancialDocumentsManager';
@@ -24,11 +26,13 @@ type FinanceTab =
   | 'fluxo_caixa'
   | 'notas_fiscais'
   | 'faturamento'
-  | 'contas_bancarias'
-  | 'contas_gerenciais';
+  | 'contas_bancarias';
 
 export default function FinanceManager() {
   const [activeTab, setActiveTab] = useState<FinanceTab>('documentos');
+  const [works, setWorks] = useState<Work[]>([]);
+  const [selectedWorkId, setSelectedWorkId] = useState<string>('todos');
+  const [loadingWorks, setLoadingWorks] = useState(true);
 
   const tabs = [
     { id: 'documentos' as FinanceTab, label: 'Documentos', icon: FileText },
@@ -37,20 +41,59 @@ export default function FinanceManager() {
     { id: 'notas_fiscais' as FinanceTab, label: 'Notas Fiscais', icon: Receipt },
     { id: 'faturamento' as FinanceTab, label: 'Faturamento', icon: DollarSign },
     { id: 'contas_bancarias' as FinanceTab, label: 'Contas Bancárias', icon: CreditCard },
-    { id: 'contas_gerenciais' as FinanceTab, label: 'Contas Gerenciais', icon: Building2 },
   ];
+
+  useEffect(() => {
+    loadWorks();
+  }, []);
+
+  const loadWorks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('works')
+        .select('*')
+        .eq('deleted', false)
+        .order('nome');
+
+      if (error) throw error;
+      setWorks(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar obras:', error);
+    } finally {
+      setLoadingWorks(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="p-3 rounded-lg" style={{ backgroundColor: `${conktColors.primary.blue}15` }}>
-          <DollarSign className="w-8 h-8" style={{ color: conktColors.primary.blue }} />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-lg" style={{ backgroundColor: `${conktColors.primary.blue}15` }}>
+            <DollarSign className="w-8 h-8" style={{ color: conktColors.primary.blue }} />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold" style={{ color: conktColors.primary.blue }}>
+              Financeiro
+            </h1>
+            <p className="text-gray-600">Gestão financeira completa</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold" style={{ color: conktColors.primary.blue }}>
-            Financeiro
-          </h1>
-          <p className="text-gray-600">Gestão financeira completa</p>
+
+        <div className="flex items-center gap-3">
+          <Building2 className="w-5 h-5 text-gray-400" />
+          <select
+            value={selectedWorkId}
+            onChange={(e) => setSelectedWorkId(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px]"
+            disabled={loadingWorks}
+          >
+            <option value="todos">Todas as Obras</option>
+            {works.map(work => (
+              <option key={work.id} value={work.id}>
+                {work.nome}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -86,13 +129,12 @@ export default function FinanceManager() {
         </div>
 
         <div className="p-6">
-          {activeTab === 'documentos' && <FinancialDocumentsManager />}
-          {activeTab === 'movimentos' && <FinancialMovementsManager />}
-          {activeTab === 'fluxo_caixa' && <CashflowView />}
-          {activeTab === 'notas_fiscais' && <InvoicesManager />}
-          {activeTab === 'faturamento' && <BillingRulesManager />}
+          {activeTab === 'documentos' && <FinancialDocumentsManager workId={selectedWorkId} />}
+          {activeTab === 'movimentos' && <FinancialMovementsManager workId={selectedWorkId} />}
+          {activeTab === 'fluxo_caixa' && <CashflowView workId={selectedWorkId} />}
+          {activeTab === 'notas_fiscais' && <InvoicesManager workId={selectedWorkId} />}
+          {activeTab === 'faturamento' && <BillingRulesManager workId={selectedWorkId} />}
           {activeTab === 'contas_bancarias' && <BankAccountsManager />}
-          {activeTab === 'contas_gerenciais' && <FinancialAccountsManager />}
         </div>
       </div>
     </div>

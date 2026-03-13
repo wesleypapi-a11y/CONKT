@@ -1,7 +1,11 @@
 import { Receipt } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 
-export default function InvoicesManager() {
+interface Props {
+  workId: string;
+}
+
+export default function InvoicesManager({ workId }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">

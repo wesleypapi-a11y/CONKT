@@ -1,7 +1,11 @@
 import { TrendingUp } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 
-export default function FinancialMovementsManager() {
+interface Props {
+  workId: string;
+}
+
+export default function FinancialMovementsManager({ workId }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
