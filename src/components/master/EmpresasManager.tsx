@@ -59,46 +59,92 @@ function EmpresasManagerContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log('=== INICIANDO CADASTRO DE EMPRESA ===');
+    console.log('Dados do formulário:', formData);
+
     if (!formData.razao_social || !formData.nome_fantasia || !formData.cnpj) {
+      console.log('Validação falhou - campos obrigatórios vazios');
       showAlert('Preencha todos os campos obrigatórios', 'error');
       return;
     }
 
+    console.log('Validação OK - todos os campos obrigatórios preenchidos');
+
     try {
+      // Verificar usuário logado
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Usuário logado:', user?.email, 'ID:', user?.id);
+
+      // Verificar perfil do usuário
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user?.id)
+        .single();
+
+      console.log('Perfil do usuário:', profile);
+
       if (editingEmpresa) {
+        console.log('Modo EDIÇÃO - atualizando empresa:', editingEmpresa.id);
         const { error } = await supabase
           .from('empresas')
           .update(formData)
           .eq('id', editingEmpresa.id);
 
         if (error) {
-          console.error('Error updating empresa:', error);
+          console.error('Erro ao atualizar empresa:', error);
+          console.error('Detalhes do erro:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          });
           throw error;
         }
+        console.log('Empresa atualizada com sucesso!');
         showAlert('Empresa atualizada com sucesso!', 'success');
       } else {
+        console.log('Modo CADASTRO - inserindo nova empresa');
+        console.log('Tentando inserir:', formData);
+
         const { data, error } = await supabase
           .from('empresas')
           .insert([formData])
           .select();
 
         if (error) {
-          console.error('Error inserting empresa:', error);
+          console.error('ERRO AO INSERIR EMPRESA:', error);
+          console.error('Detalhes completos do erro:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          });
           throw error;
         }
 
-        console.log('Empresa cadastrada:', data);
+        console.log('Empresa cadastrada com sucesso! Dados retornados:', data);
         showAlert('Empresa cadastrada com sucesso!', 'success');
       }
 
+      console.log('Fechando modal e recarregando lista...');
       setShowModal(false);
       setEditingEmpresa(null);
       resetForm();
       await loadEmpresas();
+      console.log('=== CADASTRO FINALIZADO COM SUCESSO ===');
     } catch (error: any) {
+      console.error('=== ERRO NO CADASTRO ===');
+      console.error('Tipo do erro:', typeof error);
+      console.error('Erro completo:', error);
+      console.error('Error.message:', error.message);
+      console.error('Error.details:', error.details);
+      console.error('Error.hint:', error.hint);
+      console.error('Error.code:', error.code);
+
       const errorMsg = error.message || 'Erro ao salvar empresa';
-      showAlert(errorMsg, 'error');
-      console.error('Error in handleSubmit:', error);
+      showAlert(`Erro: ${errorMsg}`, 'error');
+      console.error('=== FIM DO ERRO ===');
     }
   };
 
