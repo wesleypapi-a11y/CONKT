@@ -72,6 +72,50 @@ function EmpresasManagerContent() {
     }
   };
 
+  const handleDeleteLegacyEmpresas = async () => {
+    try {
+      console.log('=== DELETANDO EMPRESAS LEGADAS ===');
+
+      const { data: legacyEmpresas } = await supabase
+        .from('empresas')
+        .select('id, nome_fantasia')
+        .in('nome_fantasia', ['OMEGA', 'BETA', 'ALPHA', 'CONKT']);
+
+      console.log('Empresas a deletar:', legacyEmpresas);
+
+      if (!legacyEmpresas || legacyEmpresas.length === 0) {
+        showAlert('Nenhuma empresa legada encontrada', 'info');
+        return;
+      }
+
+      for (const empresa of legacyEmpresas) {
+        console.log(`Deletando empresa: ${empresa.nome_fantasia} (${empresa.id})`);
+
+        await supabase
+          .from('profiles')
+          .update({ empresa_id: null })
+          .eq('empresa_id', empresa.id);
+
+        const { error } = await supabase
+          .from('empresas')
+          .delete()
+          .eq('id', empresa.id);
+
+        if (error) {
+          console.error(`Erro ao deletar ${empresa.nome_fantasia}:`, error);
+          throw error;
+        }
+      }
+
+      showAlert('Empresas legadas deletadas com sucesso!', 'success');
+      await loadEmpresas();
+
+    } catch (error: any) {
+      console.error('Erro ao deletar empresas legadas:', error);
+      showAlert(`Erro: ${error.message}`, 'error');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -342,17 +386,26 @@ function EmpresasManagerContent() {
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingEmpresa(null);
-            resetForm();
-            setShowModal(true);
-          }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-        >
-          <Plus size={16} />
-          Nova Empresa
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleDeleteLegacyEmpresas}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+          >
+            <Trash2 size={16} />
+            Limpar Empresas Teste
+          </button>
+          <button
+            onClick={() => {
+              setEditingEmpresa(null);
+              resetForm();
+              setShowModal(true);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+          >
+            <Plus size={16} />
+            Nova Empresa
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm flex-1 flex flex-col overflow-hidden">
