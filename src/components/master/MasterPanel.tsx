@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Building2, Users, Shield, Bug, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import EmpresasManager from './EmpresasManager';
+import UsuariosManager from './UsuariosManager';
+import PerfisInfo from './PerfisInfo';
 import DebugPanel from './DebugPanel';
 
 type MasterTab = 'empresas' | 'usuarios' | 'perfis' | 'debug';
@@ -110,33 +112,9 @@ export default function MasterPanel() {
 
       <div className="flex-1 overflow-auto p-6 bg-gray-50">
         {activeTab === 'debug' && <DebugPanel />}
-        {activeTab === 'empresas' && (
-          <div>
-            <EmpresasManager />
-          </div>
-        )}
-        {activeTab === 'usuarios' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <Users size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Gerenciamento de Usuários
-            </h3>
-            <p className="text-gray-500">
-              Em desenvolvimento - gerenciamento de usuários e administradores
-            </p>
-          </div>
-        )}
-        {activeTab === 'perfis' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <Shield size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Gerenciamento de Perfis
-            </h3>
-            <p className="text-gray-500">
-              Em desenvolvimento - visualização e gestão de perfis do sistema
-            </p>
-          </div>
-        )}
+        {activeTab === 'empresas' && <EmpresasManager />}
+        {activeTab === 'usuarios' && <UsuariosManager />}
+        {activeTab === 'perfis' && <PerfisInfo />}
       </div>
     </div>
   );
