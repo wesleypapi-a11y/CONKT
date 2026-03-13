@@ -13,7 +13,6 @@ interface Usuario {
   empresa?: {
     nome_fantasia: string;
   };
-  data_vigencia_contrato: string;
   status: string;
   created_at: string;
 }
@@ -29,7 +28,6 @@ interface NovoUsuarioForm {
   senha: string;
   role: string;
   empresa_id: string;
-  data_vigencia_contrato: string;
 }
 
 export default function UsuariosManager() {
@@ -47,9 +45,8 @@ export default function UsuariosManager() {
   const [formData, setFormData] = useState<NovoUsuarioForm>({
     email: '',
     senha: '123456789',
-    role: 'usuario',
+    role: 'colaborador',
     empresa_id: '',
-    data_vigencia_contrato: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
   });
 
   useEffect(() => {
@@ -127,7 +124,6 @@ export default function UsuariosManager() {
         .update({
           role: formData.role,
           empresa_id: formData.empresa_id,
-          data_vigencia_contrato: formData.data_vigencia_contrato,
           status: 'ativo'
         })
         .eq('id', authData.user.id);
@@ -186,9 +182,8 @@ export default function UsuariosManager() {
     setFormData({
       email: '',
       senha: '123456789',
-      role: 'usuario',
+      role: 'colaborador',
       empresa_id: '',
-      data_vigencia_contrato: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
     });
   };
 
@@ -203,15 +198,25 @@ export default function UsuariosManager() {
   const getRoleLabel = (role: string) => {
     switch (role) {
       case 'master': return 'Master';
+      case 'administrador': return 'Administrador';
+      case 'financeiro': return 'Financeiro';
+      case 'colaborador': return 'Colaborador';
+      case 'cliente': return 'Cliente';
+      // Manter compatibilidade com roles antigos
       case 'admin': return 'Administrador';
-      case 'usuario': return 'Usuário';
+      case 'usuario': return 'Colaborador';
       default: return role;
     }
   };
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'master': return 'bg-purple-100 text-purple-800';
+      case 'master': return 'bg-red-100 text-red-800';
+      case 'administrador': return 'bg-blue-100 text-blue-800';
+      case 'financeiro': return 'bg-green-100 text-green-800';
+      case 'colaborador': return 'bg-gray-100 text-gray-800';
+      case 'cliente': return 'bg-yellow-100 text-yellow-800';
+      // Manter compatibilidade com roles antigos
       case 'admin': return 'bg-blue-100 text-blue-800';
       case 'usuario': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -279,8 +284,10 @@ export default function UsuariosManager() {
           >
             <option value="">Todos os perfis</option>
             <option value="master">Master</option>
-            <option value="admin">Administrador</option>
-            <option value="usuario">Usuário</option>
+            <option value="administrador">Administrador</option>
+            <option value="financeiro">Financeiro</option>
+            <option value="colaborador">Colaborador</option>
+            <option value="cliente">Cliente</option>
           </select>
 
           <button
@@ -314,9 +321,6 @@ export default function UsuariosManager() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Perfil
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Data Vigência
-                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ações
                 </th>
@@ -325,7 +329,7 @@ export default function UsuariosManager() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsuarios.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
+                  <td colSpan={5} className="px-6 py-12 text-center">
                     <Users size={48} className="mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-500 text-lg font-medium">
                       Nenhum usuário cadastrado
@@ -356,11 +360,6 @@ export default function UsuariosManager() {
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(usuario.role)}`}>
                         {getRoleLabel(usuario.role)}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {usuario.data_vigencia_contrato
-                        ? new Date(usuario.data_vigencia_contrato).toLocaleDateString('pt-BR')
-                        : 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
@@ -458,8 +457,10 @@ export default function UsuariosManager() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 >
-                  <option value="usuario">Usuário</option>
-                  <option value="admin">Administrador</option>
+                  <option value="colaborador">Colaborador</option>
+                  <option value="administrador">Administrador</option>
+                  <option value="financeiro">Financeiro</option>
+                  <option value="cliente">Cliente</option>
                   <option value="master">Master</option>
                 </select>
               </div>
@@ -481,19 +482,6 @@ export default function UsuariosManager() {
                     </option>
                   ))}
                 </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data de vigência do contrato *
-                </label>
-                <input
-                  type="date"
-                  value={formData.data_vigencia_contrato}
-                  onChange={(e) => setFormData({ ...formData, data_vigencia_contrato: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
               </div>
 
               <div className="flex gap-3 pt-4">
