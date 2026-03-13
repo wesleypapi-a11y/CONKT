@@ -214,6 +214,18 @@ function EmpresasManagerContent() {
       console.log('=== INICIANDO EXCLUSÃO DE EMPRESA ===');
       console.log('ID da empresa:', id);
 
+      const profilesDeleteResult = await supabase
+        .from('profiles')
+        .delete()
+        .eq('empresa_id', id);
+
+      if (profilesDeleteResult.error) {
+        console.error('Erro ao excluir profiles:', profilesDeleteResult.error);
+        throw profilesDeleteResult.error;
+      }
+
+      console.log('Profiles excluídos com sucesso!');
+
       const { error } = await supabase
         .from('empresas')
         .delete()
