@@ -101,14 +101,13 @@ function EmpresasManagerContent() {
       console.log('Perfil do usuário:', profile);
 
       const dbData = {
-        nome: formData.nome,
+        razao_social: formData.razao_social,
+        nome_fantasia: formData.nome_fantasia,
         cnpj: formData.cnpj,
         telefone: formData.telefone,
         email: formData.email,
-        endereco: formData.endereco,
-        responsavel: formData.responsavel,
-        data_inicio: formData.data_inicio,
-        data_fim: formData.data_fim,
+        data_inicio_vigencia: formData.data_inicio_vigencia,
+        data_fim_vigencia: formData.data_fim_vigencia,
         status: formData.status,
       };
 
@@ -179,16 +178,13 @@ function EmpresasManagerContent() {
   const handleEdit = (empresa: Empresa) => {
     setEditingEmpresa(empresa);
     setFormData({
-      nome: empresa.nome || '',
       razao_social: empresa.razao_social || empresa.nome || '',
-      nome_fantasia: empresa.nome || '',
+      nome_fantasia: empresa.nome_fantasia || empresa.nome || '',
       cnpj: empresa.cnpj,
       telefone: empresa.telefone || '',
       email: empresa.email || '',
-      endereco: empresa.endereco || '',
-      responsavel: empresa.responsavel || '',
-      data_inicio: empresa.data_inicio || '',
-      data_fim: empresa.data_fim || '',
+      data_inicio_vigencia: empresa.data_inicio_vigencia || empresa.data_inicio || '',
+      data_fim_vigencia: empresa.data_fim_vigencia || empresa.data_fim || '',
       status: empresa.status as any,
     });
     setShowModal(true);
@@ -215,6 +211,22 @@ function EmpresasManagerContent() {
 
   const handleDelete = async (id: string) => {
     try {
+      const { data: usuariosVinculados, error: checkError } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .eq('empresa_id', id);
+
+      if (checkError) throw checkError;
+
+      if (usuariosVinculados && usuariosVinculados.length > 0) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ empresa_id: null })
+          .eq('empresa_id', id);
+
+        if (updateError) throw updateError;
+      }
+
       const { error } = await supabase
         .from('empresas')
         .delete()
@@ -233,17 +245,14 @@ function EmpresasManagerContent() {
 
   const resetForm = () => {
     setFormData({
-      nome: '',
       razao_social: '',
       nome_fantasia: '',
       cnpj: '',
       telefone: '',
       email: '',
-      endereco: '',
-      responsavel: '',
-      data_inicio: new Date().toISOString().split('T')[0],
-      data_fim: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      status: 'ativo',
+      data_inicio_vigencia: new Date().toISOString().split('T')[0],
+      data_fim_vigencia: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: 'ativa',
     });
   };
 
