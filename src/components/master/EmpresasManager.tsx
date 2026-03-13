@@ -12,6 +12,7 @@ export default function EmpresasManager() {
   const [showModal, setShowModal] = useState(false);
   const [editingEmpresa, setEditingEmpresa] = useState<Empresa | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { showAlert } = useAlert();
 
   const [formData, setFormData] = useState({
@@ -31,6 +32,7 @@ export default function EmpresasManager() {
 
   const loadEmpresas = async () => {
     try {
+      setError(null);
       const { data, error } = await supabase
         .from('empresas')
         .select('*')
@@ -39,8 +41,10 @@ export default function EmpresasManager() {
       if (error) throw error;
       setEmpresas(data || []);
     } catch (error: any) {
-      showAlert('Erro ao carregar empresas', 'error');
-      console.error(error);
+      const errorMsg = error.message || 'Erro ao carregar empresas';
+      setError(errorMsg);
+      showAlert(errorMsg, 'error');
+      console.error('Error loading empresas:', error);
     } finally {
       setLoading(false);
     }
@@ -146,6 +150,32 @@ export default function EmpresasManager() {
   const isVigenciaExpired = (dataFim: string) => {
     return new Date(dataFim) < new Date();
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+        <AlertCircle size={48} className="mx-auto text-red-400 mb-4" />
+        <h3 className="text-lg font-semibold text-red-900 mb-2">
+          Erro ao carregar dados
+        </h3>
+        <p className="text-red-600 mb-4">{error}</p>
+        <button
+          onClick={loadEmpresas}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Tentar Novamente
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
