@@ -2,9 +2,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import PlanosPage from './components/PlanosPage';
 
 function AppContent() {
   const { user, loading } = useAuth();
+  const currentPath = window.location.pathname;
 
   if (loading) {
     return (
@@ -15,6 +17,10 @@ function AppContent() {
         </div>
       </div>
     );
+  }
+
+  if (currentPath === '/planos') {
+    return <PlanosPage />;
   }
 
   return user ? <Dashboard /> : <Login />;

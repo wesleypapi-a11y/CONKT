@@ -68,10 +68,8 @@ export default function Dashboard() {
   const { profile, signOut, user } = useAuth();
 
   const [appearance, setAppearance] = useState({
-    logo_url: null as string | null,
-    home_image_url: null as string | null,
-    menu_bg_color: conktColors.sidebar.main,
-    menu_text_color: '#ffffff',
+    logo_menu: null as string | null,
+    logo_inicio: null as string | null,
   });
 
   const isMasterUser = profile?.role === 'master';
@@ -101,7 +99,7 @@ export default function Dashboard() {
     try {
       const { data, error } = await supabase
         .from('appearance_preferences')
-        .select('logo_url, home_image_url, menu_bg_color, menu_text_color')
+        .select('logo_menu, logo_inicio')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -109,10 +107,8 @@ export default function Dashboard() {
 
       if (data) {
         setAppearance({
-          logo_url: data.logo_url || null,
-          home_image_url: data.home_image_url || null,
-          menu_bg_color: data.menu_bg_color || conktColors.sidebar.main,
-          menu_text_color: data.menu_text_color || '#ffffff',
+          logo_menu: data.logo_menu || null,
+          logo_inicio: data.logo_inicio || null,
         });
       }
     } catch (error: any) {
@@ -127,13 +123,13 @@ export default function Dashboard() {
           className={`fixed lg:static inset-y-0 left-0 z-50 transition-all duration-300 ${
             sidebarOpen ? 'w-64' : 'w-0 lg:w-20'
           }`}
-          style={{ backgroundColor: appearance.menu_bg_color }}
+          style={{ backgroundColor: conktColors.sidebar.main }}
         >
           <div className="h-full flex flex-col">
             <div className="p-4 flex items-center justify-center border-b border-white/10 relative">
               {sidebarOpen && (
                 <img
-                  src={appearance.logo_url || "/logo_conkt-removebg-preview.png"}
+                  src={appearance.logo_menu || "/logo_conkt-removebg-preview.png"}
                   alt="Logo"
                   className="h-12 mx-auto object-contain"
                 />
@@ -142,7 +138,7 @@ export default function Dashboard() {
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className={`hidden lg:block p-2 hover:bg-white/10 rounded-lg ${sidebarOpen ? 'absolute right-4' : ''}`}
-                style={{ color: appearance.menu_text_color }}
+                style={{ color: '#ffffff' }}
               >
                 <Menu size={20} />
               </button>
@@ -170,7 +166,7 @@ export default function Dashboard() {
                         <User size={18} />
                       </div>
                     )}
-                    <div className="text-left flex-1" style={{ color: appearance.menu_text_color }}>
+                    <div className="text-left flex-1" style={{ color: '#ffffff' }}>
                       <p className="font-medium text-sm truncate">
                         {profile?.nome_completo || 'Usuário'}
                       </p>
@@ -180,7 +176,7 @@ export default function Dashboard() {
                   <button
                     onClick={signOut}
                     className="p-2 rounded-lg hover:bg-white/10 transition-all"
-                    style={{ color: appearance.menu_text_color }}
+                    style={{ color: '#ffffff' }}
                     title="Sair"
                   >
                     <LogOut size={18} />
@@ -211,12 +207,12 @@ export default function Dashboard() {
                             ? 'bg-white text-gray-900'
                             : 'hover:bg-white/10'
                         }`}
-                        style={{ color: isActive ? '#000000' : appearance.menu_text_color }}
+                        style={{ color: isActive ? '#000000' : '#ffffff' }}
                         title={item.label}
                       >
                         <Icon
                           size={18}
-                          style={{ color: isActive ? conktColors.primary.blue : appearance.menu_text_color }}
+                          style={{ color: isActive ? conktColors.primary.blue : '#ffffff' }}
                         />
                         {sidebarOpen && (
                           <>
@@ -247,7 +243,7 @@ export default function Dashboard() {
               <button
                 onClick={signOut}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all"
-                style={{ color: appearance.menu_text_color }}
+                style={{ color: '#ffffff' }}
                 title="Sair"
               >
                 <LogOut size={18} />
@@ -290,7 +286,7 @@ export default function Dashboard() {
                 setActiveMenu('inicio');
                 setSidebarOpen(true);
               }}
-              homeImageUrl={appearance.home_image_url}
+              homeImageUrl={appearance.logo_inicio}
             />
           </div>
         </main>

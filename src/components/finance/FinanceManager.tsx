@@ -52,7 +52,7 @@ export default function FinanceManager() {
       const { data, error } = await supabase
         .from('works')
         .select('*')
-        .eq('deleted', false)
+        .is('deleted_at', null)
         .order('nome');
 
       if (error) throw error;

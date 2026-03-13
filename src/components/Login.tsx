@@ -279,33 +279,43 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="mt-4 pt-4 border-t border-gray-200 text-center">
-              <p className="text-sm text-gray-600 mb-2">
-                {isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?'}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSignUp(!isSignUp);
-                  setError('');
-                  setSuccess('');
-                  setEmail('');
-                  setPassword('');
-                  setConfirmPassword('');
-                  setNome('');
-                  setAvatarFile(null);
-                  setAvatarPreview(null);
-                }}
-                className="text-sm font-medium transition-colors"
-                style={{ color: conktColors.sidebar.main }}
-              >
-                {isSignUp ? 'Voltar para login' : 'Cadastre-se agora'}
-              </button>
-            </div>
+            {!isSignUp && (
+              <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+                <a
+                  href="/planos"
+                  className="text-sm font-medium transition-colors hover:underline"
+                  style={{ color: conktColors.sidebar.main }}
+                >
+                  Clique aqui e conheça nossos planos
+                </a>
+              </div>
+            )}
 
-            <div className="mt-4 text-center text-xs text-gray-500">
-              <p>A gestão da obra na sua mão</p>
-            </div>
+            {isSignUp && (
+              <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+                <p className="text-sm text-gray-600 mb-2">
+                  Já tem uma conta?
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(false);
+                    setError('');
+                    setSuccess('');
+                    setEmail('');
+                    setPassword('');
+                    setConfirmPassword('');
+                    setNome('');
+                    setAvatarFile(null);
+                    setAvatarPreview(null);
+                  }}
+                  className="text-sm font-medium transition-colors"
+                  style={{ color: conktColors.sidebar.main }}
+                >
+                  Voltar para login
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
