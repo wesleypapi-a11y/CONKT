@@ -11,7 +11,7 @@ interface Profile {
   funcao?: string | null;
   telefone?: string | null;
   avatar_url: string | null;
-  role: 'master' | 'admin' | 'user';
+  role: 'master' | 'administrador' | 'financeiro' | 'colaborador' | 'cliente';
   is_active: boolean;
   empresa_id?: string | null;
   created_at?: string;

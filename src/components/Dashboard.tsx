@@ -6,6 +6,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { conktColors } from '../styles/colors';
 import { supabase } from '../lib/supabase';
+import { hasAccess, getRoleName, getRoleColor, type PageKey } from '../utils/accessControl';
 import ProfileModal from './ProfileModal';
 import ClientsList from './clients/ClientsList';
 import WorksList from './works/WorksList';
@@ -28,17 +29,18 @@ import { CompanyFilesManager } from './company/CompanyFilesManager';
 import MasterPanel from './master/MasterPanel';
 
 type MenuItem = {
-  id: string;
+  id: PageKey;
   label: string;
   icon: any;
   badge?: string;
 };
 
-const baseMenuItems: MenuItem[] = [
+const allMenuItems: MenuItem[] = [
+  { id: 'painel-usuarios', label: 'Painel de Usuários', icon: Shield, badge: 'MASTER' },
   { id: 'inicio', label: 'Início', icon: Home },
   { id: 'clientes', label: 'Clientes', icon: UsersIcon },
   { id: 'obras', label: 'Obras', icon: Building2 },
-  { id: 'orcamentos', label: 'Orçamentos', icon: Calculator },
+  { id: 'orcamento', label: 'Orçamentos', icon: Calculator },
   { id: 'fornecedores', label: 'Fornecedores', icon: Truck },
   { id: 'contratos', label: 'Contratos', icon: FileText },
   { id: 'compras', label: 'Compras', icon: ShoppingCart },
@@ -47,22 +49,15 @@ const baseMenuItems: MenuItem[] = [
   { id: 'apropriacao', label: 'Apropriação', icon: FileCheck },
   { id: 'tarefas', label: 'Tarefas', icon: ListTodo },
   { id: 'diario-obra', label: 'Diário de obra', icon: Calendar },
-  { id: 'cronograma-obra', label: 'Cronograma', icon: CalendarClock },
+  { id: 'cronograma', label: 'Cronograma', icon: CalendarClock },
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'relatorio', label: 'Relatório', icon: BarChart3 },
+  { id: 'relatorios', label: 'Relatório', icon: BarChart3 },
   { id: 'portal-cliente', label: 'Portal do Cliente', icon: UserCog },
   { id: 'configuracao', label: 'Configuração', icon: Settings },
 ];
 
-const masterMenuItem: MenuItem = {
-  id: 'painel-usuarios',
-  label: 'Painel de Usuários',
-  icon: Shield,
-  badge: 'MASTER',
-};
-
 export default function Dashboard() {
-  const [activeMenu, setActiveMenu] = useState('inicio');
+  const [activeMenu, setActiveMenu] = useState<PageKey>('inicio');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const { profile, signOut, user } = useAuth();
@@ -72,8 +67,7 @@ export default function Dashboard() {
     logo_inicio: null as string | null,
   });
 
-  const isMasterUser = profile?.role === 'master';
-  const menuItems = isMasterUser ? [masterMenuItem, ...baseMenuItems] : baseMenuItems;
+  const menuItems = allMenuItems.filter(item => hasAccess(profile?.role, item.id));
 
   useEffect(() => {
     const handleResize = () => {
@@ -170,7 +164,9 @@ export default function Dashboard() {
                       <p className="font-medium text-sm truncate">
                         {profile?.nome_completo || 'Usuário'}
                       </p>
-                      <p className="text-xs opacity-70 capitalize">{profile?.funcao || profile?.role}</p>
+                      <p className="text-xs opacity-70 capitalize">
+                        {profile?.role ? getRoleName(profile.role) : profile?.funcao}
+                      </p>
                     </div>
                   </button>
                   <button
@@ -300,7 +296,7 @@ export default function Dashboard() {
   );
 }
 
-function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { activeMenu: string; onNavigateHome: () => void; homeImageUrl: string | null }) {
+function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { activeMenu: PageKey; onNavigateHome: () => void; homeImageUrl: string | null }) {
   if (activeMenu === 'inicio') {
     return <HomeContent homeImageUrl={homeImageUrl} />;
   }
@@ -321,7 +317,7 @@ function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { active
     return <SuppliersList onNavigateHome={onNavigateHome} />;
   }
 
-  if (activeMenu === 'orcamentos') {
+  if (activeMenu === 'orcamento') {
     return <BudgetsList onNavigateHome={onNavigateHome} />;
   }
 
@@ -349,7 +345,7 @@ function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { active
     return <WorkDiaryList onNavigateHome={onNavigateHome} />;
   }
 
-  if (activeMenu === 'cronograma-obra') {
+  if (activeMenu === 'cronograma') {
     return <SchedulesManager onNavigateHome={onNavigateHome} />;
   }
 
@@ -361,7 +357,7 @@ function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { active
     return <DashboardPage />;
   }
 
-  if (activeMenu === 'relatorio') {
+  if (activeMenu === 'relatorios') {
     return <ReportPage />;
   }
 
