@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { conktColors } from '../styles/colors';
+import { supabase } from '../lib/supabase';
 import ProfileModal from './ProfileModal';
 import ClientsList from './clients/ClientsList';
 import WorksList from './works/WorksList';
@@ -56,7 +57,14 @@ export default function Dashboard() {
   const [activeMenu, setActiveMenu] = useState('inicio');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, user } = useAuth();
+
+  const [appearance, setAppearance] = useState({
+    logo_url: null as string | null,
+    home_image_url: null as string | null,
+    menu_bg_color: conktColors.sidebar.main,
+    menu_text_color: '#ffffff',
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -72,6 +80,35 @@ export default function Dashboard() {
     return () => window.removeEventListener('resize', handleResize);
   }, [activeMenu]);
 
+  useEffect(() => {
+    loadAppearancePreferences();
+  }, [user]);
+
+  const loadAppearancePreferences = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('appearance_preferences')
+        .select('logo_url, home_image_url, menu_bg_color, menu_text_color')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        setAppearance({
+          logo_url: data.logo_url || null,
+          home_image_url: data.home_image_url || null,
+          menu_bg_color: data.menu_bg_color || conktColors.sidebar.main,
+          menu_text_color: data.menu_text_color || '#ffffff',
+        });
+      }
+    } catch (error: any) {
+      console.error('Erro ao carregar preferências de aparência:', error);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gray-50 flex">
@@ -79,21 +116,22 @@ export default function Dashboard() {
           className={`fixed lg:static inset-y-0 left-0 z-50 transition-all duration-300 ${
             sidebarOpen ? 'w-64' : 'w-0 lg:w-20'
           }`}
-          style={{ backgroundColor: conktColors.sidebar.main }}
+          style={{ backgroundColor: appearance.menu_bg_color }}
         >
           <div className="h-full flex flex-col">
             <div className="p-4 flex items-center justify-center border-b border-white/10 relative">
               {sidebarOpen && (
                 <img
-                  src="/logo_conkt-removebg-preview.png"
-                  alt="CONKT"
-                  className="h-12 mx-auto"
+                  src={appearance.logo_url || "/logo_conkt-removebg-preview.png"}
+                  alt="Logo"
+                  className="h-12 mx-auto object-contain"
                 />
               )}
 
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className={`hidden lg:block text-gray-900 p-2 hover:bg-white/10 rounded-lg ${sidebarOpen ? 'absolute right-4' : ''}`}
+                className={`hidden lg:block p-2 hover:bg-white/10 rounded-lg ${sidebarOpen ? 'absolute right-4' : ''}`}
+                style={{ color: appearance.menu_text_color }}
               >
                 <Menu size={20} />
               </button>
@@ -120,11 +158,11 @@ export default function Dashboard() {
                       <User size={18} />
                     </div>
                   )}
-                  <div className="text-white text-left flex-1">
+                  <div className="text-left flex-1" style={{ color: appearance.menu_text_color }}>
                     <p className="font-medium text-sm truncate">
                       {profile?.nome_completo || 'Usuário'}
                     </p>
-                    <p className="text-xs text-white/70 capitalize">{profile?.funcao || profile?.role}</p>
+                    <p className="text-xs opacity-70 capitalize">{profile?.funcao || profile?.role}</p>
                   </div>
                 </button>
               </div>
@@ -150,13 +188,14 @@ export default function Dashboard() {
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                           isActive
                             ? 'bg-white text-gray-900'
-                            : 'text-white hover:bg-white/10'
+                            : 'hover:bg-white/10'
                         }`}
+                        style={{ color: isActive ? '#000000' : appearance.menu_text_color }}
                         title={item.label}
                       >
                         <Icon
                           size={18}
-                          style={{ color: isActive ? conktColors.primary.blue : '#ffffff' }}
+                          style={{ color: isActive ? conktColors.primary.blue : appearance.menu_text_color }}
                         />
                         {sidebarOpen && (
                           <>
@@ -186,7 +225,8 @@ export default function Dashboard() {
             <div className="p-3 border-t border-white/10">
               <button
                 onClick={signOut}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:bg-white/10 transition-all"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all"
+                style={{ color: appearance.menu_text_color }}
                 title="Sair"
               >
                 <LogOut size={18} />
@@ -229,6 +269,7 @@ export default function Dashboard() {
                 setActiveMenu('inicio');
                 setSidebarOpen(true);
               }}
+              homeImageUrl={appearance.home_image_url}
             />
           </div>
         </main>
@@ -242,9 +283,9 @@ export default function Dashboard() {
   );
 }
 
-function DashboardContent({ activeMenu, onNavigateHome }: { activeMenu: string; onNavigateHome: () => void }) {
+function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { activeMenu: string; onNavigateHome: () => void; homeImageUrl: string | null }) {
   if (activeMenu === 'inicio') {
-    return <HomeContent />;
+    return <HomeContent homeImageUrl={homeImageUrl} />;
   }
 
   if (activeMenu === 'clientes') {
@@ -369,17 +410,17 @@ function CompanyManager() {
   );
 }
 
-function HomeContent() {
+function HomeContent({ homeImageUrl }: { homeImageUrl: string | null }) {
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4">
       <div className="text-center">
         <img
-          src="/logo_conkt-removebg-preview.png"
-          alt="CONKT - A Gestão da Obra na Sua Mão"
-          className="w-[300px] sm:w-[400px] max-w-full mx-auto mb-6 sm:mb-8"
+          src={homeImageUrl || "/logo_conkt-removebg-preview.png"}
+          alt="Logo"
+          className="w-[300px] sm:w-[400px] max-w-full mx-auto mb-6 sm:mb-8 object-contain"
         />
         <p className="text-gray-600 text-base sm:text-lg">
-          Bem-vindo ao Sistema de Gestão CONKT
+          Bem-vindo ao Sistema de Gestão
         </p>
       </div>
     </div>
