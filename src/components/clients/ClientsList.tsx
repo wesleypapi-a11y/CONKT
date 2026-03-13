@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, User, Home } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit, Trash2, User, Home } from 'lucide-react';
 import { conktColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Client } from '../../types/client';
@@ -75,18 +75,34 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
   };
 
   const handleDeleteClient = async (clientId: string) => {
-    if (!confirm('Deseja realmente excluir este cliente? Todos os dados relacionados serão perdidos.')) {
-      return;
-    }
-
     setLoading(true);
     try {
+      const { data: obras, error: checkError } = await supabase
+        .from('works')
+        .select('id, name')
+        .eq('client_id', clientId)
+        .eq('deleted', false);
+
+      if (checkError) throw checkError;
+
+      if (obras && obras.length > 0) {
+        alert(`Não é possível excluir este cliente pois existem ${obras.length} obra(s) vinculada(s). Exclua as obras primeiro.`);
+        setLoading(false);
+        return;
+      }
+
+      if (!confirm('Deseja realmente excluir este cliente? Esta ação não pode ser desfeita.')) {
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase
         .from('clients')
         .delete()
         .eq('id', clientId);
 
       if (error) throw error;
+      alert('Cliente excluído com sucesso!');
       await loadClients();
     } catch (error) {
       console.error('Error deleting client:', error);
