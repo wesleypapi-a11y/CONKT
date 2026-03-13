@@ -1,4 +1,4 @@
-import { Shield, Crown, UserCog, User } from 'lucide-react';
+import { Shield, Crown, UserCog, User, DollarSign } from 'lucide-react';
 
 export default function PerfisInfo() {
   const perfis = [
@@ -6,8 +6,8 @@ export default function PerfisInfo() {
       id: 'master',
       nome: 'Master',
       icon: Crown,
-      cor: 'purple',
-      descricao: 'Perfil de super administrador com acesso total ao sistema',
+      cor: 'red',
+      descricao: 'Super administrador do sistema com acesso global',
       permissoes: [
         'Acesso total a todas as funcionalidades',
         'Gerenciar todas as empresas do sistema',
@@ -19,11 +19,11 @@ export default function PerfisInfo() {
       ],
     },
     {
-      id: 'admin',
+      id: 'administrador',
       nome: 'Administrador',
       icon: UserCog,
       cor: 'blue',
-      descricao: 'Administrador da empresa com permissões completas dentro de sua empresa',
+      descricao: 'Gerente da empresa com acesso total aos módulos',
       permissoes: [
         'Acesso completo aos dados da sua empresa',
         'Gerenciar usuários da sua empresa',
@@ -35,11 +35,27 @@ export default function PerfisInfo() {
       ],
     },
     {
-      id: 'usuario',
-      nome: 'Usuário',
+      id: 'financeiro',
+      nome: 'Financeiro',
+      icon: DollarSign,
+      cor: 'green',
+      descricao: 'Responsável financeiro com foco em compras e contratos',
+      permissoes: [
+        'Gerenciar compras e pedidos',
+        'Aprovar cotações e ordens de compra',
+        'Gerenciar contratos e pagamentos',
+        'Acesso ao módulo financeiro completo',
+        'Visualizar relatórios financeiros',
+        'Gerenciar fornecedores',
+        'Vinculado a uma empresa específica',
+      ],
+    },
+    {
+      id: 'colaborador',
+      nome: 'Colaborador',
       icon: User,
       cor: 'gray',
-      descricao: 'Usuário padrão com permissões limitadas para operações do dia a dia',
+      descricao: 'Usuário operacional com acesso às obras e tarefas',
       permissoes: [
         'Visualizar dados da sua empresa',
         'Criar e editar registros básicos',
@@ -50,15 +66,31 @@ export default function PerfisInfo() {
         'Vinculado a uma empresa específica',
       ],
     },
+    {
+      id: 'cliente',
+      nome: 'Cliente',
+      icon: Shield,
+      cor: 'yellow',
+      descricao: 'Acesso limitado ao Portal do Cliente',
+      permissoes: [
+        'Acesso apenas ao Portal do Cliente',
+        'Visualizar cronograma da obra',
+        'Visualizar orçamento aprovado',
+        'Visualizar diário de obra (RDO)',
+        'Visualizar fluxo de caixa da obra',
+        'Não tem acesso ao sistema completo',
+        'Vinculado a obras específicas',
+      ],
+    },
   ];
 
   const getColorClasses = (cor: string) => {
     const colors: Record<string, { bg: string; border: string; text: string; icon: string }> = {
-      purple: {
-        bg: 'bg-purple-50',
-        border: 'border-purple-200',
-        text: 'text-purple-900',
-        icon: 'text-purple-600',
+      red: {
+        bg: 'bg-red-50',
+        border: 'border-red-200',
+        text: 'text-red-900',
+        icon: 'text-red-600',
       },
       blue: {
         bg: 'bg-blue-50',
@@ -66,11 +98,23 @@ export default function PerfisInfo() {
         text: 'text-blue-900',
         icon: 'text-blue-600',
       },
+      green: {
+        bg: 'bg-green-50',
+        border: 'border-green-200',
+        text: 'text-green-900',
+        icon: 'text-green-600',
+      },
       gray: {
         bg: 'bg-gray-50',
         border: 'border-gray-200',
         text: 'text-gray-900',
         icon: 'text-gray-600',
+      },
+      yellow: {
+        bg: 'bg-yellow-50',
+        border: 'border-yellow-200',
+        text: 'text-yellow-900',
+        icon: 'text-yellow-600',
       },
     };
     return colors[cor] || colors.gray;
@@ -87,7 +131,7 @@ export default function PerfisInfo() {
       </div>
 
       {/* Cards de Perfis */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {perfis.map((perfil) => {
           const Icon = perfil.icon;
           const colors = getColorClasses(perfil.cor);
@@ -151,21 +195,28 @@ export default function PerfisInfo() {
             </h3>
             <div className="space-y-2 text-sm text-blue-900 opacity-90">
               <p>
-                <strong>Master:</strong> É o perfil de mais alto nível, com acesso irrestrito a todo o sistema.
-                Geralmente usado pela equipe de TI ou proprietários do sistema. Não está vinculado a nenhuma empresa.
+                <strong>Master:</strong> Super administrador do sistema com acesso global.
+                Gerencia todas as empresas e usuários. Não está vinculado a nenhuma empresa.
               </p>
               <p>
-                <strong>Administrador:</strong> Tem controle total sobre sua empresa, podendo gerenciar usuários,
-                obras, contratos, orçamentos e todas as funcionalidades do sistema dentro do contexto da empresa.
+                <strong>Administrador:</strong> Gerente da empresa com controle total sobre sua empresa,
+                incluindo usuários, obras, contratos, orçamentos e todas as funcionalidades.
               </p>
               <p>
-                <strong>Usuário:</strong> Perfil operacional, com permissões limitadas para realizar tarefas do dia a dia,
-                como preencher RDOs, visualizar obras e acessar informações básicas.
+                <strong>Financeiro:</strong> Responsável pela gestão financeira da empresa,
+                com acesso a compras, contratos, pagamentos e relatórios financeiros.
+              </p>
+              <p>
+                <strong>Colaborador:</strong> Usuário operacional com permissões para trabalhar em obras,
+                preencher RDOs, gerenciar tarefas e visualizar informações básicas.
+              </p>
+              <p>
+                <strong>Cliente:</strong> Acesso exclusivo ao Portal do Cliente para acompanhar
+                cronograma, orçamento, diário de obra e fluxo de caixa das suas obras.
               </p>
               <p className="pt-2 border-t border-blue-200 mt-3">
-                <strong>Nota:</strong> As permissões de cada perfil são controladas automaticamente pelo sistema através
-                de políticas de segurança (RLS - Row Level Security) no banco de dados, garantindo que cada usuário
-                acesse apenas os dados permitidos para seu perfil.
+                <strong>Nota:</strong> As permissões são controladas automaticamente pelo sistema através
+                de políticas RLS no banco de dados, garantindo segurança e isolamento dos dados.
               </p>
             </div>
           </div>
@@ -177,21 +228,31 @@ export default function PerfisInfo() {
         <h3 className="text-lg font-bold text-gray-900 mb-4">
           Resumo de Perfis no Sistema
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <Crown size={32} className="mx-auto text-purple-600 mb-2" />
-            <p className="text-2xl font-bold text-purple-900">Master</p>
-            <p className="text-xs text-purple-700 mt-1">Super Administrador</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="text-center p-4 bg-red-50 rounded-lg">
+            <Crown size={32} className="mx-auto text-red-600 mb-2" />
+            <p className="text-xl font-bold text-red-900">Master</p>
+            <p className="text-xs text-red-700 mt-1">Global</p>
           </div>
           <div className="text-center p-4 bg-blue-50 rounded-lg">
             <UserCog size={32} className="mx-auto text-blue-600 mb-2" />
-            <p className="text-2xl font-bold text-blue-900">Administrador</p>
-            <p className="text-xs text-blue-700 mt-1">Gestor da Empresa</p>
+            <p className="text-xl font-bold text-blue-900">Administrador</p>
+            <p className="text-xs text-blue-700 mt-1">Gerente</p>
+          </div>
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <DollarSign size={32} className="mx-auto text-green-600 mb-2" />
+            <p className="text-xl font-bold text-green-900">Financeiro</p>
+            <p className="text-xs text-green-700 mt-1">Compras</p>
           </div>
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <User size={32} className="mx-auto text-gray-600 mb-2" />
-            <p className="text-2xl font-bold text-gray-900">Usuário</p>
+            <p className="text-xl font-bold text-gray-900">Colaborador</p>
             <p className="text-xs text-gray-700 mt-1">Operacional</p>
+          </div>
+          <div className="text-center p-4 bg-yellow-50 rounded-lg">
+            <Shield size={32} className="mx-auto text-yellow-600 mb-2" />
+            <p className="text-xl font-bold text-yellow-900">Cliente</p>
+            <p className="text-xs text-yellow-700 mt-1">Portal</p>
           </div>
         </div>
       </div>
