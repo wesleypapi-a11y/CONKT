@@ -250,7 +250,7 @@ export default function Dashboard() {
                 setActiveMenu('inicio');
                 setSidebarOpen(true);
               }}
-              homeImageUrl={appearance.logo_inicio}
+              homeImageUrl={null}
             />
           </div>
         </main>
