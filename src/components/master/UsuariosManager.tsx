@@ -40,6 +40,7 @@ export default function UsuariosManager() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterEmpresa, setFilterEmpresaSelect] = useState('');
   const [filterRole, setFilterRole] = useState('');
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<NovoUsuarioForm>({
     email: '',
@@ -94,48 +95,66 @@ export default function UsuariosManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.senha || !formData.empresa_id) {
+    if (!formData.email || !formData.empresa_id) {
       showAlert('Preencha todos os campos obrigatórios', 'error');
       return;
     }
 
     try {
-      // Criar usuário no auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.senha,
-        options: {
-          data: {
+      if (editingUserId) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({
             role: formData.role,
             empresa_id: formData.empresa_id,
-          }
+          })
+          .eq('id', editingUserId);
+
+        if (error) throw error;
+        showAlert('Usuário atualizado com sucesso!', 'success');
+      } else {
+        if (!formData.senha) {
+          showAlert('Senha é obrigatória para novo usuário', 'error');
+          return;
         }
-      });
 
-      if (authError) throw authError;
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.senha,
+          options: {
+            data: {
+              role: formData.role,
+              empresa_id: formData.empresa_id,
+            }
+          }
+        });
 
-      if (!authData.user) {
-        throw new Error('Erro ao criar usuário');
+        if (authError) throw authError;
+
+        if (!authData.user) {
+          throw new Error('Erro ao criar usuário');
+        }
+
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            role: formData.role,
+            empresa_id: formData.empresa_id,
+            status: 'ativo'
+          })
+          .eq('id', authData.user.id);
+
+        if (profileError) throw profileError;
+
+        showAlert('Usuário cadastrado com sucesso!', 'success');
       }
 
-      // Atualizar perfil do usuário
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          role: formData.role,
-          empresa_id: formData.empresa_id,
-          status: 'ativo'
-        })
-        .eq('id', authData.user.id);
-
-      if (profileError) throw profileError;
-
-      showAlert('Usuário cadastrado com sucesso!', 'success');
       setShowModal(false);
+      setEditingUserId(null);
       resetForm();
       await loadUsuarios();
     } catch (error: any) {
-      const errorMsg = error.message || 'Erro ao cadastrar usuário';
+      const errorMsg = error.message || 'Erro ao salvar usuário';
       showAlert(errorMsg, 'error');
       console.error('Error in handleSubmit:', error);
     }
@@ -178,6 +197,17 @@ export default function UsuariosManager() {
     }
   };
 
+  const handleEdit = (usuario: Usuario) => {
+    setEditingUserId(usuario.id);
+    setFormData({
+      email: usuario.email,
+      senha: '',
+      role: usuario.role,
+      empresa_id: usuario.empresa_id || '',
+    });
+    setShowModal(true);
+  };
+
   const resetForm = () => {
     setFormData({
       email: '',
@@ -185,6 +215,7 @@ export default function UsuariosManager() {
       role: 'colaborador',
       empresa_id: '',
     });
+    setEditingUserId(null);
   };
 
   const filteredUsuarios = usuarios.filter(usuario => {
@@ -310,16 +341,10 @@ export default function UsuariosManager() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Login (Email)
+                  Nome
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Senha
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Empresa
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Perfil
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ações
@@ -329,7 +354,7 @@ export default function UsuariosManager() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsuarios.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={3} className="px-6 py-12 text-center">
                     <Users size={48} className="mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-500 text-lg font-medium">
                       Nenhum usuário cadastrado
@@ -342,41 +367,22 @@ export default function UsuariosManager() {
               ) : (
                 filteredUsuarios.map((usuario) => (
                   <tr key={usuario.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{usuario.email}</div>
-                      {usuario.nome_completo && (
-                        <div className="text-sm text-gray-500">{usuario.nome_completo}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">••••••••</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {usuario.empresa?.nome || 'N/A'}
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {usuario.nome_completo || usuario.email}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(usuario.role)}`}>
-                        {getRoleLabel(usuario.role)}
-                      </span>
+                      <Eye size={18} className="text-gray-400" />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => handleToggleStatus(usuario)}
-                          className={`p-2 rounded-lg transition-all ${
-                            usuario.status === 'ativo'
-                              ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                          }`}
-                          title={usuario.status === 'ativo' ? 'Desativar usuário' : 'Ativar usuário'}
+                          onClick={() => handleEdit(usuario)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                          title="Editar"
                         >
-                          {usuario.status === 'ativo' ? (
-                            <Power size={18} />
-                          ) : (
-                            <PowerOff size={18} />
-                          )}
+                          <Edit size={18} />
                         </button>
                         <button
                           onClick={() => setConfirmDelete(usuario.id)}
@@ -401,9 +407,11 @@ export default function UsuariosManager() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl">
-              <h3 className="text-xl font-bold text-gray-900">Novo Usuário</h3>
+              <h3 className="text-xl font-bold text-gray-900">
+                {editingUserId ? 'Editar Usuário' : 'Novo Usuário'}
+              </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Preencha os dados do novo usuário
+                {editingUserId ? 'Atualize os dados do usuário' : 'Preencha os dados do novo usuário'}
               </p>
             </div>
 
@@ -419,33 +427,36 @@ export default function UsuariosManager() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="usuario@exemplo.com"
                   required
+                  disabled={!!editingUserId}
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Senha padrão *
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.senha}
-                    onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                    className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
+              {!editingUserId && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Senha padrão *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={formData.senha}
+                      onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
+                      className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Senha padrão: 123456789 (o usuário deve alterá-la no primeiro acesso)
+                  </p>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Senha padrão: 123456789 (o usuário deve alterá-la no primeiro acesso)
-                </p>
-              </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -499,7 +510,7 @@ export default function UsuariosManager() {
                   type="submit"
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Cadastrar Usuário
+                  {editingUserId ? 'Salvar Alterações' : 'Cadastrar Usuário'}
                 </button>
               </div>
             </form>
