@@ -5,16 +5,19 @@ import { useAlert } from '../../hooks/useAlert';
 import { getEmpresaContext } from '../../utils/empresaContext';
 
 interface BankAccountModalData {
-  banco: string;
-  agencia: string;
-  numero_conta: string;
-  tipo_conta: 'Corrente' | 'Poupança' | 'Investimento';
-  saldo_inicial: string;
-  work_id: string;
-  observacoes: string;
+  name: string;
+  bank_name: string;
+  account_number: string;
+  account_type: 'corrente' | 'poupanca' | 'investimento';
+  initial_balance: string;
+  notes: string;
 }
 
-const TIPOS_CONTA = ['Corrente', 'Poupança', 'Investimento'];
+const ACCOUNT_TYPES = [
+  { value: 'corrente', label: 'Corrente' },
+  { value: 'poupanca', label: 'Poupança' },
+  { value: 'investimento', label: 'Investimento' }
+];
 
 export function ContasBancarias({ workId }: { workId?: string }) {
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -23,45 +26,25 @@ export function ContasBancarias({ workId }: { workId?: string }) {
   const [showModal, setShowModal] = useState(false);
   const [editingAccount, setEditingAccount] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [works, setWorks] = useState<any[]>([]);
 
   const [formData, setFormData] = useState<BankAccountModalData>({
-    banco: '',
-    agencia: '',
-    numero_conta: '',
-    tipo_conta: 'Corrente',
-    saldo_inicial: '0',
-    work_id: workId || '',
-    observacoes: ''
+    name: '',
+    bank_name: '',
+    account_number: '',
+    account_type: 'corrente',
+    initial_balance: '0',
+    notes: ''
   });
 
   const { showAlert } = useAlert();
 
   useEffect(() => {
     loadAccounts();
-    loadWorks();
   }, [workId]);
 
   useEffect(() => {
     applyFilters();
   }, [accounts, searchTerm]);
-
-  const loadWorks = async () => {
-    try {
-      const { empresaId } = await getEmpresaContext();
-      if (!empresaId) return;
-
-      const { data } = await supabase
-        .from('works')
-        .select('id, nome')
-        .eq('empresa_id', empresaId)
-        .is('deleted_at', null);
-
-      setWorks(data || []);
-    } catch (error: any) {
-      console.error('Erro ao carregar obras:', error);
-    }
-  };
 
   const loadAccounts = async () => {
     try {
@@ -73,18 +56,12 @@ export function ContasBancarias({ workId }: { workId?: string }) {
         return;
       }
 
-      let query = supabase
-        .from('financial_bank_accounts')
-        .select('*, work:works(nome)')
+      const { data, error } = await supabase
+        .from('bank_accounts')
+        .select('*')
         .eq('empresa_id', empresaId)
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
-
-      if (workId) {
-        query = query.eq('work_id', workId);
-      }
-
-      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -103,8 +80,9 @@ export function ContasBancarias({ workId }: { workId?: string }) {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(acc =>
-        acc.banco.toLowerCase().includes(term) ||
-        acc.numero_conta.toLowerCase().includes(term)
+        acc.bank_name?.toLowerCase().includes(term) ||
+        acc.name?.toLowerCase().includes(term) ||
+        acc.account_number?.toLowerCase().includes(term)
       );
     }
 
@@ -113,7 +91,7 @@ export function ContasBancarias({ workId }: { workId?: string }) {
 
   const handleSave = async () => {
     try {
-      if (!formData.banco || !formData.numero_conta) {
+      if (!formData.name || !formData.bank_name || !formData.account_number) {
         showAlert('Preencha todos os campos obrigatórios', 'error');
         return;
       }
@@ -128,20 +106,19 @@ export function ContasBancarias({ workId }: { workId?: string }) {
 
       const accountData = {
         empresa_id: empresaId,
-        work_id: formData.work_id || null,
-        banco: formData.banco,
-        agencia: formData.agencia || null,
-        numero_conta: formData.numero_conta,
-        tipo_conta: formData.tipo_conta,
-        saldo_inicial: Number(formData.saldo_inicial),
-        saldo_atual: editingAccount ? undefined : Number(formData.saldo_inicial),
-        observacoes: formData.observacoes || null,
+        name: formData.name,
+        bank_name: formData.bank_name,
+        account_number: formData.account_number,
+        account_type: formData.account_type,
+        initial_balance: Number(formData.initial_balance),
+        current_balance: editingAccount ? undefined : Number(formData.initial_balance),
+        notes: formData.notes || null,
         created_by: user?.id
       };
 
       if (editingAccount) {
         const { error } = await supabase
-          .from('financial_bank_accounts')
+          .from('bank_accounts')
           .update(accountData)
           .eq('id', editingAccount.id);
 
@@ -149,7 +126,7 @@ export function ContasBancarias({ workId }: { workId?: string }) {
         showAlert('Conta atualizada com sucesso', 'success');
       } else {
         const { error } = await supabase
-          .from('financial_bank_accounts')
+          .from('bank_accounts')
           .insert(accountData);
 
         if (error) throw error;
@@ -169,8 +146,8 @@ export function ContasBancarias({ workId }: { workId?: string }) {
   const handleToggleActive = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('financial_bank_accounts')
-        .update({ ativa: !currentStatus })
+        .from('bank_accounts')
+        .update({ is_active: !currentStatus })
         .eq('id', id);
 
       if (error) throw error;
@@ -188,7 +165,7 @@ export function ContasBancarias({ workId }: { workId?: string }) {
 
     try {
       const { error } = await supabase
-        .from('financial_bank_accounts')
+        .from('bank_accounts')
         .update({ deleted_at: new Date().toISOString() })
         .eq('id', id);
 
@@ -206,13 +183,12 @@ export function ContasBancarias({ workId }: { workId?: string }) {
     if (account) {
       setEditingAccount(account);
       setFormData({
-        banco: account.banco,
-        agencia: account.agencia || '',
-        numero_conta: account.numero_conta,
-        tipo_conta: account.tipo_conta,
-        saldo_inicial: String(account.saldo_inicial),
-        work_id: account.work_id || '',
-        observacoes: account.observacoes || ''
+        name: account.name,
+        bank_name: account.bank_name,
+        account_number: account.account_number,
+        account_type: account.account_type,
+        initial_balance: String(account.initial_balance),
+        notes: account.notes || ''
       });
     } else {
       resetForm();
@@ -222,19 +198,24 @@ export function ContasBancarias({ workId }: { workId?: string }) {
 
   const resetForm = () => {
     setFormData({
-      banco: '',
-      agencia: '',
-      numero_conta: '',
-      tipo_conta: 'Corrente',
-      saldo_inicial: '0',
-      work_id: workId || '',
-      observacoes: ''
+      name: '',
+      bank_name: '',
+      account_number: '',
+      account_type: 'corrente',
+      initial_balance: '0',
+      notes: ''
     });
     setEditingAccount(null);
   };
 
   const formatCurrency = (value: number) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
+  const calculateTotalBalance = () => {
+    return filteredAccounts
+      .filter(acc => acc.is_active)
+      .reduce((sum, acc) => sum + Number(acc.current_balance || 0), 0);
   };
 
   return (
@@ -251,6 +232,11 @@ export function ContasBancarias({ workId }: { workId?: string }) {
           <Plus size={18} />
           Nova Conta
         </button>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+        <p className="text-sm text-gray-600">Saldo Total das Contas Ativas</p>
+        <p className="text-3xl font-bold text-blue-600 mt-1">{formatCurrency(calculateTotalBalance())}</p>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
@@ -283,11 +269,10 @@ export function ContasBancarias({ workId }: { workId?: string }) {
           <table className="w-full">
             <thead>
               <tr className="border-b-2 border-gray-200">
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Nome</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Banco</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-700">Agência</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Conta</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-700">Obra</th>
                 <th className="text-right py-3 px-4 font-semibold text-gray-700">Saldo Atual</th>
                 <th className="text-center py-3 px-4 font-semibold text-gray-700">Status</th>
                 <th className="text-center py-3 px-4 font-semibold text-gray-700">Ações</th>
@@ -296,33 +281,34 @@ export function ContasBancarias({ workId }: { workId?: string }) {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-gray-500">
+                  <td colSpan={7} className="text-center py-8 text-gray-500">
                     Carregando...
                   </td>
                 </tr>
               ) : filteredAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-gray-500">
+                  <td colSpan={7} className="text-center py-8 text-gray-500">
                     Nenhuma conta encontrada
                   </td>
                 </tr>
               ) : (
                 filteredAccounts.map((acc) => (
                   <tr key={acc.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm font-semibold text-gray-700">{acc.banco}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{acc.agencia || '-'}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{acc.numero_conta}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{acc.tipo_conta}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{acc.work?.nome || 'Geral'}</td>
+                    <td className="py-3 px-4 text-sm font-semibold text-gray-700">{acc.name}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{acc.bank_name}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{acc.account_number}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      {ACCOUNT_TYPES.find(t => t.value === acc.account_type)?.label || acc.account_type}
+                    </td>
                     <td className="py-3 px-4 text-sm text-right font-bold text-gray-800">
-                      {formatCurrency(Number(acc.saldo_atual))}
+                      {formatCurrency(Number(acc.current_balance || 0))}
                     </td>
                     <td className="py-3 px-4 text-center">
                       <button
-                        onClick={() => handleToggleActive(acc.id, acc.ativa)}
-                        className="flex items-center gap-1"
+                        onClick={() => handleToggleActive(acc.id, acc.is_active)}
+                        className="inline-block"
                       >
-                        {acc.ativa ? (
+                        {acc.is_active ? (
                           <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                             <ToggleRight size={14} className="mr-1" />
                             Ativa
@@ -383,39 +369,39 @@ export function ContasBancarias({ workId }: { workId?: string }) {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome da Conta <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ex: Conta Principal, Conta Obra X"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Banco <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.banco}
-                  onChange={(e) => setFormData({ ...formData, banco: e.target.value })}
+                  value={formData.bank_name}
+                  onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Ex: Banco do Brasil, Itaú, Bradesco"
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Agência
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.agencia}
-                    onChange={(e) => setFormData({ ...formData, agencia: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="0000"
-                  />
-                </div>
-
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Número da Conta <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    value={formData.numero_conta}
-                    onChange={(e) => setFormData({ ...formData, numero_conta: e.target.value })}
+                    value={formData.account_number}
+                    onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="00000-0"
                   />
@@ -426,49 +412,12 @@ export function ContasBancarias({ workId }: { workId?: string }) {
                     Tipo de Conta <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.tipo_conta}
-                    onChange={(e) => setFormData({ ...formData, tipo_conta: e.target.value as any })}
+                    value={formData.account_type}
+                    onChange={(e) => setFormData({ ...formData, account_type: e.target.value as any })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    {TIPOS_CONTA.map(tipo => (
-                      <option key={tipo} value={tipo}>{tipo}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Saldo Inicial
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.saldo_inicial}
-                    onChange={(e) => setFormData({ ...formData, saldo_inicial: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="0,00"
-                    disabled={!!editingAccount}
-                  />
-                  {editingAccount && (
-                    <p className="text-xs text-gray-500 mt-1">Saldo inicial não pode ser alterado</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Obra Vinculada
-                  </label>
-                  <select
-                    value={formData.work_id}
-                    onChange={(e) => setFormData({ ...formData, work_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    disabled={!!workId}
-                  >
-                    <option value="">Geral (Empresa)</option>
-                    {works.map(work => (
-                      <option key={work.id} value={work.id}>{work.nome}</option>
+                    {ACCOUNT_TYPES.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
                   </select>
                 </div>
@@ -476,11 +425,29 @@ export function ContasBancarias({ workId }: { workId?: string }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Saldo Inicial
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.initial_balance}
+                  onChange={(e) => setFormData({ ...formData, initial_balance: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="0,00"
+                  disabled={!!editingAccount}
+                />
+                {editingAccount && (
+                  <p className="text-xs text-gray-500 mt-1">Saldo inicial não pode ser alterado</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Observações
                 </label>
                 <textarea
-                  value={formData.observacoes}
-                  onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Informações adicionais..."

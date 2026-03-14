@@ -1,40 +1,52 @@
 import { useState, useEffect } from 'react';
-import { FileText, Plus, Search, Filter, X, CreditCard as Edit, Trash2, Paperclip, Download } from 'lucide-react';
+import { FileText, Plus, Search, X, CreditCard as Edit, Trash2, Paperclip } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAlert } from '../../hooks/useAlert';
 import { getEmpresaContext } from '../../utils/empresaContext';
-import type { FinancialDocument } from '../../types/financialObra';
 
 interface DocumentModalData {
-  tipo: 'Conta a Pagar' | 'Conta a Receber' | 'Adiantamento' | 'Reembolso' | 'Medicao' | 'Imposto' | 'Parcelamento';
-  descricao: string;
+  document_type: 'provisao' | 'previsao' | 'adiantamento' | 'receber' | 'pagar';
+  transaction_type: 'receita' | 'despesa';
+  description: string;
   work_id: string;
-  fornecedor_id: string;
-  cliente_id: string;
-  cost_center_id: string;
-  categoria: string;
-  valor: string;
-  data_vencimento: string;
-  forma_pagamento: string;
-  numero_documento: string;
-  status: 'previsto' | 'aprovado' | 'pago' | 'recebido' | 'cancelado';
-  observacoes: string;
-  anexo?: File;
+  supplier_id: string;
+  client_id: string;
+  financial_account_id: string;
+  category: string;
+  amount: string;
+  due_date: string;
+  payment_method: string;
+  document_number: string;
+  status: 'aberto' | 'pago' | 'parcial' | 'atrasado' | 'cancelado';
+  notes: string;
 }
 
-const TIPOS_DOCUMENTO = [
-  'Conta a Pagar',
-  'Conta a Receber',
-  'Adiantamento',
-  'Reembolso',
-  'Medicao',
-  'Imposto',
-  'Parcelamento'
+const DOCUMENT_TYPES = [
+  { value: 'provisao', label: 'Provisão' },
+  { value: 'previsao', label: 'Previsão' },
+  { value: 'adiantamento', label: 'Adiantamento' },
+  { value: 'receber', label: 'A Receber' },
+  { value: 'pagar', label: 'A Pagar' }
 ];
 
-const STATUS_OPTIONS = ['previsto', 'aprovado', 'pago', 'recebido', 'cancelado'];
+const STATUS_OPTIONS = [
+  { value: 'aberto', label: 'Aberto' },
+  { value: 'parcial', label: 'Parcial' },
+  { value: 'pago', label: 'Pago' },
+  { value: 'atrasado', label: 'Atrasado' },
+  { value: 'cancelado', label: 'Cancelado' }
+];
 
-const FORMAS_PAGAMENTO = ['PIX', 'Transferência', 'Dinheiro', 'Débito', 'Crédito', 'Boleto', 'Cheque'];
+const PAYMENT_METHODS = [
+  { value: 'pix', label: 'PIX' },
+  { value: 'ted', label: 'TED' },
+  { value: 'doc', label: 'DOC' },
+  { value: 'boleto', label: 'Boleto' },
+  { value: 'dinheiro', label: 'Dinheiro' },
+  { value: 'cartao_credito', label: 'Cartão de Crédito' },
+  { value: 'cartao_debito', label: 'Cartão de Débito' },
+  { value: 'cheque', label: 'Cheque' }
+];
 
 export function DocumentosFinanceiros({ workId }: { workId?: string }) {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -43,27 +55,28 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
   const [showModal, setShowModal] = useState(false);
   const [editingDoc, setEditingDoc] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterTipo, setFilterTipo] = useState<string>('todos');
+  const [filterType, setFilterType] = useState<string>('todos');
   const [filterStatus, setFilterStatus] = useState<string>('todos');
   const [works, setWorks] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
-  const [costCenters, setCostCenters] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
 
   const [formData, setFormData] = useState<DocumentModalData>({
-    tipo: 'Conta a Pagar',
-    descricao: '',
+    document_type: 'pagar',
+    transaction_type: 'despesa',
+    description: '',
     work_id: workId || '',
-    fornecedor_id: '',
-    cliente_id: '',
-    cost_center_id: '',
-    categoria: '',
-    valor: '',
-    data_vencimento: new Date().toISOString().split('T')[0],
-    forma_pagamento: 'PIX',
-    numero_documento: '',
-    status: 'previsto',
-    observacoes: ''
+    supplier_id: '',
+    client_id: '',
+    financial_account_id: '',
+    category: '',
+    amount: '',
+    due_date: new Date().toISOString().split('T')[0],
+    payment_method: 'pix',
+    document_number: '',
+    status: 'aberto',
+    notes: ''
   });
 
   const { showAlert } = useAlert();
@@ -75,24 +88,24 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
 
   useEffect(() => {
     applyFilters();
-  }, [documents, searchTerm, filterTipo, filterStatus]);
+  }, [documents, searchTerm, filterType, filterStatus]);
 
   const loadReferences = async () => {
     try {
       const { empresaId } = await getEmpresaContext();
       if (!empresaId) return;
 
-      const [worksRes, suppliersRes, clientsRes, centersRes] = await Promise.all([
+      const [worksRes, suppliersRes, clientsRes, accountsRes] = await Promise.all([
         supabase.from('works').select('id, nome').eq('empresa_id', empresaId).is('deleted_at', null),
         supabase.from('suppliers').select('id, nome_fantasia').eq('empresa_id', empresaId).is('deleted_at', null),
         supabase.from('clients').select('id, nome_fantasia').eq('empresa_id', empresaId).is('deleted_at', null),
-        supabase.from('financial_cost_centers').select('id, nome, codigo').eq('empresa_id', empresaId).is('deleted_at', null)
+        supabase.from('financial_accounts').select('id, name, type').eq('empresa_id', empresaId).is('deleted_at', null)
       ]);
 
       setWorks(worksRes.data || []);
       setSuppliers(suppliersRes.data || []);
       setClients(clientsRes.data || []);
-      setCostCenters(centersRes.data || []);
+      setAccounts(accountsRes.data || []);
     } catch (error: any) {
       console.error('Erro ao carregar referências:', error);
     }
@@ -113,13 +126,13 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
         .select(`
           *,
           work:works(nome),
-          fornecedor:suppliers(nome_fantasia),
-          cliente:clients(nome_fantasia),
-          cost_center:financial_cost_centers(nome, codigo)
+          supplier:suppliers(nome_fantasia),
+          client:clients(nome_fantasia),
+          financial_account:financial_accounts(name)
         `)
         .eq('empresa_id', empresaId)
         .is('deleted_at', null)
-        .order('data_vencimento', { ascending: false });
+        .order('due_date', { ascending: false });
 
       if (workId) {
         query = query.eq('work_id', workId);
@@ -144,13 +157,13 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(d =>
-        d.descricao.toLowerCase().includes(term) ||
-        (d.numero_documento && d.numero_documento.toLowerCase().includes(term))
+        d.description?.toLowerCase().includes(term) ||
+        d.document_number?.toLowerCase().includes(term)
       );
     }
 
-    if (filterTipo !== 'todos') {
-      filtered = filtered.filter(d => d.tipo === filterTipo);
+    if (filterType !== 'todos') {
+      filtered = filtered.filter(d => d.document_type === filterType);
     }
 
     if (filterStatus !== 'todos') {
@@ -162,7 +175,7 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
 
   const handleSave = async () => {
     try {
-      if (!formData.descricao || !formData.valor || !formData.data_vencimento) {
+      if (!formData.description || !formData.amount || !formData.due_date) {
         showAlert('Preencha todos os campos obrigatórios', 'error');
         return;
       }
@@ -175,34 +188,22 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
 
       const { data: { user } } = await supabase.auth.getUser();
 
-      let anexoPath = null;
-      if (formData.anexo) {
-        const timestamp = Date.now();
-        const fileName = `${empresaId}/${timestamp}_${formData.anexo.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from('financial-documents')
-          .upload(fileName, formData.anexo);
-
-        if (uploadError) throw uploadError;
-        anexoPath = fileName;
-      }
-
       const docData = {
         empresa_id: empresaId,
         work_id: formData.work_id || null,
-        tipo: formData.tipo,
-        descricao: formData.descricao,
-        fornecedor_id: formData.fornecedor_id || null,
-        cliente_id: formData.cliente_id || null,
-        cost_center_id: formData.cost_center_id || null,
-        categoria: formData.categoria || null,
-        valor: Number(formData.valor),
-        data_vencimento: formData.data_vencimento,
-        forma_pagamento: formData.forma_pagamento || null,
-        numero_documento: formData.numero_documento || null,
+        document_type: formData.document_type,
+        transaction_type: formData.transaction_type,
+        description: formData.description,
+        supplier_id: formData.supplier_id || null,
+        client_id: formData.client_id || null,
+        financial_account_id: formData.financial_account_id || null,
+        category: formData.category || null,
+        amount: Number(formData.amount),
+        due_date: formData.due_date,
+        payment_method: formData.payment_method || null,
+        document_number: formData.document_number || null,
         status: formData.status,
-        observacoes: formData.observacoes || null,
-        anexo_path: anexoPath || (editingDoc?.anexo_path || null),
+        notes: formData.notes || null,
         created_by: user?.id
       };
 
@@ -252,43 +253,24 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
     }
   };
 
-  const downloadAnexo = async (path: string, nome: string) => {
-    try {
-      const { data, error } = await supabase.storage
-        .from('financial-documents')
-        .download(path);
-
-      if (error) throw error;
-
-      const url = URL.createObjectURL(data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = nome;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error: any) {
-      showAlert('Erro ao baixar anexo', 'error');
-      console.error(error);
-    }
-  };
-
   const openModal = (doc?: any) => {
     if (doc) {
       setEditingDoc(doc);
       setFormData({
-        tipo: doc.tipo,
-        descricao: doc.descricao,
+        document_type: doc.document_type,
+        transaction_type: doc.transaction_type,
+        description: doc.description,
         work_id: doc.work_id || '',
-        fornecedor_id: doc.fornecedor_id || '',
-        cliente_id: doc.cliente_id || '',
-        cost_center_id: doc.cost_center_id || '',
-        categoria: doc.categoria || '',
-        valor: String(doc.valor),
-        data_vencimento: doc.data_vencimento,
-        forma_pagamento: doc.forma_pagamento || 'PIX',
-        numero_documento: doc.numero_documento || '',
+        supplier_id: doc.supplier_id || '',
+        client_id: doc.client_id || '',
+        financial_account_id: doc.financial_account_id || '',
+        category: doc.category || '',
+        amount: String(doc.amount),
+        due_date: doc.due_date,
+        payment_method: doc.payment_method || 'pix',
+        document_number: doc.document_number || '',
         status: doc.status,
-        observacoes: doc.observacoes || ''
+        notes: doc.notes || ''
       });
     } else {
       resetForm();
@@ -298,19 +280,20 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
 
   const resetForm = () => {
     setFormData({
-      tipo: 'Conta a Pagar',
-      descricao: '',
+      document_type: 'pagar',
+      transaction_type: 'despesa',
+      description: '',
       work_id: workId || '',
-      fornecedor_id: '',
-      cliente_id: '',
-      cost_center_id: '',
-      categoria: '',
-      valor: '',
-      data_vencimento: new Date().toISOString().split('T')[0],
-      forma_pagamento: 'PIX',
-      numero_documento: '',
-      status: 'previsto',
-      observacoes: ''
+      supplier_id: '',
+      client_id: '',
+      financial_account_id: '',
+      category: '',
+      amount: '',
+      due_date: new Date().toISOString().split('T')[0],
+      payment_method: 'pix',
+      document_number: '',
+      status: 'aberto',
+      notes: ''
     });
     setEditingDoc(null);
   };
@@ -321,24 +304,21 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
 
   const getStatusBadge = (status: string) => {
     const badges: any = {
-      previsto: 'bg-gray-100 text-gray-800',
-      aprovado: 'bg-blue-100 text-blue-800',
+      aberto: 'bg-yellow-100 text-yellow-800',
+      parcial: 'bg-blue-100 text-blue-800',
       pago: 'bg-green-100 text-green-800',
-      recebido: 'bg-green-100 text-green-800',
-      cancelado: 'bg-red-100 text-red-800'
+      atrasado: 'bg-red-100 text-red-800',
+      cancelado: 'bg-gray-100 text-gray-800'
     };
-    return badges[status] || badges.previsto;
+    return badges[status] || badges.aberto;
+  };
+
+  const getDocumentTypeLabel = (type: string) => {
+    return DOCUMENT_TYPES.find(t => t.value === type)?.label || type;
   };
 
   const getStatusLabel = (status: string) => {
-    const labels: any = {
-      previsto: 'Previsto',
-      aprovado: 'Aprovado',
-      pago: 'Pago',
-      recebido: 'Recebido',
-      cancelado: 'Cancelado'
-    };
-    return labels[status] || status;
+    return STATUS_OPTIONS.find(s => s.value === status)?.label || status;
   };
 
   return (
@@ -373,13 +353,13 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
           </div>
 
           <select
-            value={filterTipo}
-            onChange={(e) => setFilterTipo(e.target.value)}
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="todos">Todos os tipos</option>
-            {TIPOS_DOCUMENTO.map(tipo => (
-              <option key={tipo} value={tipo}>{tipo}</option>
+            {DOCUMENT_TYPES.map(type => (
+              <option key={type.value} value={type.value}>{type.label}</option>
             ))}
           </select>
 
@@ -390,15 +370,15 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
           >
             <option value="todos">Todos os status</option>
             {STATUS_OPTIONS.map(status => (
-              <option key={status} value={status}>{getStatusLabel(status)}</option>
+              <option key={status.value} value={status.value}>{status.label}</option>
             ))}
           </select>
 
-          {(searchTerm || filterTipo !== 'todos' || filterStatus !== 'todos') && (
+          {(searchTerm || filterType !== 'todos' || filterStatus !== 'todos') && (
             <button
               onClick={() => {
                 setSearchTerm('');
-                setFilterTipo('todos');
+                setFilterType('todos');
                 setFilterStatus('todos');
               }}
               className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2"
@@ -414,6 +394,7 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
             <thead>
               <tr className="border-b-2 border-gray-200">
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Nº Documento</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Descrição</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Obra</th>
                 <th className="text-right py-3 px-4 font-semibold text-gray-700">Valor</th>
@@ -426,41 +407,37 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-gray-500">
+                  <td colSpan={9} className="text-center py-8 text-gray-500">
                     Carregando...
                   </td>
                 </tr>
               ) : filteredDocuments.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-gray-500">
+                  <td colSpan={9} className="text-center py-8 text-gray-500">
                     Nenhum documento encontrado
                   </td>
                 </tr>
               ) : (
                 filteredDocuments.map((doc) => (
                   <tr key={doc.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm text-gray-700">{doc.tipo}</td>
                     <td className="py-3 px-4 text-sm text-gray-700">
-                      {doc.descricao}
-                      {doc.anexo_path && (
-                        <button
-                          onClick={() => downloadAnexo(doc.anexo_path, doc.descricao)}
-                          className="ml-2 text-blue-600 hover:text-blue-800"
-                          title="Baixar anexo"
-                        >
-                          <Paperclip size={14} className="inline" />
-                        </button>
-                      )}
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        doc.transaction_type === 'receita' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {getDocumentTypeLabel(doc.document_type)}
+                      </span>
                     </td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{doc.document_number || '-'}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{doc.description}</td>
                     <td className="py-3 px-4 text-sm text-gray-700">{doc.work?.nome || '-'}</td>
                     <td className="py-3 px-4 text-sm text-right font-semibold text-gray-800">
-                      {formatCurrency(Number(doc.valor))}
+                      {formatCurrency(Number(doc.amount))}
                     </td>
                     <td className="py-3 px-4 text-sm text-right text-gray-700">
-                      {formatCurrency(Number(doc.valor_pago))}
+                      {formatCurrency(Number(doc.paid_amount || 0))}
                     </td>
                     <td className="py-3 px-4 text-sm text-gray-700">
-                      {new Date(doc.data_vencimento).toLocaleDateString('pt-BR')}
+                      {new Date(doc.due_date).toLocaleDateString('pt-BR')}
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getStatusBadge(doc.status)}`}>
@@ -516,15 +493,19 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tipo <span className="text-red-500">*</span>
+                    Tipo de Documento <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.tipo}
-                    onChange={(e) => setFormData({ ...formData, tipo: e.target.value as any })}
+                    value={formData.document_type}
+                    onChange={(e) => {
+                      const type = e.target.value as any;
+                      const transactionType = (type === 'receber' || type === 'previsao') ? 'receita' : 'despesa';
+                      setFormData({ ...formData, document_type: type, transaction_type: transactionType });
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    {TIPOS_DOCUMENTO.map(tipo => (
-                      <option key={tipo} value={tipo}>{tipo}</option>
+                    {DOCUMENT_TYPES.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
                   </select>
                 </div>
@@ -539,7 +520,7 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     {STATUS_OPTIONS.map(status => (
-                      <option key={status} value={status}>{getStatusLabel(status)}</option>
+                      <option key={status.value} value={status.value}>{status.label}</option>
                     ))}
                   </select>
                 </div>
@@ -551,8 +532,8 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                 </label>
                 <input
                   type="text"
-                  value={formData.descricao}
-                  onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Ex: Pagamento de fornecedor ref. Janeiro/2026"
                 />
@@ -578,16 +559,16 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Centro de Custo
+                    Conta Gerencial
                   </label>
                   <select
-                    value={formData.cost_center_id}
-                    onChange={(e) => setFormData({ ...formData, cost_center_id: e.target.value })}
+                    value={formData.financial_account_id}
+                    onChange={(e) => setFormData({ ...formData, financial_account_id: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Selecione...</option>
-                    {costCenters.map(cc => (
-                      <option key={cc.id} value={cc.id}>{cc.codigo} - {cc.nome}</option>
+                    {accounts.map(acc => (
+                      <option key={acc.id} value={acc.id}>{acc.name}</option>
                     ))}
                   </select>
                 </div>
@@ -596,21 +577,21 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {formData.tipo === 'Conta a Pagar' || formData.tipo === 'Adiantamento' ? 'Fornecedor' : 'Cliente'}
+                    {formData.transaction_type === 'despesa' ? 'Fornecedor' : 'Cliente'}
                   </label>
                   <select
-                    value={formData.tipo === 'Conta a Pagar' || formData.tipo === 'Adiantamento' ? formData.fornecedor_id : formData.cliente_id}
+                    value={formData.transaction_type === 'despesa' ? formData.supplier_id : formData.client_id}
                     onChange={(e) => {
-                      if (formData.tipo === 'Conta a Pagar' || formData.tipo === 'Adiantamento') {
-                        setFormData({ ...formData, fornecedor_id: e.target.value });
+                      if (formData.transaction_type === 'despesa') {
+                        setFormData({ ...formData, supplier_id: e.target.value });
                       } else {
-                        setFormData({ ...formData, cliente_id: e.target.value });
+                        setFormData({ ...formData, client_id: e.target.value });
                       }
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Selecione...</option>
-                    {(formData.tipo === 'Conta a Pagar' || formData.tipo === 'Adiantamento' ? suppliers : clients).map(item => (
+                    {(formData.transaction_type === 'despesa' ? suppliers : clients).map(item => (
                       <option key={item.id} value={item.id}>{item.nome_fantasia}</option>
                     ))}
                   </select>
@@ -622,8 +603,8 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                   </label>
                   <input
                     type="text"
-                    value={formData.categoria}
-                    onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="Ex: Material, Serviço"
                   />
@@ -638,8 +619,8 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                   <input
                     type="number"
                     step="0.01"
-                    value={formData.valor}
-                    onChange={(e) => setFormData({ ...formData, valor: e.target.value })}
+                    value={formData.amount}
+                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="0,00"
                   />
@@ -651,8 +632,8 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                   </label>
                   <input
                     type="date"
-                    value={formData.data_vencimento}
-                    onChange={(e) => setFormData({ ...formData, data_vencimento: e.target.value })}
+                    value={formData.due_date}
+                    onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -662,12 +643,12 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                     Forma de Pagamento
                   </label>
                   <select
-                    value={formData.forma_pagamento}
-                    onChange={(e) => setFormData({ ...formData, forma_pagamento: e.target.value })}
+                    value={formData.payment_method}
+                    onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    {FORMAS_PAGAMENTO.map(forma => (
-                      <option key={forma} value={forma}>{forma}</option>
+                    {PAYMENT_METHODS.map(method => (
+                      <option key={method.value} value={method.value}>{method.label}</option>
                     ))}
                   </select>
                 </div>
@@ -679,8 +660,8 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                 </label>
                 <input
                   type="text"
-                  value={formData.numero_documento}
-                  onChange={(e) => setFormData({ ...formData, numero_documento: e.target.value })}
+                  value={formData.document_number}
+                  onChange={(e) => setFormData({ ...formData, document_number: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Ex: NF-12345"
                 />
@@ -691,28 +672,12 @@ export function DocumentosFinanceiros({ workId }: { workId?: string }) {
                   Observações
                 </label>
                 <textarea
-                  value={formData.observacoes}
-                  onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Informações adicionais..."
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Anexo (Nota Fiscal, Comprovante, etc.)
-                </label>
-                <input
-                  type="file"
-                  onChange={(e) => setFormData({ ...formData, anexo: e.target.files?.[0] })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-                {editingDoc?.anexo_path && !formData.anexo && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Anexo existente: {editingDoc.anexo_path.split('/').pop()}
-                  </p>
-                )}
               </div>
             </div>
 

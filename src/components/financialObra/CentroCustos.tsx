@@ -4,37 +4,48 @@ import { supabase } from '../../lib/supabase';
 import { useAlert } from '../../hooks/useAlert';
 import { getEmpresaContext } from '../../utils/empresaContext';
 
-interface CostCenterModalData {
-  nome: string;
-  codigo: string;
-  descricao: string;
+interface AccountModalData {
+  code: string;
+  name: string;
+  type: 'receita' | 'despesa' | 'ativo' | 'passivo';
+  parent_id: string;
+  description: string;
 }
 
+const ACCOUNT_TYPES = [
+  { value: 'receita', label: 'Receita' },
+  { value: 'despesa', label: 'Despesa' },
+  { value: 'ativo', label: 'Ativo' },
+  { value: 'passivo', label: 'Passivo' }
+];
+
 export function CentroCustos() {
-  const [costCenters, setCostCenters] = useState<any[]>([]);
-  const [filteredCenters, setFilteredCenters] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [filteredAccounts, setFilteredAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editingCenter, setEditingCenter] = useState<any | null>(null);
+  const [editingAccount, setEditingAccount] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const [formData, setFormData] = useState<CostCenterModalData>({
-    nome: '',
-    codigo: '',
-    descricao: ''
+  const [formData, setFormData] = useState<AccountModalData>({
+    code: '',
+    name: '',
+    type: 'despesa',
+    parent_id: '',
+    description: ''
   });
 
   const { showAlert } = useAlert();
 
   useEffect(() => {
-    loadCostCenters();
+    loadAccounts();
   }, []);
 
   useEffect(() => {
     applyFilters();
-  }, [costCenters, searchTerm]);
+  }, [accounts, searchTerm]);
 
-  const loadCostCenters = async () => {
+  const loadAccounts = async () => {
     try {
       setLoading(true);
       const { empresaId } = await getEmpresaContext();
@@ -45,17 +56,20 @@ export function CentroCustos() {
       }
 
       const { data, error } = await supabase
-        .from('financial_cost_centers')
-        .select('*')
+        .from('financial_accounts')
+        .select(`
+          *,
+          parent:financial_accounts!parent_id(name)
+        `)
         .eq('empresa_id', empresaId)
         .is('deleted_at', null)
-        .order('codigo');
+        .order('code');
 
       if (error) throw error;
 
-      setCostCenters(data || []);
+      setAccounts(data || []);
     } catch (error: any) {
-      showAlert('Erro ao carregar centros de custo', 'error');
+      showAlert('Erro ao carregar contas gerenciais', 'error');
       console.error(error);
     } finally {
       setLoading(false);
@@ -63,23 +77,23 @@ export function CentroCustos() {
   };
 
   const applyFilters = () => {
-    let filtered = [...costCenters];
+    let filtered = [...accounts];
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(cc =>
-        cc.nome.toLowerCase().includes(term) ||
-        (cc.codigo && cc.codigo.toLowerCase().includes(term))
+      filtered = filtered.filter(acc =>
+        acc.name?.toLowerCase().includes(term) ||
+        acc.code?.toLowerCase().includes(term)
       );
     }
 
-    setFilteredCenters(filtered);
+    setFilteredAccounts(filtered);
   };
 
   const handleSave = async () => {
     try {
-      if (!formData.nome) {
-        showAlert('Preencha o nome do centro de custo', 'error');
+      if (!formData.name || !formData.code) {
+        showAlert('Preencha todos os campos obrigatórios', 'error');
         return;
       }
 
@@ -91,37 +105,39 @@ export function CentroCustos() {
 
       const { data: { user } } = await supabase.auth.getUser();
 
-      const centerData = {
+      const accountData = {
         empresa_id: empresaId,
-        nome: formData.nome,
-        codigo: formData.codigo || null,
-        descricao: formData.descricao || null,
+        code: formData.code,
+        name: formData.name,
+        type: formData.type,
+        parent_id: formData.parent_id || null,
+        description: formData.description || null,
         created_by: user?.id
       };
 
-      if (editingCenter) {
+      if (editingAccount) {
         const { error } = await supabase
-          .from('financial_cost_centers')
-          .update(centerData)
-          .eq('id', editingCenter.id);
+          .from('financial_accounts')
+          .update(accountData)
+          .eq('id', editingAccount.id);
 
         if (error) throw error;
-        showAlert('Centro de custo atualizado com sucesso', 'success');
+        showAlert('Conta gerencial atualizada com sucesso', 'success');
       } else {
         const { error } = await supabase
-          .from('financial_cost_centers')
-          .insert(centerData);
+          .from('financial_accounts')
+          .insert(accountData);
 
         if (error) throw error;
-        showAlert('Centro de custo criado com sucesso', 'success');
+        showAlert('Conta gerencial criada com sucesso', 'success');
       }
 
       setShowModal(false);
-      setEditingCenter(null);
+      setEditingAccount(null);
       resetForm();
-      loadCostCenters();
+      loadAccounts();
     } catch (error: any) {
-      showAlert('Erro ao salvar centro de custo', 'error');
+      showAlert('Erro ao salvar conta gerencial', 'error');
       console.error(error);
     }
   };
@@ -129,14 +145,14 @@ export function CentroCustos() {
   const handleToggleActive = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('financial_cost_centers')
-        .update({ ativo: !currentStatus })
+        .from('financial_accounts')
+        .update({ is_active: !currentStatus })
         .eq('id', id);
 
       if (error) throw error;
 
-      showAlert(`Centro de custo ${!currentStatus ? 'ativado' : 'desativado'} com sucesso`, 'success');
-      loadCostCenters();
+      showAlert(`Conta ${!currentStatus ? 'ativada' : 'desativada'} com sucesso`, 'success');
+      loadAccounts();
     } catch (error: any) {
       showAlert('Erro ao alterar status', 'error');
       console.error(error);
@@ -144,31 +160,33 @@ export function CentroCustos() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Deseja realmente excluir este centro de custo?')) return;
+    if (!confirm('Deseja realmente excluir esta conta gerencial?')) return;
 
     try {
       const { error } = await supabase
-        .from('financial_cost_centers')
+        .from('financial_accounts')
         .update({ deleted_at: new Date().toISOString() })
         .eq('id', id);
 
       if (error) throw error;
 
-      showAlert('Centro de custo excluído com sucesso', 'success');
-      loadCostCenters();
+      showAlert('Conta gerencial excluída com sucesso', 'success');
+      loadAccounts();
     } catch (error: any) {
-      showAlert('Erro ao excluir centro de custo', 'error');
+      showAlert('Erro ao excluir conta gerencial', 'error');
       console.error(error);
     }
   };
 
-  const openModal = (center?: any) => {
-    if (center) {
-      setEditingCenter(center);
+  const openModal = (account?: any) => {
+    if (account) {
+      setEditingAccount(account);
       setFormData({
-        nome: center.nome,
-        codigo: center.codigo || '',
-        descricao: center.descricao || ''
+        code: account.code,
+        name: account.name,
+        type: account.type,
+        parent_id: account.parent_id || '',
+        description: account.description || ''
       });
     } else {
       resetForm();
@@ -178,26 +196,30 @@ export function CentroCustos() {
 
   const resetForm = () => {
     setFormData({
-      nome: '',
-      codigo: '',
-      descricao: ''
+      code: '',
+      name: '',
+      type: 'despesa',
+      parent_id: '',
+      description: ''
     });
-    setEditingCenter(null);
+    setEditingAccount(null);
   };
+
+  const parentAccounts = accounts.filter(acc => !acc.parent_id);
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Centros de Custo</h2>
-          <p className="text-gray-600 mt-1">Classificação de despesas por área</p>
+          <h2 className="text-2xl font-bold text-gray-800">Plano de Contas Gerencial</h2>
+          <p className="text-gray-600 mt-1">Classificação de receitas e despesas</p>
         </div>
         <button
           onClick={() => openModal()}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           <Plus size={18} />
-          Novo Centro de Custo
+          Nova Conta
         </button>
       </div>
 
@@ -233,7 +255,8 @@ export function CentroCustos() {
               <tr className="border-b-2 border-gray-200">
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Código</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Nome</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-700">Descrição</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Conta Pai</th>
                 <th className="text-center py-3 px-4 font-semibold text-gray-700">Status</th>
                 <th className="text-center py-3 px-4 font-semibold text-gray-700">Ações</th>
               </tr>
@@ -241,36 +264,46 @@ export function CentroCustos() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-8 text-gray-500">
+                  <td colSpan={6} className="text-center py-8 text-gray-500">
                     Carregando...
                   </td>
                 </tr>
-              ) : filteredCenters.length === 0 ? (
+              ) : filteredAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-8 text-gray-500">
-                    Nenhum centro de custo encontrado
+                  <td colSpan={6} className="text-center py-8 text-gray-500">
+                    Nenhuma conta gerencial encontrada
                   </td>
                 </tr>
               ) : (
-                filteredCenters.map((cc) => (
-                  <tr key={cc.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm font-semibold text-gray-700">{cc.codigo || '-'}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{cc.nome}</td>
-                    <td className="py-3 px-4 text-sm text-gray-600">{cc.descricao || '-'}</td>
+                filteredAccounts.map((acc) => (
+                  <tr key={acc.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm font-semibold text-gray-700">{acc.code}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{acc.name}</td>
+                    <td className="py-3 px-4">
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                        acc.type === 'receita' ? 'bg-green-100 text-green-800' :
+                        acc.type === 'despesa' ? 'bg-red-100 text-red-800' :
+                        acc.type === 'ativo' ? 'bg-blue-100 text-blue-800' :
+                        'bg-orange-100 text-orange-800'
+                      }`}>
+                        {ACCOUNT_TYPES.find(t => t.value === acc.type)?.label || acc.type}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-600">{acc.parent?.name || '-'}</td>
                     <td className="py-3 px-4 text-center">
                       <button
-                        onClick={() => handleToggleActive(cc.id, cc.ativo)}
-                        className="flex items-center gap-1"
+                        onClick={() => handleToggleActive(acc.id, acc.is_active)}
+                        className="inline-block"
                       >
-                        {cc.ativo ? (
+                        {acc.is_active ? (
                           <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                             <ToggleRight size={14} className="mr-1" />
-                            Ativo
+                            Ativa
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
                             <ToggleLeft size={14} className="mr-1" />
-                            Inativo
+                            Inativa
                           </span>
                         )}
                       </button>
@@ -278,14 +311,14 @@ export function CentroCustos() {
                     <td className="py-3 px-4">
                       <div className="flex justify-center gap-2">
                         <button
-                          onClick={() => openModal(cc)}
+                          onClick={() => openModal(acc)}
                           className="p-1 text-blue-600 hover:bg-blue-50 rounded"
                           title="Editar"
                         >
                           <Edit size={16} />
                         </button>
                         <button
-                          onClick={() => handleDelete(cc.id)}
+                          onClick={() => handleDelete(acc.id)}
                           className="p-1 text-red-600 hover:bg-red-50 rounded"
                           title="Excluir"
                         >
@@ -306,12 +339,12 @@ export function CentroCustos() {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
               <h3 className="text-xl font-bold text-gray-800">
-                {editingCenter ? 'Editar Centro de Custo' : 'Novo Centro de Custo'}
+                {editingAccount ? 'Editar Conta Gerencial' : 'Nova Conta Gerencial'}
               </h3>
               <button
                 onClick={() => {
                   setShowModal(false);
-                  setEditingCenter(null);
+                  setEditingAccount(null);
                   resetForm();
                 }}
                 className="text-gray-400 hover:text-gray-600"
@@ -324,29 +357,60 @@ export function CentroCustos() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Código
+                    Código <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    value={formData.codigo}
-                    onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ex: CC-001"
+                    placeholder="Ex: 1.1.01"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nome <span className="text-red-500">*</span>
+                    Tipo <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.nome}
-                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  <select
+                    value={formData.type}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ex: Fundação"
-                  />
+                  >
+                    {ACCOUNT_TYPES.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ex: Material de Construção"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Conta Pai
+                </label>
+                <select
+                  value={formData.parent_id}
+                  onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Nenhuma (Conta Raiz)</option>
+                  {parentAccounts.filter(acc => acc.id !== editingAccount?.id).map(acc => (
+                    <option key={acc.id} value={acc.id}>{acc.code} - {acc.name}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -354,11 +418,11 @@ export function CentroCustos() {
                   Descrição
                 </label>
                 <textarea
-                  value={formData.descricao}
-                  onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Descreva o que este centro de custo engloba..."
+                  placeholder="Descreva o que esta conta gerencial engloba..."
                 />
               </div>
             </div>
@@ -367,7 +431,7 @@ export function CentroCustos() {
               <button
                 onClick={() => {
                   setShowModal(false);
-                  setEditingCenter(null);
+                  setEditingAccount(null);
                   resetForm();
                 }}
                 className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
@@ -378,7 +442,7 @@ export function CentroCustos() {
                 onClick={handleSave}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                {editingCenter ? 'Atualizar' : 'Salvar'}
+                {editingAccount ? 'Atualizar' : 'Salvar'}
               </button>
             </div>
           </div>
@@ -386,113 +450,4 @@ export function CentroCustos() {
       )}
     </div>
   );
-
-  async function handleSave() {
-    try {
-      if (!formData.nome) {
-        showAlert('Preencha o nome do centro de custo', 'error');
-        return;
-      }
-
-      const { empresaId } = await getEmpresaContext();
-      if (!empresaId) {
-        showAlert('Usuário sem empresa vinculada', 'error');
-        return;
-      }
-
-      const { data: { user } } = await supabase.auth.getUser();
-
-      const centerData = {
-        empresa_id: empresaId,
-        nome: formData.nome,
-        codigo: formData.codigo || null,
-        descricao: formData.descricao || null,
-        created_by: user?.id
-      };
-
-      if (editingCenter) {
-        const { error } = await supabase
-          .from('financial_cost_centers')
-          .update(centerData)
-          .eq('id', editingCenter.id);
-
-        if (error) throw error;
-        showAlert('Centro de custo atualizado com sucesso', 'success');
-      } else {
-        const { error } = await supabase
-          .from('financial_cost_centers')
-          .insert(centerData);
-
-        if (error) throw error;
-        showAlert('Centro de custo criado com sucesso', 'success');
-      }
-
-      setShowModal(false);
-      setEditingCenter(null);
-      resetForm();
-      loadCostCenters();
-    } catch (error: any) {
-      showAlert('Erro ao salvar centro de custo', 'error');
-      console.error(error);
-    }
-  }
-
-  function openModal(center?: any) {
-    if (center) {
-      setEditingCenter(center);
-      setFormData({
-        nome: center.nome,
-        codigo: center.codigo || '',
-        descricao: center.descricao || ''
-      });
-    } else {
-      resetForm();
-    }
-    setShowModal(true);
-  }
-
-  function resetForm() {
-    setFormData({
-      nome: '',
-      codigo: '',
-      descricao: ''
-    });
-    setEditingCenter(null);
-  }
-
-  async function handleToggleActive(id: string, currentStatus: boolean) {
-    try {
-      const { error } = await supabase
-        .from('financial_cost_centers')
-        .update({ ativo: !currentStatus })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      showAlert(`Centro de custo ${!currentStatus ? 'ativado' : 'desativado'} com sucesso`, 'success');
-      loadCostCenters();
-    } catch (error: any) {
-      showAlert('Erro ao alterar status', 'error');
-      console.error(error);
-    }
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm('Deseja realmente excluir este centro de custo?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('financial_cost_centers')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      showAlert('Centro de custo excluído com sucesso', 'success');
-      loadCostCenters();
-    } catch (error: any) {
-      showAlert('Erro ao excluir centro de custo', 'error');
-      console.error(error);
-    }
-  }
 }

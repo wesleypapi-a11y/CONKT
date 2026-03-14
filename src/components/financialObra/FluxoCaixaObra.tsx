@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign, Calendar } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Calendar, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAlert } from '../../hooks/useAlert';
 import { getEmpresaContext } from '../../utils/empresaContext';
@@ -44,13 +44,13 @@ export function FluxoCaixaObra({ workId }: { workId?: string }) {
       }
 
       if (startDate) {
-        docsQuery = docsQuery.gte('data_vencimento', startDate);
-        movsQuery = movsQuery.gte('data_movimento', startDate);
+        docsQuery = docsQuery.gte('due_date', startDate);
+        movsQuery = movsQuery.gte('movement_date', startDate);
       }
 
       if (endDate) {
-        docsQuery = docsQuery.lte('data_vencimento', endDate);
-        movsQuery = movsQuery.lte('data_movimento', endDate);
+        docsQuery = docsQuery.lte('due_date', endDate);
+        movsQuery = movsQuery.lte('movement_date', endDate);
       }
 
       const [docsRes, movsRes] = await Promise.all([
@@ -68,23 +68,23 @@ export function FluxoCaixaObra({ workId }: { workId?: string }) {
 
       docs.forEach(doc => {
         combined.push({
-          data: doc.data_vencimento,
-          tipo: doc.tipo.includes('Receber') || doc.tipo === 'Medicao' ? 'entrada' : 'saida',
-          valor: Number(doc.valor),
-          descricao: doc.descricao,
-          realizado: doc.status === 'pago' || doc.status === 'recebido',
-          origem: 'previsto'
+          data: doc.due_date,
+          tipo: doc.transaction_type === 'receita' ? 'entrada' : 'saida',
+          valor: Number(doc.amount),
+          descricao: doc.description || doc.document_number,
+          realizado: doc.status === 'pago',
+          origem: 'documento'
         });
       });
 
       movs.forEach(mov => {
         combined.push({
-          data: mov.data_movimento,
-          tipo: mov.tipo,
-          valor: Number(mov.valor),
-          descricao: mov.descricao,
+          data: mov.movement_date,
+          tipo: mov.movement_type === 'entrada' ? 'entrada' : 'saida',
+          valor: Number(mov.amount),
+          descricao: mov.description,
           realizado: true,
-          origem: 'realizado'
+          origem: 'movimento'
         });
       });
 
@@ -262,7 +262,7 @@ export function FluxoCaixaObra({ workId }: { workId?: string }) {
               ) : cashflowData.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-center py-8 text-gray-500">
-                    Nenhum registro encontrado
+                    Nenhum lançamento financeiro encontrado
                   </td>
                 </tr>
               ) : (
