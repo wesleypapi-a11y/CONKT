@@ -241,40 +241,47 @@ export default function UserManagement() {
 
         alert('Usuário atualizado com sucesso!');
       } else {
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            data: {
-              nome: formData.nome,
-              telefone: formData.telefone,
-              funcao: formData.funcao
-            }
-          }
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          throw new Error('Sessão inválida');
+        }
+
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            nome: formData.nome,
+            telefone: formData.telefone,
+            funcao: formData.funcao,
+            role: formData.role,
+            is_active: formData.is_active,
+            empresa_id: formData.empresa_id,
+            avatar_url: '',
+            created_by: user?.id,
+          }),
         });
 
-        if (signUpError) throw signUpError;
+        const result = await response.json();
 
-        if (authData.user) {
-          let avatarUrl = '';
+        if (!result.success) {
+          throw new Error(result.error || 'Erro ao criar usuário');
+        }
 
-          if (avatarFile) {
-            const uploadedUrl = await uploadAvatar(authData.user.id);
-            if (uploadedUrl) avatarUrl = uploadedUrl;
+        if (avatarFile && result.user?.id) {
+          const uploadedUrl = await uploadAvatar(result.user.id);
+          if (uploadedUrl) {
+            await supabase
+              .from('profiles')
+              .update({ avatar_url: uploadedUrl })
+              .eq('id', result.user.id);
           }
-
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .update({
-              role: formData.role,
-              is_active: formData.is_active,
-              created_by: user?.id,
-              avatar_url: avatarUrl,
-              empresa_id: formData.role === 'master' ? null : formData.empresa_id
-            })
-            .eq('id', authData.user.id);
-
-          if (profileError) throw profileError;
         }
 
         alert('Usuário criado com sucesso!');
