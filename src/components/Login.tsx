@@ -94,7 +94,7 @@ export default function Login() {
                   <img
                     src="/azul_marinho_sem_fundo.png"
                     alt="ARCO Logo"
-                    className="h-64 mx-auto"
+                    className="h-44 mx-auto"
                   />
                 </div>
 

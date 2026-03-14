@@ -107,7 +107,7 @@ export default function Dashboard() {
                 <img
                   src="/azul_marinho_sem_fundo.png"
                   alt="Logo"
-                  className="h-16 mx-auto object-contain"
+                  className="h-12 mx-auto object-contain"
                 />
               )}
 
