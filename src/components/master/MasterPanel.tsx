@@ -11,7 +11,7 @@ type MasterTab = 'receitas' | 'empresas' | 'usuarios' | 'perfis' | 'debug';
 
 export default function MasterPanel() {
   const { profile, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState<MasterTab>('receitas');
+  const [activeTab, setActiveTab] = useState<MasterTab>('empresas');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,10 +69,10 @@ export default function MasterPanel() {
   }
 
   const tabs = [
-    { id: 'receitas' as MasterTab, label: 'Receitas', icon: DollarSign },
     { id: 'empresas' as MasterTab, label: 'Empresas', icon: Building2 },
     { id: 'usuarios' as MasterTab, label: 'Usuários', icon: Users },
     { id: 'perfis' as MasterTab, label: 'Perfis', icon: Shield },
+    { id: 'receitas' as MasterTab, label: 'Receitas', icon: DollarSign },
   ];
 
   return (
@@ -80,7 +80,7 @@ export default function MasterPanel() {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Painel de Usuários</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Dash Master</h1>
             <p className="text-sm text-gray-500">Gerenciamento completo do sistema</p>
           </div>
           <div className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">
