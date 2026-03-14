@@ -133,6 +133,8 @@ export default function Dashboard() {
                         alt={profile.nome_completo}
                         className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
                         key={profile.avatar_url}
+                        onLoad={() => console.log('📸 [AVATAR] Avatar carregado:', profile.avatar_url)}
+                        onError={() => console.error('📸 [AVATAR] ERRO ao carregar avatar:', profile.avatar_url)}
                       />
                     ) : (
                       <div
@@ -164,6 +166,7 @@ export default function Dashboard() {
             )}
 
             <nav className="flex-1 p-3 overflow-y-auto scrollbar-hide">
+              {console.log('📋 [MENU RENDER] Renderizando menu com', menuItems.length, 'itens')}
               <ul className="space-y-1">
                 {menuItems.map((item) => {
                   const Icon = item.icon;
