@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
-import { Users, Palette, Server } from 'lucide-react';
+import { Users, Palette, Server, Building2 } from 'lucide-react';
 import UserManagement from './UserManagement';
 import AppearanceSettings from './AppearanceSettings';
 import SystemSettings from './SystemSettings';
+import CompanyProfiles from './CompanyProfiles';
 import { useAuth } from '../contexts/AuthContext';
 
-type SettingsTab = 'users' | 'appearance' | 'system';
+type SettingsTab = 'users' | 'company-profiles' | 'appearance' | 'system';
 
 interface SettingsPageProps {
   onNavigateHome: () => void;
@@ -13,20 +14,26 @@ interface SettingsPageProps {
 
 export default function SettingsPage({}: SettingsPageProps) {
   const { profile } = useAuth();
-  const isMaster = profile?.email === 'wesley.papi@gmail.com';
+  const isMaster = profile?.role === 'master';
+  const isAdmin = profile?.role === 'administrador';
 
-  const defaultTab: SettingsTab = isMaster ? 'users' : 'appearance';
+  const defaultTab: SettingsTab = isMaster ? 'users' : isAdmin ? 'company-profiles' : 'appearance';
   const [activeTab, setActiveTab] = useState<SettingsTab>(defaultTab);
 
   const tabs = useMemo(() => {
-    const allTabs = [
+    const allTabs: Array<{ id: SettingsTab; label: string; icon: any; masterOnly?: boolean; adminOnly?: boolean }> = [
       { id: 'users' as SettingsTab, label: 'Usuários', icon: Users, masterOnly: true },
-      { id: 'appearance' as SettingsTab, label: 'Aparência', icon: Palette, masterOnly: false },
-      { id: 'system' as SettingsTab, label: 'Sistema', icon: Server, masterOnly: false }
+      { id: 'company-profiles' as SettingsTab, label: 'Perfis da Minha Empresa', icon: Building2, adminOnly: true },
+      { id: 'appearance' as SettingsTab, label: 'Aparência', icon: Palette },
+      { id: 'system' as SettingsTab, label: 'Sistema', icon: Server }
     ];
 
-    return allTabs.filter(tab => !tab.masterOnly || isMaster);
-  }, [isMaster]);
+    return allTabs.filter(tab => {
+      if (tab.masterOnly) return isMaster;
+      if (tab.adminOnly) return isAdmin;
+      return true;
+    });
+  }, [isMaster, isAdmin]);
 
   return (
     <div className="space-y-6">
@@ -56,6 +63,7 @@ export default function SettingsPage({}: SettingsPageProps) {
 
         <div className="p-6">
           {activeTab === 'users' && isMaster && <UserManagement />}
+          {activeTab === 'company-profiles' && isAdmin && <CompanyProfiles />}
           {activeTab === 'appearance' && <AppearanceSettings />}
           {activeTab === 'system' && <SystemSettings />}
         </div>
