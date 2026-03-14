@@ -219,46 +219,6 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
                 </td>
               ))}
             </tr>
-            <tr className="bg-gray-50">
-              <td colSpan={3} className="px-3 py-3 text-right border font-semibold" style={{ color: '#000000' }}>
-                Ações:
-              </td>
-              <td className="px-3 py-3 text-center border" style={{ color: '#000000' }}>-</td>
-              {quotations.map(quot => (
-                <td key={quot.id} className="px-3 py-3 text-center border">
-                  {!quot.approved && (
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          handleApproveQuotation(quot.id);
-                        }}
-                        disabled={processing}
-                        className="px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-                        title="Aprovar e Gerar PC"
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                        Aprovar
-                      </button>
-                      <button
-                        onClick={() => handleRejectQuotation(quot.id)}
-                        disabled={processing}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Rejeitar"
-                      >
-                        <XCircle className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                  {quot.approved && (
-                    <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
-                      Aprovada
-                    </span>
-                  )}
-                </td>
-              ))}
-            </tr>
           </tbody>
         </table>
       </div>
