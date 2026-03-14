@@ -34,7 +34,12 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
 
   console.log('🗺️ [MAPA] QuotationComparison renderizado');
   console.log('🗺️ [MAPA] Props recebidas - quotations:', quotations.length, 'cotações');
-  console.log('🗺️ [MAPA] Props - cotações com approved:', quotations.map(q => ({ id: q.id, approved: q.approved, status: q.status })));
+  console.log('🔍 [VERIFICAÇÃO D] Props detalhadas:', JSON.stringify(quotations.map(q => ({
+    id: q.id,
+    approved: q.approved,
+    status: q.status,
+    supplier_name: q.supplier_name
+  })), null, 2));
   console.log('🗺️ [MAPA] Props - processing:', processing);
 
   useEffect(() => {
@@ -232,7 +237,10 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
               </td>
               <td className="px-3 py-3 text-center border" style={{ color: '#000000' }}>-</td>
               {quotations.map(quot => {
-                console.log('🎨 [RENDER] Renderizando botão para cotação ID:', quot.id, 'approved:', quot.approved, 'status:', quot.status);
+                console.log(`🎨 [RENDER] Renderizando célula de ação para cotação ${quot.id}`);
+                console.log(`  - approved: ${quot.approved}`);
+                console.log(`  - status: ${quot.status}`);
+                console.log(`  - Renderizará: ${!quot.approved ? 'BOTÕES (Aprovar/Rejeitar)' : 'BADGE APROVADA'}`);
                 return (
                   <td key={quot.id} className="px-3 py-3 text-center border">
                     {!quot.approved && (
@@ -240,6 +248,7 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
                         <button
                           onClick={(e) => {
                             console.log('🔘 [BOTÃO] onClick disparado no botão Aprovar');
+                            console.log('🔘 [BOTÃO] ID da cotação clicada:', quot.id);
                             e.stopPropagation();
                             e.preventDefault();
                             console.log('🔘 [BOTÃO] Chamando handleApproveQuotation com ID:', quot.id);
@@ -417,6 +426,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
     console.log('📥 [loadQuotations] INICIANDO para requestId:', requestId);
     try {
       console.log('📥 [loadQuotations] Fazendo query no Supabase...');
+      console.log('📥 [loadQuotations] Query: .neq("status", "aprovada") será aplicado');
       const { data, error } = await supabase
         .from('quotations')
         .select(`
@@ -430,7 +440,8 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
       console.log('📥 [loadQuotations] Query concluída');
       console.log('📥 [loadQuotations] Error:', error);
-      console.log('📥 [loadQuotations] Data recebida:', data);
+      console.log('📥 [loadQuotations] Data BRUTA recebida do banco (ANTES de processar):', JSON.stringify(data, null, 2));
+      console.log('🔍 [VERIFICAÇÃO B] Quantidade de cotações retornadas do banco:', data?.length);
 
       if (error) throw error;
 
@@ -441,10 +452,20 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
       console.log('📥 [loadQuotations] Cotações processadas:', quotationsWithSupplier.length, 'encontradas');
       console.log('📥 [loadQuotations] IDs das cotações:', quotationsWithSupplier.map(q => q.id));
-      console.log('📥 [loadQuotations] Status das cotações:', quotationsWithSupplier.map(q => ({ id: q.id, approved: q.approved, status: q.status })));
-      console.log('📥 [loadQuotations] Chamando setQuotations...');
+
+      quotationsWithSupplier.forEach(q => {
+        console.log(`🔍 [VERIFICAÇÃO B] Cotação ${q.id}:`, {
+          id: q.id,
+          approved: q.approved,
+          status: q.status,
+          supplier_name: q.supplier_name
+        });
+      });
+
+      console.log('🔍 [VERIFICAÇÃO C] ANTES de setQuotations, estado atual quotations.length:', quotations.length);
+      console.log('🔍 [VERIFICAÇÃO C] NOVO valor que será setado:', quotationsWithSupplier.length, 'cotações');
       setQuotations(quotationsWithSupplier);
-      console.log('📥 [loadQuotations] setQuotations chamado');
+      console.log('🔍 [VERIFICAÇÃO C] setQuotations chamado - estado será atualizado no próximo render');
     } catch (error) {
       console.error('📥 [loadQuotations] ❌ Erro ao carregar cotações:', error);
     }
@@ -587,6 +608,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
     console.log('🚀 [HANDLER] handleApproveQuotation INICIADO com quotationId:', quotationId);
     console.log('🚀 [HANDLER] processing atual:', processing);
     console.log('🚀 [HANDLER] selectedRequest:', selectedRequest);
+    console.log('🔍 [ID APROVADO] ★★★ COTAÇÃO SENDO APROVADA:', quotationId, '★★★');
 
     if (processing) {
       console.log('⚠️ [HANDLER] BLOQUEADO: já está processando');
@@ -605,6 +627,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
       'Você deseja aprovar esse orçamento?',
       async () => {
         console.log('✅ [CONFIRM] Callback do modal INICIADO');
+        console.log('✅ [CONFIRM] quotationId recebido no callback:', quotationId);
         console.log('✅ [CONFIRM] processing antes de verificar:', processing);
 
         if (processing) {
@@ -715,6 +738,21 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
           console.log('[Frontend] ✅ Edge Function executada com sucesso:', result);
 
+          console.log('🔍 [VERIFICAÇÃO A] CONSULTANDO cotação aprovada DIRETO NO BANCO...');
+          const { data: verifyQuotation, error: verifyError } = await supabase
+            .from('quotations')
+            .select('id, approved, status, frozen')
+            .eq('id', quotationId)
+            .single();
+
+          console.log('🔍 [VERIFICAÇÃO A] Resultado da consulta direta:');
+          console.log('  - ID:', verifyQuotation?.id);
+          console.log('  - approved:', verifyQuotation?.approved);
+          console.log('  - status:', verifyQuotation?.status);
+          console.log('  - frozen:', verifyQuotation?.frozen);
+          console.log('  - Error:', verifyError);
+          console.log('🔍 [VERIFICAÇÃO A] ✅ RESPOSTA: A Edge Function aprovou no banco?', verifyQuotation?.approved === true ? 'SIM' : 'NÃO');
+
           console.log('⏳ [PROPAGAÇÃO] Aguardando 500ms para propagação...');
           await new Promise(resolve => setTimeout(resolve, 500));
           console.log('⏳ [PROPAGAÇÃO] Delay concluído');
@@ -729,8 +767,10 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
           await Promise.all([loadPromise1, loadPromise2]);
           console.log('🔄 [RELOAD] ✅ Dados recarregados com sucesso');
 
-          console.log('🔄 [RELOAD] Estado das cotações APÓS reload:', quotations.length, 'cotações');
-          console.log('🔄 [RELOAD] Estado das solicitações APÓS reload:', requests.length, 'solicitações');
+          console.log('🔄 [RELOAD] Estado das cotações APÓS reload (AINDA NO CLOSURE):', quotations.length, 'cotações');
+          console.log('🔄 [RELOAD] Estado das solicitações APÓS reload (AINDA NO CLOSURE):', requests.length, 'solicitações');
+          console.log('⚠️ [PROBLEMA CLOSURE] ATENÇÃO: quotations e requests aqui são do closure (estado antigo)');
+          console.log('⚠️ [PROBLEMA CLOSURE] O estado só será atualizado no próximo render do React');
 
           console.log('🏠 [NAV] Executando navegação Voltar (fecha mapa + volta para lista)...');
           console.log('🏠 [NAV] Antes: showComparison=', showComparison, ', selectedRequest=', selectedRequest);
@@ -740,6 +780,9 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
           console.log('🏠 [NAV] setSelectedRequest(null) chamado');
           setComparisonKey(prev => prev + 1);
           console.log('🏠 [NAV] setComparisonKey incrementado');
+          console.log('⚠️ [ANÁLISE] setShowComparison(false) + setSelectedRequest(null) executados');
+          console.log('⚠️ [ANÁLISE] Isso desmonta QuotationComparison e volta para a lista');
+          console.log('⚠️ [ANÁLISE] O componente QuotationComparison será desmontado ANTES do próximo render com dados novos');
 
           showSuccess(`${result.message || 'Pedido de Compra gerado com sucesso!'}\n\nO pedido foi criado com todos os dados (obra, fornecedor, centro de custo, itens e forma de pagamento) e os valores foram lançados automaticamente no Orçamento → Realizado por Centro de Custo.`);
 
