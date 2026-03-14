@@ -684,11 +684,10 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
           ]);
           console.log('[Frontend] ✅ Dados recarregados');
 
-          console.log('[Frontend] Forçando remontagem do mapa de comparação...');
-          setComparisonKey(prev => prev + 1);
-
-          console.log('[Frontend] Fechando mapa de comparação...');
+          console.log('[Frontend] Executando navegação Voltar (fecha mapa + volta para lista)...');
           setShowComparison(false);
+          setSelectedRequest(null);
+          setComparisonKey(prev => prev + 1);
 
           showSuccess(`${result.message || 'Pedido de Compra gerado com sucesso!'}\n\nO pedido foi criado com todos os dados (obra, fornecedor, centro de custo, itens e forma de pagamento) e os valores foram lançados automaticamente no Orçamento → Realizado por Centro de Custo.`);
 
