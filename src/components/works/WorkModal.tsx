@@ -7,6 +7,9 @@ import { arcoColors } from '../../styles/colors';
 import WorkDadosTab from './WorkDadosTab';
 import WorkEnderecoTab from './WorkEnderecoTab';
 import WorkPastaTab from './WorkPastaTab';
+import WorkContatosTab from './WorkContatosTab';
+import WorkConfiguracoesTab from './WorkConfiguracoesTab';
+import { FinanceiroObra } from '../financialObra/FinanceiroObra';
 
 interface WorkModalProps {
   work: Work | null;
@@ -15,7 +18,7 @@ interface WorkModalProps {
   onSave?: () => void;
 }
 
-type TabType = 'dados' | 'endereco' | 'pasta';
+type TabType = 'dados' | 'endereco' | 'contatos' | 'configuracoes' | 'pasta' | 'financeiro';
 
 export default function WorkModal({ work: initialWork, onClose, onNavigateHome, onSave }: WorkModalProps) {
   const { user } = useAuth();
@@ -105,7 +108,10 @@ export default function WorkModal({ work: initialWork, onClose, onNavigateHome, 
   const tabs = [
     { id: 'dados' as TabType, label: 'Dados' },
     { id: 'endereco' as TabType, label: 'Endereço' },
+    { id: 'contatos' as TabType, label: 'Contatos' },
+    { id: 'configuracoes' as TabType, label: 'Configurações' },
     { id: 'pasta' as TabType, label: 'Pasta' },
+    { id: 'financeiro' as TabType, label: 'Financeiro' },
   ];
 
   return (
@@ -160,8 +166,17 @@ export default function WorkModal({ work: initialWork, onClose, onNavigateHome, 
           {activeTab === 'endereco' && (
             <WorkEnderecoTab work={work} onChange={handleChange} onNavigateHome={onNavigateHome} />
           )}
+          {activeTab === 'contatos' && (
+            <WorkContatosTab work={work} onChange={handleChange} />
+          )}
+          {activeTab === 'configuracoes' && (
+            <WorkConfiguracoesTab work={work} onChange={handleChange} />
+          )}
           {activeTab === 'pasta' && (
             <WorkPastaTab clientId={work.client_id} onNavigateHome={onNavigateHome} />
+          )}
+          {activeTab === 'financeiro' && initialWork?.id && (
+            <FinanceiroObra workId={initialWork.id} />
           )}
         </div>
 
