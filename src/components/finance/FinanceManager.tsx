@@ -49,11 +49,23 @@ export default function FinanceManager() {
 
   const loadWorks = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('empresa_id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
       const { data, error } = await supabase
         .from('works')
         .select('*')
+        .eq('empresa_id', profileData.empresa_id)
         .is('deleted_at', null)
-        .order('nome');
+        .order('name');
 
       if (error) throw error;
       setWorks(data || []);
