@@ -11,7 +11,7 @@ interface Usuario {
   role: string;
   empresa_id: string | null;
   empresa?: {
-    nome_fantasia: string;
+    nome: string;
   };
   status: string;
   created_at: string;
@@ -19,8 +19,7 @@ interface Usuario {
 
 interface EmpresaSelect {
   id: string;
-  nome_fantasia: string;
-  razao_social: string;
+  nome: string;
 }
 
 interface NovoUsuarioForm {
@@ -61,7 +60,7 @@ export default function UsuariosManager() {
         .from('profiles')
         .select(`
           *,
-          empresa:empresas(nome_fantasia)
+          empresa:empresas(nome)
         `)
         .order('created_at', { ascending: false });
 
@@ -80,9 +79,10 @@ export default function UsuariosManager() {
     try {
       const { data, error } = await supabase
         .from('empresas')
-        .select('id, nome_fantasia, razao_social')
+        .select('id, nome')
         .eq('status', 'ativa')
-        .order('nome_fantasia');
+        .is('deleted_at', null)
+        .order('nome');
 
       if (error) throw error;
       setEmpresas(data || []);
@@ -272,7 +272,7 @@ export default function UsuariosManager() {
             <option value="">Todas as empresas</option>
             {empresas.map(empresa => (
               <option key={empresa.id} value={empresa.id}>
-                {empresa.nome_fantasia}
+                {empresa.nome}
               </option>
             ))}
           </select>
@@ -353,7 +353,7 @@ export default function UsuariosManager() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {usuario.empresa?.nome_fantasia || 'N/A'}
+                        {usuario.empresa?.nome || 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -478,7 +478,7 @@ export default function UsuariosManager() {
                   <option value="">Selecione uma empresa</option>
                   {empresas.map(empresa => (
                     <option key={empresa.id} value={empresa.id}>
-                      {empresa.nome_fantasia}
+                      {empresa.nome}
                     </option>
                   ))}
                 </select>
