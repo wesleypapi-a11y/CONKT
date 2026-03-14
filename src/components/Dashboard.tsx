@@ -129,7 +129,7 @@ export default function Dashboard() {
           style={{ backgroundColor: arcoColors.sidebar.main }}
         >
           <div className="h-full flex flex-col">
-            <div className="p-4 flex items-center justify-center border-b border-white/10 relative">
+            <div className="p-6 flex items-center justify-center border-b border-white/10 relative">
               {sidebarOpen && (
                 <img
                   src={empresaLogo || "/Sem_titulo-removebg-previewsemf.png"}
@@ -145,7 +145,7 @@ export default function Dashboard() {
 
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className={`hidden lg:block p-2 hover:bg-white/10 rounded-lg ${sidebarOpen ? 'absolute right-4' : ''}`}
+                className={`hidden lg:block p-2 hover:bg-white/10 rounded-xl ${sidebarOpen ? 'absolute right-4' : ''}`}
                 style={{ color: '#ffffff' }}
               >
                 <Menu size={20} />
@@ -153,46 +153,48 @@ export default function Dashboard() {
             </div>
 
             {sidebarOpen && (
-              <div className="px-4 py-3 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setProfileModalOpen(true)}
-                    className="flex-1 flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-all"
-                  >
-                    {profile?.avatar_url ? (
-                      <img
-                        src={`${profile.avatar_url}?t=${Date.now()}`}
-                        alt={profile.nome_completo}
-                        className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
-                        key={profile.avatar_url}
-                        onLoad={() => console.log('📸 [AVATAR] Avatar carregado:', profile.avatar_url)}
-                        onError={() => console.error('📸 [AVATAR] ERRO ao carregar avatar:', profile.avatar_url)}
-                      />
-                    ) : (
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                        style={{ backgroundColor: arcoColors.primary.gold }}
-                      >
-                        <User size={18} />
+              <div className="px-4 py-4 border-b border-white/10">
+                <div className="bg-white/5 rounded-2xl p-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setProfileModalOpen(true)}
+                      className="flex-1 flex items-center gap-3 p-2 rounded-xl hover:bg-white/10 transition-all"
+                    >
+                      {profile?.avatar_url ? (
+                        <img
+                          src={`${profile.avatar_url}?t=${Date.now()}`}
+                          alt={profile.nome_completo}
+                          className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
+                          key={profile.avatar_url}
+                          onLoad={() => console.log('📸 [AVATAR] Avatar carregado:', profile.avatar_url)}
+                          onError={() => console.error('📸 [AVATAR] ERRO ao carregar avatar:', profile.avatar_url)}
+                        />
+                      ) : (
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+                          style={{ backgroundColor: arcoColors.primary.gold }}
+                        >
+                          <User size={18} />
+                        </div>
+                      )}
+                      <div className="text-left flex-1" style={{ color: '#ffffff' }}>
+                        <p className="font-medium text-sm truncate">
+                          {profile?.nome_completo || 'Usuário'}
+                        </p>
+                        <p className="text-xs opacity-70 capitalize">
+                          {profile?.role ? getRoleName(profile.role) : profile?.funcao}
+                        </p>
                       </div>
-                    )}
-                    <div className="text-left flex-1" style={{ color: '#ffffff' }}>
-                      <p className="font-medium text-sm truncate">
-                        {profile?.nome_completo || 'Usuário'}
-                      </p>
-                      <p className="text-xs opacity-70 capitalize">
-                        {profile?.role ? getRoleName(profile.role) : profile?.funcao}
-                      </p>
-                    </div>
-                  </button>
-                  <button
-                    onClick={signOut}
-                    className="p-2 rounded-lg hover:bg-white/10 transition-all"
-                    style={{ color: '#ffffff' }}
-                    title="Sair"
-                  >
-                    <LogOut size={18} />
-                  </button>
+                    </button>
+                    <button
+                      onClick={signOut}
+                      className="p-2 rounded-xl hover:bg-white/10 transition-all"
+                      style={{ color: '#ffffff' }}
+                      title="Sair"
+                    >
+                      <LogOut size={18} />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -215,7 +217,7 @@ export default function Dashboard() {
                             setSidebarOpen(false);
                           }
                         }}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                           isActive
                             ? 'bg-white/10'
                             : 'hover:bg-white/5'
@@ -255,7 +257,7 @@ export default function Dashboard() {
             <div className="p-3 border-t border-white/10">
               <button
                 onClick={signOut}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 transition-all"
                 style={{ color: '#ffffff' }}
                 title="Sair"
               >
