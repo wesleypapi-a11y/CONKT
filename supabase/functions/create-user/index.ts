@@ -2,7 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
@@ -45,6 +45,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const token = authHeader.replace('Bearer ', '');
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -54,7 +55,11 @@ Deno.serve(async (req: Request) => {
       }
     );
 
-    const { data: { user: currentUser }, error: userError } = await supabaseClient.auth.getUser(token);
+    const {
+      data: { user: currentUser },
+      error: userError,
+    } = await supabaseClient.auth.getUser(token);
+
     if (userError || !currentUser) {
       throw new Error('Não autorizado');
     }
@@ -95,35 +100,37 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const { data: authUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-      email: requestData.email,
-      password: requestData.password,
-      email_confirm: true,
-      user_metadata: {
-        nome_completo: requestData.nome,
-        telefone: requestData.telefone || '',
-        funcao: requestData.funcao || '',
-      },
-    });
+    const { data: authUser, error: createError } =
+      await supabaseAdmin.auth.admin.createUser({
+        email: requestData.email,
+        password: requestData.password,
+        email_confirm: true,
+        user_metadata: {
+          nome_completo: requestData.nome,
+          telefone: requestData.telefone || '',
+          funcao: requestData.funcao || '',
+        },
+      });
 
     if (createError) throw createError;
+    if (!authUser.user) throw new Error('Falha ao criar usuário');
 
-    if (!authUser.user) {
-      throw new Error('Falha ao criar usuário');
-    }
-
-    const { error: profileUpdateError } = await supabaseAdmin
+    const { error: profileUpsertError } = await supabaseAdmin
       .from('profiles')
-      .update({
+      .upsert({
+        id: authUser.user.id,
+        email: requestData.email,
+        nome_completo: requestData.nome,
+        telefone: requestData.telefone || null,
+        funcao: requestData.funcao || null,
         role: requestData.role,
         is_active: requestData.is_active,
         created_by: requestData.created_by,
         avatar_url: requestData.avatar_url || null,
         empresa_id: requestData.role === 'master' ? null : requestData.empresa_id,
-      })
-      .eq('id', authUser.user.id);
+      });
 
-    if (profileUpdateError) throw profileUpdateError;
+    if (profileUpsertError) throw profileUpsertError;
 
     return new Response(
       JSON.stringify({
@@ -134,6 +141,7 @@ Deno.serve(async (req: Request) => {
         },
       }),
       {
+        status: 200,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
@@ -142,6 +150,7 @@ Deno.serve(async (req: Request) => {
     );
   } catch (error: any) {
     console.error('Error creating user:', error);
+
     return new Response(
       JSON.stringify({
         success: false,
