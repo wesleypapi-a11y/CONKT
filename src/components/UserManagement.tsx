@@ -17,11 +17,18 @@ interface UserProfile {
   created_at: string;
   created_by?: string;
   avatar_url?: string;
+  empresa_id?: string;
+}
+
+interface Empresa {
+  id: string;
+  nome: string;
 }
 
 export default function UserManagement() {
   const { user } = useAuth();
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
@@ -39,11 +46,13 @@ export default function UserManagement() {
     funcao: '',
     role: 'colaborador' as UserRole,
     is_active: true,
-    avatar_url: ''
+    avatar_url: '',
+    empresa_id: ''
   });
 
   useEffect(() => {
     loadUsers();
+    loadEmpresas();
   }, []);
 
   const loadUsers = async () => {
@@ -63,6 +72,21 @@ export default function UserManagement() {
     }
   };
 
+  const loadEmpresas = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('empresas')
+        .select('id, nome')
+        .eq('is_active', true)
+        .order('nome');
+
+      if (error) throw error;
+      setEmpresas(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar empresas:', error);
+    }
+  };
+
   const handleOpenModal = (userToEdit?: UserProfile) => {
     if (userToEdit) {
       setEditingUser(userToEdit);
@@ -74,7 +98,8 @@ export default function UserManagement() {
         funcao: userToEdit.funcao || '',
         role: userToEdit.role,
         is_active: userToEdit.is_active,
-        avatar_url: userToEdit.avatar_url || ''
+        avatar_url: userToEdit.avatar_url || '',
+        empresa_id: userToEdit.empresa_id || ''
       });
       setAvatarPreview(userToEdit.avatar_url || '');
     } else {
@@ -87,7 +112,8 @@ export default function UserManagement() {
         funcao: '',
         role: 'colaborador',
         is_active: true,
-        avatar_url: ''
+        avatar_url: '',
+        empresa_id: ''
       });
       setAvatarPreview('');
     }
@@ -106,7 +132,8 @@ export default function UserManagement() {
       funcao: '',
       role: 'colaborador',
       is_active: true,
-      avatar_url: ''
+      avatar_url: '',
+      empresa_id: ''
     });
     setShowPassword(false);
     setAvatarFile(null);
@@ -166,6 +193,19 @@ export default function UserManagement() {
       return;
     }
 
+    if (formData.role !== 'master' && !formData.empresa_id) {
+      alert('Empresa é obrigatória para usuários não-Master');
+      return;
+    }
+
+    if (formData.role === 'master') {
+      const existingMaster = users.find(u => u.role === 'master' && u.id !== editingUser?.id);
+      if (existingMaster) {
+        alert('Já existe um usuário Master no sistema');
+        return;
+      }
+    }
+
     setSaving(true);
     try {
       if (editingUser) {
@@ -184,7 +224,8 @@ export default function UserManagement() {
             funcao: formData.funcao,
             role: formData.role,
             is_active: formData.is_active,
-            avatar_url: avatarUrl
+            avatar_url: avatarUrl,
+            empresa_id: formData.role === 'master' ? null : formData.empresa_id
           })
           .eq('id', editingUser.id);
 
@@ -228,7 +269,8 @@ export default function UserManagement() {
               role: formData.role,
               is_active: formData.is_active,
               created_by: user?.id,
-              avatar_url: avatarUrl
+              avatar_url: avatarUrl,
+              empresa_id: formData.role === 'master' ? null : formData.empresa_id
             })
             .eq('id', authData.user.id);
 
@@ -606,6 +648,26 @@ export default function UserManagement() {
                     {formData.role === 'cliente' && 'Acesso apenas ao Portal do Cliente'}
                   </p>
                 </div>
+
+                {formData.role !== 'master' && (
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Empresa <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={formData.empresa_id}
+                      onChange={(e) => setFormData({ ...formData, empresa_id: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Selecione uma empresa</option>
+                      {empresas.map((empresa) => (
+                        <option key={empresa.id} value={empresa.id}>
+                          {empresa.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
