@@ -1,20 +1,19 @@
 export const arcoColors = {
   primary: {
-    pink: '#E91E63',
-    magenta: '#D81B60',
-    orange: '#FF9800',
-    amber: '#FFA726',
-    lime: '#8BC34A',
-    green: '#7CB342',
-    cyan: '#00BCD4',
-    lightBlue: '#03A9F4',
-    blue: '#2196F3',
-    darkBlue: '#1976D2',
+    charcoal: '#3A3F4D',
+    charcoalLight: '#4A4F5D',
+    charcoalDark: '#2A2F3D',
+    gold: '#B8976B',
+    goldLight: '#C8A77B',
+    goldDark: '#A8876B',
+    skyBlue: '#B8C5D6',
+    skyBlueDark: '#A8B5C6',
+    skyBlueLight: '#C8D5E6',
   },
   sidebar: {
-    main: '#3B5998',
-    dark: '#2C4373',
-    hover: '#4A6BA8',
+    main: '#3A3F4D',
+    dark: '#2A2F3D',
+    hover: '#4A4F5D',
   },
   neutral: {
     white: '#FFFFFF',
@@ -30,7 +29,7 @@ export const arcoColors = {
     gray900: '#111827',
   },
   text: {
-    primary: '#111827',
+    primary: '#2D3748',
     secondary: '#6B7280',
     disabled: '#9CA3AF',
     inverse: '#FFFFFF',
@@ -40,5 +39,10 @@ export const arcoColors = {
     warning: '#F59E0B',
     error: '#EF4444',
     info: '#3B82F6',
+  },
+  background: {
+    main: '#B8C5D6',
+    light: '#C8D5E6',
+    dark: '#A8B5C6',
   }
 };

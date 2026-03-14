@@ -171,7 +171,7 @@ export default function Dashboard() {
                     ) : (
                       <div
                         className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                        style={{ backgroundColor: arcoColors.primary.cyan }}
+                        style={{ backgroundColor: arcoColors.primary.gold }}
                       >
                         <User size={18} />
                       </div>
@@ -217,15 +217,15 @@ export default function Dashboard() {
                         }}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                           isActive
-                            ? 'bg-white text-gray-900'
-                            : 'hover:bg-white/10'
+                            ? 'bg-white/10'
+                            : 'hover:bg-white/5'
                         }`}
-                        style={{ color: isActive ? '#000000' : '#ffffff' }}
+                        style={{ color: '#ffffff' }}
                         title={item.label}
                       >
                         <Icon
                           size={18}
-                          style={{ color: isActive ? arcoColors.primary.blue : '#ffffff' }}
+                          style={{ color: '#ffffff' }}
                         />
                         {sidebarOpen && (
                           <>
@@ -236,8 +236,8 @@ export default function Dashboard() {
                               <span
                                 className="px-2 py-0.5 text-xs rounded-full font-semibold"
                                 style={{
-                                  backgroundColor: item.id === 'painel-usuarios' ? '#9333ea' : arcoColors.primary.lime,
-                                  color: item.id === 'painel-usuarios' ? '#ffffff' : '#000000'
+                                  backgroundColor: arcoColors.primary.gold,
+                                  color: '#2D3748'
                                 }}
                               >
                                 {item.badge}
@@ -273,19 +273,20 @@ export default function Dashboard() {
           />
         )}
 
-        <main className="flex-1 flex flex-col min-h-screen">
-          <header className="bg-white shadow-sm">
+        <main className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: arcoColors.primary.skyBlue }}>
+          <header style={{ backgroundColor: arcoColors.primary.charcoal, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
             <div className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
               <div className="flex items-center gap-6 sm:gap-8">
                 {activeMenu !== 'inicio' && (
                   <button
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="lg:hidden text-gray-600 hover:text-gray-900"
+                    className="lg:hidden hover:opacity-80 transition-opacity"
+                    style={{ color: '#ffffff' }}
                   >
                     <Menu size={24} />
                   </button>
                 )}
-                <h1 className="text-lg sm:text-2xl font-bold text-gray-800 truncate">
+                <h1 className="text-lg sm:text-2xl font-semibold truncate" style={{ color: '#ffffff' }}>
                   {menuItems.find(item => item.id === activeMenu)?.label || 'Dashboard'}
                 </h1>
               </div>
