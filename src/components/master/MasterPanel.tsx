@@ -11,7 +11,7 @@ type MasterTab = 'receitas' | 'empresas' | 'usuarios' | 'perfis' | 'debug';
 
 export default function MasterPanel() {
   const { profile, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState<MasterTab>('debug');
+  const [activeTab, setActiveTab] = useState<MasterTab>('receitas');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,7 +69,6 @@ export default function MasterPanel() {
   }
 
   const tabs = [
-    { id: 'debug' as MasterTab, label: 'Debug', icon: Bug },
     { id: 'receitas' as MasterTab, label: 'Receitas', icon: DollarSign },
     { id: 'empresas' as MasterTab, label: 'Empresas', icon: Building2 },
     { id: 'usuarios' as MasterTab, label: 'Usuários', icon: Users },
