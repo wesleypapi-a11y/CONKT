@@ -1326,14 +1326,18 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Carregando...</p>
-      </div>
+      <>
+        <div className="flex items-center justify-center h-full">
+          <p className="text-gray-500">Carregando...</p>
+        </div>
+        <AlertComponent />
+      </>
     );
   }
 
   if (selectedRequest) {
     return (
+      <>
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
@@ -1688,6 +1692,8 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
           )}
         </div>
       </div>
+      <AlertComponent />
+      </>
     );
   }
 
