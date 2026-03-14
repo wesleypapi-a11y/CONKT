@@ -287,6 +287,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
   const [showEditQuotation, setShowEditQuotation] = useState(false);
   const [editingQuotation, setEditingQuotation] = useState<Quotation | null>(null);
   const [showComparison, setShowComparison] = useState(false);
+  const [comparisonKey, setComparisonKey] = useState(0);
   const [filters, setFilters] = useState({
     work_id: '',
     supplier_id: '',
@@ -683,6 +684,10 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
           ]);
           console.log('[Frontend] ✅ Dados recarregados');
 
+          console.log('[Frontend] Forçando remontagem do mapa de comparação...');
+          setComparisonKey(prev => prev + 1);
+
+          console.log('[Frontend] Fechando mapa de comparação...');
           setShowComparison(false);
 
           showSuccess(`${result.message || 'Pedido de Compra gerado com sucesso!'}\n\nO pedido foi criado com todos os dados (obra, fornecedor, centro de custo, itens e forma de pagamento) e os valores foram lançados automaticamente no Orçamento → Realizado por Centro de Custo.`);
@@ -1258,7 +1263,10 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
             )}
             {quotations.length >= 2 && !showComparison && (
               <button
-                onClick={() => setShowComparison(true)}
+                onClick={() => {
+                  setComparisonKey(prev => prev + 1);
+                  setShowComparison(true);
+                }}
                 className="px-4 py-2 rounded-md text-white flex items-center gap-2 hover:opacity-90"
                 style={{ backgroundColor: arcoColors.primary.orange }}
               >
@@ -1445,6 +1453,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
             </div>
           ) : showComparison ? (
             <QuotationComparison
+              key={comparisonKey}
               quotations={quotations.filter(q => q.status !== 'rejeitada')}
               requestItems={requestItems}
               handleApproveQuotation={handleApproveQuotation}
