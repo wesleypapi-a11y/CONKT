@@ -71,7 +71,7 @@ export default function MasterPanel() {
   const tabs = [
     { id: 'empresas' as MasterTab, label: 'Empresas', icon: Building2 },
     { id: 'usuarios' as MasterTab, label: 'Usuários', icon: Users },
-    { id: 'perfis' as MasterTab, label: 'Perfis', icon: Shield },
+    { id: 'perfis' as MasterTab, label: 'Perfil', icon: Shield },
     { id: 'receitas' as MasterTab, label: 'Receitas', icon: DollarSign },
   ];
 

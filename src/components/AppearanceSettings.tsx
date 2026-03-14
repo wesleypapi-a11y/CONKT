@@ -1,53 +1,43 @@
 import { useState, useEffect } from 'react';
-import { Image, Upload, Save, LogIn, Menu as MenuIcon, Home } from 'lucide-react';
+import { Image, Upload, Save, Menu as MenuIcon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { useAlert } from '../hooks/useAlert';
 
 interface AppearancePreferences {
-  logo_login: string | null;
   logo_menu: string | null;
-  logo_inicio: string | null;
 }
 
 export default function AppearanceSettings() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { showAlert } = useAlert();
-  const [savingLogin, setSavingLogin] = useState(false);
   const [savingMenu, setSavingMenu] = useState(false);
-  const [savingInicio, setSavingInicio] = useState(false);
 
   const [preferences, setPreferences] = useState<AppearancePreferences>({
-    logo_login: null,
     logo_menu: null,
-    logo_inicio: null,
   });
 
-  const [previewLogin, setPreviewLogin] = useState<string | null>(null);
   const [previewMenu, setPreviewMenu] = useState<string | null>(null);
-  const [previewInicio, setPreviewInicio] = useState<string | null>(null);
 
   useEffect(() => {
     loadPreferences();
-  }, [user]);
+  }, [profile?.empresa_id]);
 
   const loadPreferences = async () => {
-    if (!user) return;
+    if (!profile?.empresa_id) return;
 
     try {
       const { data, error } = await supabase
-        .from('appearance_preferences')
-        .select('logo_login, logo_menu, logo_inicio')
-        .eq('user_id', user.id)
-        .maybeSingle();
+        .from('empresas')
+        .select('logo_menu')
+        .eq('id', profile.empresa_id)
+        .single();
 
       if (error) throw error;
 
       if (data) {
         setPreferences({
-          logo_login: data.logo_login || null,
           logo_menu: data.logo_menu || null,
-          logo_inicio: data.logo_inicio || null,
         });
       }
     } catch (error: any) {
@@ -77,21 +67,19 @@ export default function AppearanceSettings() {
 
   const handleSaveImage = async (
     preview: string | null,
-    fieldName: 'logo_login' | 'logo_menu' | 'logo_inicio',
-    prefix: string,
     setSaving: (value: boolean) => void,
     setPreview: (value: string | null) => void
   ) => {
-    if (!preview) return;
+    if (!preview || !profile?.empresa_id) return;
 
     setSaving(true);
     try {
       const blob = await fetch(preview).then(r => r.blob());
       const fileExt = blob.type.split('/')[1];
-      const fileName = `${prefix}-${user?.id}-${Date.now()}.${fileExt}`;
+      const fileName = `menu-${profile.empresa_id}-${Date.now()}.${fileExt}`;
 
-      if (preferences[fieldName]) {
-        const oldFileName = preferences[fieldName]!.split('/').pop();
+      if (preferences.logo_menu) {
+        const oldFileName = preferences.logo_menu.split('/').pop();
         if (oldFileName) {
           await supabase.storage.from('company-branding').remove([oldFileName]);
         }
@@ -107,28 +95,22 @@ export default function AppearanceSettings() {
         .from('company-branding')
         .getPublicUrl(fileName);
 
-      const updateData = {
-        user_id: user!.id,
-        [fieldName]: data.publicUrl,
-      };
-
       const { error } = await supabase
-        .from('appearance_preferences')
-        .upsert(updateData, {
-          onConflict: 'user_id'
-        });
+        .from('empresas')
+        .update({ logo_menu: data.publicUrl })
+        .eq('id', profile.empresa_id);
 
       if (error) throw error;
 
-      setPreferences({ ...preferences, [fieldName]: data.publicUrl });
+      setPreferences({ logo_menu: data.publicUrl });
       setPreview(null);
-      showAlert('Imagem salva com sucesso!', 'success');
+      showAlert('Logo do menu atualizado com sucesso!', 'success');
 
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error: any) {
-      showAlert('Erro ao salvar imagem', 'error');
+      showAlert('Erro ao salvar logo', 'error');
       console.error(error);
     } finally {
       setSaving(false);
@@ -214,46 +196,24 @@ export default function AppearanceSettings() {
         <Image size={28} className="text-blue-600" />
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Aparência</h2>
-          <p className="text-sm text-gray-500">Personalize a identidade visual do sistema</p>
+          <p className="text-sm text-gray-500">Personalize o logo do menu da sua empresa</p>
         </div>
       </div>
 
       <LogoUploadSection
-        title="Logo Login"
-        description="Imagem exibida na tela de login"
-        icon={LogIn}
-        preview={previewLogin}
-        currentImage={preferences.logo_login}
-        onUpload={(e) => handleImageUpload(e, setPreviewLogin)}
-        onSave={() => handleSaveImage(previewLogin, 'logo_login', 'login', setSavingLogin, setPreviewLogin)}
-        saving={savingLogin}
-      />
-
-      <LogoUploadSection
-        title="Logo Menu"
-        description="Imagem exibida no topo do menu, acima da foto de perfil"
+        title="Logo do Menu"
+        description="Imagem exibida na coluna do menu lateral (específica da sua empresa)"
         icon={MenuIcon}
         preview={previewMenu}
         currentImage={preferences.logo_menu}
         onUpload={(e) => handleImageUpload(e, setPreviewMenu)}
-        onSave={() => handleSaveImage(previewMenu, 'logo_menu', 'menu', setSavingMenu, setPreviewMenu)}
+        onSave={() => handleSaveImage(previewMenu, setSavingMenu, setPreviewMenu)}
         saving={savingMenu}
-      />
-
-      <LogoUploadSection
-        title="Logo Início"
-        description="Imagem exibida na página quando o usuário clica em 'Início'"
-        icon={Home}
-        preview={previewInicio}
-        currentImage={preferences.logo_inicio}
-        onUpload={(e) => handleImageUpload(e, setPreviewInicio)}
-        onSave={() => handleSaveImage(previewInicio, 'logo_inicio', 'inicio', setSavingInicio, setPreviewInicio)}
-        saving={savingInicio}
       />
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          <strong>Importante:</strong> Após salvar cada alteração, a página será recarregada automaticamente para aplicar as mudanças visuais.
+          <strong>Importante:</strong> O logo será exibido apenas para usuários da sua empresa. Após salvar, a página será recarregada automaticamente.
         </p>
       </div>
     </div>

@@ -4,6 +4,7 @@ import {
   DollarSign, FileCheck, Menu, LogOut, User, Calendar, CalendarClock, LayoutDashboard, FileText, ListTodo, Settings, BarChart3, UserCog, Briefcase, Shield
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import { arcoColors } from '../styles/colors';
 import { hasAccess, getRoleName, type PageKey } from '../utils/accessControl';
 import ProfileModal from './ProfileModal';
@@ -59,6 +60,7 @@ export default function Dashboard() {
   const [activeMenu, setActiveMenu] = useState<PageKey>('inicio');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [empresaLogo, setEmpresaLogo] = useState<string | null>(null);
   const { profile, signOut } = useAuth();
 
   console.log('📋 [DASHBOARD] Profile recebido:', profile ? {
@@ -77,6 +79,29 @@ export default function Dashboard() {
 
   console.log('📋 [DASHBOARD] Total de itens filtrados:', menuItems.length);
   console.log('📋 [DASHBOARD] Menu items:', menuItems.map(i => i.id));
+
+  useEffect(() => {
+    const loadEmpresaLogo = async () => {
+      if (!profile?.empresa_id) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('empresas')
+          .select('logo_menu')
+          .eq('id', profile.empresa_id)
+          .single();
+
+        if (error) throw error;
+        if (data?.logo_menu) {
+          setEmpresaLogo(data.logo_menu);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar logo da empresa:', error);
+      }
+    };
+
+    loadEmpresaLogo();
+  }, [profile?.empresa_id]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -105,7 +130,7 @@ export default function Dashboard() {
             <div className="p-4 flex items-center justify-center border-b border-white/10 relative">
               {sidebarOpen && (
                 <img
-                  src="/azul_marinho_sem_fundo.png"
+                  src={empresaLogo || "/azul_marinho_sem_fundo.png"}
                   alt="Logo"
                   className="h-12 mx-auto object-contain"
                 />
