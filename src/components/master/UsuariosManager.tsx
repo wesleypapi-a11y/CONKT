@@ -132,11 +132,42 @@ export default function UsuariosManager() {
           return;
         }
 
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          throw new Error('Sessão inválida');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        console.log('=== DEBUG SESSION ===');
+        console.log('sessionError:', sessionError);
+        console.log('session:', session);
+        console.log('session?.access_token:', session?.access_token);
+
+        if (sessionError) {
+          console.error('Erro ao obter sessão:', sessionError);
+          showAlert('Erro ao obter sessão. Tente novamente.', 'error');
+          return;
         }
 
+        if (!session) {
+          showAlert('Sessão inválida. Faça login novamente.', 'error');
+          return;
+        }
+
+        if (!session.access_token) {
+          showAlert('Token de acesso não encontrado. Faça login novamente.', 'error');
+          return;
+        }
+
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+        console.log('=== DEBUG USER ===');
+        console.log('userError:', userError);
+        console.log('user:', user);
+
+        if (userError || !user) {
+          console.error('Erro ao obter usuário:', userError);
+          showAlert('Usuário não autenticado. Faça login novamente.', 'error');
+          return;
+        }
+
+        console.log('=== CHAMANDO EDGE FUNCTION ===');
         const { data, error: fnError } = await supabase.functions.invoke('create-user', {
           body: {
             email: formData.email,
@@ -148,13 +179,17 @@ export default function UsuariosManager() {
             is_active: true,
             empresa_id: formData.empresa_id,
             avatar_url: '',
-            created_by: session.user.id,
+            created_by: user.id,
           },
         });
 
+        console.log('=== RESPOSTA EDGE FUNCTION ===');
+        console.log('fnError:', fnError);
+        console.log('data:', data);
+
         if (fnError || !data?.success) {
           const errorMessage = data?.error || fnError?.message || 'Erro ao criar usuário';
-          console.error('Erro ao criar usuário:', errorMessage);
+          console.error('Erro completo ao criar usuário:', { data, fnError, errorMessage });
           throw new Error(errorMessage);
         }
 
