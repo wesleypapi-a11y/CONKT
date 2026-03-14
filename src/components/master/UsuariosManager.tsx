@@ -23,6 +23,7 @@ interface EmpresaSelect {
 }
 
 interface NovoUsuarioForm {
+  nome_completo: string;
   email: string;
   senha: string;
   role: string;
@@ -43,6 +44,7 @@ export default function UsuariosManager() {
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<NovoUsuarioForm>({
+    nome_completo: '',
     email: '',
     senha: '123456789',
     role: 'colaborador',
@@ -95,7 +97,7 @@ export default function UsuariosManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.empresa_id) {
+    if (!formData.nome_completo || !formData.email || !formData.empresa_id) {
       showAlert('Preencha todos os campos obrigatórios', 'error');
       return;
     }
@@ -105,6 +107,7 @@ export default function UsuariosManager() {
         const { error } = await supabase
           .from('profiles')
           .update({
+            nome_completo: formData.nome_completo,
             role: formData.role,
             empresa_id: formData.empresa_id,
           })
@@ -118,18 +121,36 @@ export default function UsuariosManager() {
           return;
         }
 
+        const { data: existingUser } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('email', formData.email)
+          .maybeSingle();
+
+        if (existingUser) {
+          showAlert('Email já cadastrado', 'error');
+          return;
+        }
+
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.senha,
           options: {
             data: {
+              nome_completo: formData.nome_completo,
               role: formData.role,
               empresa_id: formData.empresa_id,
             }
           }
         });
 
-        if (authError) throw authError;
+        if (authError) {
+          if (authError.message.includes('already registered')) {
+            showAlert('Email já cadastrado', 'error');
+            return;
+          }
+          throw authError;
+        }
 
         if (!authData.user) {
           throw new Error('Erro ao criar usuário');
@@ -138,6 +159,7 @@ export default function UsuariosManager() {
         const { error: profileError } = await supabase
           .from('profiles')
           .update({
+            nome_completo: formData.nome_completo,
             role: formData.role,
             empresa_id: formData.empresa_id,
             status: 'ativo'
@@ -200,6 +222,7 @@ export default function UsuariosManager() {
   const handleEdit = (usuario: Usuario) => {
     setEditingUserId(usuario.id);
     setFormData({
+      nome_completo: usuario.nome_completo || '',
       email: usuario.email,
       senha: '',
       role: usuario.role,
@@ -210,6 +233,7 @@ export default function UsuariosManager() {
 
   const resetForm = () => {
     setFormData({
+      nome_completo: '',
       email: '',
       senha: '123456789',
       role: 'colaborador',
@@ -344,7 +368,16 @@ export default function UsuariosManager() {
                   Nome
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Senha
+                  E-mail do usuário *
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Senha padrão *
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Perfil do usuário *
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Empresa vinculada *
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ações
@@ -354,7 +387,7 @@ export default function UsuariosManager() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsuarios.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center">
+                  <td colSpan={6} className="px-6 py-12 text-center">
                     <Users size={48} className="mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-500 text-lg font-medium">
                       Nenhum usuário cadastrado
@@ -369,11 +402,26 @@ export default function UsuariosManager() {
                   <tr key={usuario.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900">
-                        {usuario.nome_completo || usuario.email}
+                        {usuario.nome_completo || '-'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">
+                        {usuario.email}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Eye size={18} className="text-gray-400" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(usuario.role)}`}>
+                        {getRoleLabel(usuario.role)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">
+                        {usuario.empresa?.nome || '-'}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -416,6 +464,20 @@ export default function UsuariosManager() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nome completo *
+                </label>
+                <input
+                  type="text"
+                  value={formData.nome_completo}
+                  onChange={(e) => setFormData({ ...formData, nome_completo: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Nome completo do usuário"
+                  required
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   E-mail do usuário *
