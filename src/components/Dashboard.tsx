@@ -107,7 +107,7 @@ export default function Dashboard() {
                 <img
                   src="/lOGO_PRETO_SEM_FUNDO.png"
                   alt="Logo"
-                  className="h-16 mx-auto object-contain"
+                  className="h-32 mx-auto object-contain"
                 />
               )}
 
@@ -419,7 +419,7 @@ function HomeContent({ homeImageUrl }: { homeImageUrl: string | null }) {
         <img
           src={homeImageUrl || "/lOGO_PRETO_SEM_FUNDO.png"}
           alt="Logo"
-          className="w-[400px] sm:w-[500px] max-w-full mx-auto mb-6 sm:mb-8 object-contain"
+          className="w-[600px] sm:w-[800px] max-w-full mx-auto mb-6 sm:mb-8 object-contain"
         />
         <p className="text-gray-600 text-base sm:text-lg">
           Bem-vindo ao Sistema de Gestão
