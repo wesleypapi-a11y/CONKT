@@ -9,7 +9,7 @@ import {
   BarChart3,
   Settings
 } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import type { Work } from '../../types/work';
 import BankAccountsManager from './BankAccountsManager';
@@ -68,11 +68,11 @@ export default function FinanceManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg" style={{ backgroundColor: `${conktColors.primary.blue}15` }}>
-            <DollarSign className="w-8 h-8" style={{ color: conktColors.primary.blue }} />
+          <div className="p-3 rounded-lg" style={{ backgroundColor: `${arcoColors.primary.blue}15` }}>
+            <DollarSign className="w-8 h-8" style={{ color: arcoColors.primary.blue }} />
           </div>
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: conktColors.primary.blue }}>
+            <h1 className="text-3xl font-bold" style={{ color: arcoColors.primary.blue }}>
               Financeiro
             </h1>
             <p className="text-gray-600">Gestão financeira completa</p>
@@ -114,8 +114,8 @@ export default function FinanceManager() {
                   style={
                     activeTab === tab.id
                       ? {
-                          color: conktColors.primary.blue,
-                          borderBottomColor: conktColors.primary.blue,
+                          color: arcoColors.primary.blue,
+                          borderBottomColor: arcoColors.primary.blue,
                         }
                       : {}
                   }

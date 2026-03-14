@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, Calendar as CalendarIcon, Check, Upload, Activity, Edit, GripVertical, X, ArrowLeft } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { Plus, Trash2, Calendar as CalendarIcon, Check, Upload, Activity, CreditCard as Edit, GripVertical, X, ArrowLeft } from 'lucide-react';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Schedule, ScheduleTask, ScheduleHoliday } from '../../types/schedule';
 import {
@@ -667,13 +667,13 @@ export default function ScheduleTaskTable({
           <div className="flex items-center justify-center gap-2">
             {isMacro ? (
               <>
-                <span className="px-2 py-1 text-xs font-bold rounded text-white" style={{ backgroundColor: conktColors.primary.blue }}>
+                <span className="px-2 py-1 text-xs font-bold rounded text-white" style={{ backgroundColor: arcoColors.primary.blue }}>
                   MACRO
                 </span>
                 <button
                   onClick={() => handleAddTask(false, task.id)}
                   className="p-1 hover:text-blue-800"
-                  style={{ color: conktColors.primary.blue }}
+                  style={{ color: arcoColors.primary.blue }}
                   title="Adicionar Subtarefa"
                 >
                   <Plus className="w-4 h-4" />
@@ -728,7 +728,7 @@ export default function ScheduleTaskTable({
                 className="h-full rounded-full transition-all duration-300 flex items-center justify-center"
                 style={{
                   width: `${calculatePlannedProgress(task)}%`,
-                  backgroundColor: conktColors.primary.blue
+                  backgroundColor: arcoColors.primary.blue
                 }}
               >
                 {calculatePlannedProgress(task) > 15 && (
@@ -1161,7 +1161,7 @@ export default function ScheduleTaskTable({
           <button
             onClick={onBack}
             className="px-4 py-2 rounded-md font-medium flex items-center gap-2 hover:opacity-90 transition-opacity text-white"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
             title="Voltar"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -1190,7 +1190,7 @@ export default function ScheduleTaskTable({
           onClick={() => fileInputRef.current?.click()}
           disabled={importing}
           className="px-4 py-2 rounded-md font-medium flex items-center gap-2 text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Upload className="w-4 h-4" />
           {importing ? 'Importando...' : 'Importar Excel'}
@@ -1234,7 +1234,7 @@ export default function ScheduleTaskTable({
           <button
             onClick={runSimulation}
             className="px-3 py-1 text-xs rounded-md font-medium hover:opacity-90 transition-opacity flex items-center gap-1"
-            style={{ backgroundColor: conktColors.primary.blue, color: '#000000' }}
+            style={{ backgroundColor: arcoColors.primary.blue, color: '#000000' }}
           >
             <Activity className="w-3 h-3" />
             Simular
@@ -1307,7 +1307,7 @@ export default function ScheduleTaskTable({
           <div className="flex items-start gap-3">
             <div className="flex items-center gap-2" style={{ minWidth: '90px' }}>
               <span className="text-xs font-semibold text-gray-700">Planejado:</span>
-              <span className="text-xs font-bold" style={{ color: conktColors.primary.blue }}>
+              <span className="text-xs font-bold" style={{ color: arcoColors.primary.blue }}>
                 {simulationProgress !== null ? `${simulationProgress}%` : '-'}
               </span>
             </div>
@@ -1316,7 +1316,7 @@ export default function ScheduleTaskTable({
                 {simulationProgress !== null && (
                   <div
                     className="h-6 rounded-full transition-all"
-                    style={{ width: `${simulationProgress}%`, backgroundColor: conktColors.primary.blue }}
+                    style={{ width: `${simulationProgress}%`, backgroundColor: arcoColors.primary.blue }}
                   />
                 )}
               </div>

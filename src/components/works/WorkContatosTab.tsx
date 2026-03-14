@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { WorkContact } from '../../types/work';
 
 interface WorkContatosTabProps {
@@ -157,7 +157,7 @@ export default function WorkContatosTab({ workId}: WorkContatosTabProps) {
         <button
           onClick={handleAddContact}
           className="px-4 py-2 text-white rounded-md hover:opacity-90 transition-all flex items-center gap-2"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Plus size={18} />
           Adicionar

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2, FileText, Download, FolderPlus, Folder, FolderOpen } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { SupplierAttachment, SupplierFolder } from '../../types/supplier';
 import { useAuth } from '../../contexts/AuthContext';
@@ -234,7 +234,7 @@ export default function SupplierAnexosTab({ supplierId }: SupplierAnexosTabProps
             <button
               onClick={() => setShowNewFolderInput(true)}
               className="p-1 hover:bg-gray-200 rounded transition-colors"
-              style={{ color: conktColors.primary.blue }}
+              style={{ color: arcoColors.primary.blue }}
               title="Nova Pasta"
             >
               <FolderPlus className="w-5 h-5" />
@@ -261,7 +261,7 @@ export default function SupplierAnexosTab({ supplierId }: SupplierAnexosTabProps
                     onClick={handleCreateFolder}
                     disabled={!newFolderName.trim()}
                     className="flex-1 px-2 py-1 text-xs text-white rounded hover:opacity-90 disabled:opacity-50"
-                    style={{ backgroundColor: conktColors.primary.blue }}
+                    style={{ backgroundColor: arcoColors.primary.blue }}
                   >
                     Criar
                   </button>
@@ -298,7 +298,7 @@ export default function SupplierAnexosTab({ supplierId }: SupplierAnexosTabProps
                   >
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       {selectedFolderId === folder.id ? (
-                        <FolderOpen className="w-4 h-4" style={{ color: conktColors.primary.blue }} />
+                        <FolderOpen className="w-4 h-4" style={{ color: arcoColors.primary.blue }} />
                       ) : (
                         <Folder className="w-4 h-4 text-gray-400" />
                       )}

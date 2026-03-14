@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, CheckCircle, XCircle, FileText, DollarSign, Trash2, Building2, Eye, Edit, Printer } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { ArrowLeft, Plus, CheckCircle, XCircle, FileText, DollarSign, Trash2, Building2, Eye, CreditCard as Edit, Printer } from 'lucide-react';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { PurchaseRequest, Quotation, PurchaseRequestItem } from '../../types/purchase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -94,7 +94,7 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
   return (
     <div className="bg-white rounded-lg border p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold" style={{ color: conktColors.primary.blue }}>
+        <h3 className="text-lg font-semibold" style={{ color: arcoColors.primary.blue }}>
           Mapa de Cotação - Comparação Detalhada
         </h3>
         <button
@@ -107,7 +107,7 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
             });
           }}
           className="px-4 py-2 rounded-md text-white flex items-center gap-2 hover:opacity-90"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Printer className="w-4 h-4" />
           Imprimir PDF
@@ -192,7 +192,7 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
                 {calculatePerfectBudget().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </td>
               {quotations.map(quot => (
-                <td key={quot.id} className="px-3 py-3 text-center border" style={{ color: conktColors.primary.blue }}>
+                <td key={quot.id} className="px-3 py-3 text-center border" style={{ color: arcoColors.primary.blue }}>
                   {quot.total_value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </td>
               ))}
@@ -1229,10 +1229,10 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
               className="p-2 hover:bg-gray-100 rounded-md transition-colors"
               title="Voltar"
             >
-              <ArrowLeft className="w-5 h-5" style={{ color: conktColors.primary.blue }} />
+              <ArrowLeft className="w-5 h-5" style={{ color: arcoColors.primary.blue }} />
             </button>
             <div>
-              <h2 className="text-xl font-semibold" style={{ color: conktColors.primary.blue }}>
+              <h2 className="text-xl font-semibold" style={{ color: arcoColors.primary.blue }}>
                 {selectedRequest.request_number}
               </h2>
               <p className="text-sm text-gray-600">{selectedRequest.work_name}</p>
@@ -1253,7 +1253,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
               <button
                 onClick={() => setShowComparison(true)}
                 className="px-4 py-2 rounded-md text-white flex items-center gap-2 hover:opacity-90"
-                style={{ backgroundColor: conktColors.primary.orange }}
+                style={{ backgroundColor: arcoColors.primary.orange }}
               >
                 <FileText className="w-4 h-4" />
                 Mapa de cotação
@@ -1273,7 +1273,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
         <div className="flex-1 overflow-auto p-6">
           {showAddQuotation || showEditQuotation ? (
             <div className="max-w-4xl mx-auto bg-white rounded-lg border p-6">
-              <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.primary.blue }}>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: arcoColors.primary.blue }}>
                 {showEditQuotation ? 'Editar Cotação' : 'Nova Cotação'}
               </h3>
 
@@ -1447,7 +1447,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
             />
           ) : (
             <div>
-              <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.primary.blue }}>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: arcoColors.primary.blue }}>
                 Cotações Recebidas
               </h3>
               {quotations.length === 0 ? (
@@ -1546,7 +1546,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
                                     handlePrintQuotation(quot.id);
                                   }}
                                   className="p-2 hover:bg-blue-50 rounded transition-colors"
-                                  style={{ color: conktColors.primary.blue }}
+                                  style={{ color: arcoColors.primary.blue }}
                                   title="Visualizar PDF"
                                 >
                                   <Eye className="w-4 h-4" />
@@ -1558,7 +1558,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
                                   }}
                                   disabled={isFrozen}
                                   className="p-2 hover:bg-blue-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                  style={{ color: conktColors.primary.blue }}
+                                  style={{ color: arcoColors.primary.blue }}
                                   title={isFrozen ? 'Cotação congelada' : 'Editar'}
                                 >
                                   <Edit className="w-4 h-4" />
@@ -1596,7 +1596,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
           onClick={onNavigateHome}
           className="mb-3 px-4 py-2 rounded-md font-medium text-white flex items-center gap-2 hover:opacity-90 transition-opacity"
           style={{
-            backgroundColor: conktColors.primary.blue
+            backgroundColor: arcoColors.primary.blue
           }}
           title="Voltar"
         >
@@ -1763,7 +1763,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
                           setSelectedRequest(req);
                         }}
                         className="p-2 hover:bg-blue-50 rounded transition-colors"
-                        style={{ color: conktColors.primary.blue }}
+                        style={{ color: arcoColors.primary.blue }}
                         title="Ver Cotações"
                       >
                         <FileText className="w-4 h-4" />

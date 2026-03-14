@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, Calendar, Check } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Schedule, ScheduleHoliday } from '../../types/schedule';
 
@@ -99,7 +99,7 @@ export default function ScheduleSettings({ schedule, holidays, onUpdate }: Sched
               onChange={handleToggleWeekends}
               disabled={saving}
               className="w-4 h-4 rounded border-gray-300 focus:ring-2"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <label htmlFor="considerWeekends" className="ml-3 text-sm font-medium text-gray-700">
               Considerar finais de semana nos cálculos

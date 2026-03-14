@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { SupplierCategory, SUPPLIER_CATEGORIES } from '../../types/supplier';
 
@@ -85,7 +85,7 @@ export default function SupplierCategoriasTab({ supplierId }: SupplierCategorias
   return (
     <div className="space-y-4 relative">
       <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <h3 className="text-base font-semibold mb-4" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-base font-semibold mb-4" style={{ color: arcoColors.text.primary }}>
           Categorias de fornecimento
         </h3>
         <p className="text-sm text-gray-600 mb-4">
@@ -104,7 +104,7 @@ export default function SupplierCategoriasTab({ supplierId }: SupplierCategorias
                 onChange={() => handleToggleCategory(category)}
                 disabled={loading}
                 className="w-5 h-5 cursor-pointer"
-                style={{ accentColor: conktColors.primary.blue }}
+                style={{ accentColor: arcoColors.primary.blue }}
               />
               <span className="text-sm font-medium text-gray-700">{category}</span>
             </label>

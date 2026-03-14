@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { SupplierBankInfo } from '../../types/supplier';
 
@@ -162,7 +162,7 @@ export default function SupplierDadosBancariosTab({ supplierId }: SupplierDadosB
           onClick={handleSave}
           disabled={loading}
           className="px-6 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           {loading ? 'Salvando...' : 'Salvar dados bancários'}
         </button>

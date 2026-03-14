@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, FileText, Home, DollarSign } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { Plus, Search, CreditCard as Edit, Trash2, FileText, Home, DollarSign } from 'lucide-react';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Contract } from '../../types/contract';
 import { Client } from '../../types/client';
@@ -227,7 +227,7 @@ export default function ContractsList({ onNavigateHome }: ContractsListProps) {
         onClick={onNavigateHome}
         className="absolute top-0 right-0 z-10 p-2 sm:p-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
         style={{
-          backgroundColor: conktColors.primary.blue,
+          backgroundColor: arcoColors.primary.blue,
           color: '#000000'
         }}
         title="Voltar ao Início"

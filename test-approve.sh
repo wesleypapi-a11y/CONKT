@@ -13,7 +13,7 @@ echo "1️⃣ Fazendo login..."
 LOGIN_RESPONSE=$(curl -s -X POST "${SUPABASE_URL}/auth/v1/token?grant_type=password" \
   -H "Content-Type: application/json" \
   -H "apikey: ${SUPABASE_ANON_KEY}" \
-  -d '{"email":"adm@conkt.com","password":"Eneas@001"}')
+  -d '{"email":"adm@arco.com","password":"Eneas@001"}')
 
 ACCESS_TOKEN=$(echo "$LOGIN_RESPONSE" | grep -o '"access_token":"[^"]*' | cut -d'"' -f4)
 

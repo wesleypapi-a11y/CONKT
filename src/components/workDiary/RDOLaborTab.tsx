@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Save } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { WorkDiaryLabor } from '../../types/workDiary';
 
@@ -100,7 +100,7 @@ export default function RDOLaborTab({ rdoId }: RDOLaborTabProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: arcoColors.text.primary }}>
           Mão de obra
         </h3>
 
@@ -120,7 +120,7 @@ export default function RDOLaborTab({ rdoId }: RDOLaborTabProps) {
             onClick={handleSaveNotes}
             disabled={saving}
             className="mt-2 px-4 py-2 rounded-md text-white font-medium flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
           >
             <Save className="w-4 h-4" />
             {saving ? 'Salvando...' : 'Salvar Observações'}
@@ -169,7 +169,7 @@ export default function RDOLaborTab({ rdoId }: RDOLaborTabProps) {
             <button
               onClick={addLabor}
               className="px-4 py-2 rounded-md text-white font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: conktColors.primary.blue }}
+              style={{ backgroundColor: arcoColors.primary.blue }}
             >
               <Plus className="w-4 h-4" />
               Adicionar

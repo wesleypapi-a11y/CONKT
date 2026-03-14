@@ -8,7 +8,7 @@ SELECT
   empresa_id,
   'Usuário existe' as status
 FROM profiles
-WHERE email = 'wesley@conkt.com.br';
+WHERE email = 'wesley@arco.com.br';
 
 -- 2. Verificar se existem policies para INSERT
 SELECT

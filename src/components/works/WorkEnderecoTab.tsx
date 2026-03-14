@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Work, BillingAddressType } from '../../types/work';
 import { Client } from '../../types/client';
@@ -80,14 +80,14 @@ export default function WorkEnderecoTab({ work, onChange}: WorkEnderecoTabProps)
     <div className="space-y-6 relative">
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-semibold" style={{ color: conktColors.text.primary }}>
+          <h3 className="text-base font-semibold" style={{ color: arcoColors.text.primary }}>
             Endereço da obra
           </h3>
           {client && (
             <button
               onClick={handleCopyClientAddress}
               className="text-sm px-3 py-1 rounded hover:bg-gray-100 transition-colors"
-              style={{ color: conktColors.primary.blue }}
+              style={{ color: arcoColors.primary.blue }}
             >
               Copiar endereço do cliente
             </button>
@@ -168,7 +168,7 @@ export default function WorkEnderecoTab({ work, onChange}: WorkEnderecoTabProps)
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-base font-semibold mb-3" style={{ color: arcoColors.text.primary }}>
           Endereço de cobrança
         </h3>
 
@@ -185,7 +185,7 @@ export default function WorkEnderecoTab({ work, onChange}: WorkEnderecoTabProps)
                 checked={work.billing_address_type === 'obra'}
                 onChange={(e) => handleBillingAddressTypeChange(e.target.value as BillingAddressType)}
                 className="w-4 h-4"
-                style={{ accentColor: conktColors.primary.blue }}
+                style={{ accentColor: arcoColors.primary.blue }}
               />
               <span className="text-sm text-gray-700">Obra</span>
             </label>
@@ -197,7 +197,7 @@ export default function WorkEnderecoTab({ work, onChange}: WorkEnderecoTabProps)
                 checked={work.billing_address_type === 'cliente'}
                 onChange={(e) => handleBillingAddressTypeChange(e.target.value as BillingAddressType)}
                 className="w-4 h-4"
-                style={{ accentColor: conktColors.primary.blue }}
+                style={{ accentColor: arcoColors.primary.blue }}
               />
               <span className="text-sm text-gray-700">Cliente</span>
             </label>
@@ -209,7 +209,7 @@ export default function WorkEnderecoTab({ work, onChange}: WorkEnderecoTabProps)
                 checked={work.billing_address_type === 'empresa'}
                 onChange={(e) => handleBillingAddressTypeChange(e.target.value as BillingAddressType)}
                 className="w-4 h-4"
-                style={{ accentColor: conktColors.primary.blue }}
+                style={{ accentColor: arcoColors.primary.blue }}
               />
               <span className="text-sm text-gray-700">Empresa</span>
             </label>
@@ -221,7 +221,7 @@ export default function WorkEnderecoTab({ work, onChange}: WorkEnderecoTabProps)
                 checked={work.billing_address_type === 'outro'}
                 onChange={(e) => handleBillingAddressTypeChange(e.target.value as BillingAddressType)}
                 className="w-4 h-4"
-                style={{ accentColor: conktColors.primary.blue }}
+                style={{ accentColor: arcoColors.primary.blue }}
               />
               <span className="text-sm text-gray-700">Outro</span>
             </label>

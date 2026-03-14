@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Check, HelpCircle } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { ClientContact } from '../../types/client';
 
@@ -193,7 +193,7 @@ export default function ClientContatosTab({ clientId}: ClientContatosTabProps) {
           onClick={handleAddContact}
           disabled={loading || !newContact.name.trim()}
           className="px-4 py-2 rounded-md text-white font-medium flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Plus className="w-4 h-4" />
           Adicionar
@@ -259,8 +259,8 @@ export default function ClientContatosTab({ clientId}: ClientContatosTabProps) {
                         disabled={loading}
                         className="inline-flex items-center justify-center w-6 h-6 rounded border-2 hover:bg-gray-50 transition-colors disabled:opacity-50"
                         style={{
-                          borderColor: contact.has_access ? conktColors.primary.blue : '#d1d5db',
-                          backgroundColor: contact.has_access ? conktColors.primary.blue : 'white'
+                          borderColor: contact.has_access ? arcoColors.primary.blue : '#d1d5db',
+                          backgroundColor: contact.has_access ? arcoColors.primary.blue : 'white'
                         }}
                       >
                         {contact.has_access && <Check className="w-4 h-4 text-gray-900" />}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Users, Plus, CreditCard as Edit2, Trash2, X, Save, Shield, User as UserIcon, Mail, Lock, Eye, EyeOff, CheckCircle, XCircle, Camera } from 'lucide-react';
-import { conktColors } from '../styles/colors';
+import { arcoColors } from '../styles/colors';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -391,15 +391,15 @@ export default function UserManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Users size={32} style={{ color: conktColors.primary.blue }} />
-          <h2 className="text-2xl font-bold" style={{ color: conktColors.text.primary }}>
+          <Users size={32} style={{ color: arcoColors.primary.blue }} />
+          <h2 className="text-2xl font-bold" style={{ color: arcoColors.text.primary }}>
             Gerenciamento de Usuários
           </h2>
         </div>
         <button
           onClick={() => handleOpenModal()}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Plus size={20} />
           Novo Usuário
@@ -445,8 +445,8 @@ export default function UserManagement() {
                             className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: conktColors.primary.blue + '20' }}>
-                            <UserIcon size={20} style={{ color: conktColors.primary.blue }} />
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: arcoColors.primary.blue + '20' }}>
+                            <UserIcon size={20} style={{ color: arcoColors.primary.blue }} />
                           </div>
                         )}
                         <div>
@@ -494,7 +494,7 @@ export default function UserManagement() {
                         <button
                           onClick={() => handleOpenModal(userItem)}
                           className="p-2 rounded-lg hover:bg-blue-50 transition-colors"
-                          style={{ color: conktColors.primary.blue }}
+                          style={{ color: arcoColors.primary.blue }}
                           title="Editar"
                         >
                           <Edit2 size={16} />
@@ -557,7 +557,7 @@ export default function UserManagement() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     className="absolute bottom-0 right-0 p-2 rounded-full text-white shadow-lg hover:opacity-90 transition-opacity"
-                    style={{ backgroundColor: conktColors.primary.blue }}
+                    style={{ backgroundColor: arcoColors.primary.blue }}
                   >
                     <Camera size={20} />
                   </button>
@@ -708,7 +708,7 @@ export default function UserManagement() {
                         checked={formData.is_active}
                         onChange={() => setFormData({ ...formData, is_active: true })}
                         className="w-4 h-4"
-                        style={{ accentColor: conktColors.primary.blue }}
+                        style={{ accentColor: arcoColors.primary.blue }}
                       />
                       <span className="text-sm text-gray-700">Ativo</span>
                     </label>
@@ -718,7 +718,7 @@ export default function UserManagement() {
                         checked={!formData.is_active}
                         onChange={() => setFormData({ ...formData, is_active: false })}
                         className="w-4 h-4"
-                        style={{ accentColor: conktColors.primary.blue }}
+                        style={{ accentColor: arcoColors.primary.blue }}
                       />
                       <span className="text-sm text-gray-700">Inativo</span>
                     </label>
@@ -738,7 +738,7 @@ export default function UserManagement() {
                 onClick={handleSave}
                 disabled={saving}
                 className="flex items-center gap-2 px-6 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-                style={{ backgroundColor: conktColors.primary.blue }}
+                style={{ backgroundColor: arcoColors.primary.blue }}
               >
                 <Save size={18} />
                 {saving ? 'Salvando...' : 'Salvar'}

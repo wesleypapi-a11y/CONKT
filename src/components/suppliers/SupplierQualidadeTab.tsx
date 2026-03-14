@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { SupplierQuality } from '../../types/supplier';
 
@@ -180,7 +180,7 @@ export default function SupplierQualidadeTab({ supplierId }: SupplierQualidadeTa
           onClick={handleSave}
           disabled={loading}
           className="px-6 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           {loading ? 'Salvando...' : 'Salvar avaliação'}
         </button>

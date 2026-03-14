@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, CreditCard, Eye, EyeOff } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { Plus, CreditCard as Edit, Trash2, CreditCard, Eye, EyeOff } from 'lucide-react';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { BankAccount } from '../../types/financial';
 import { useAuth } from '../../contexts/AuthContext';
@@ -160,7 +160,7 @@ export default function BankAccountsManager() {
       <AlertComponent />
 
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold" style={{ color: conktColors.primary.blue }}>
+        <h2 className="text-xl font-semibold" style={{ color: arcoColors.primary.blue }}>
           Contas Bancárias
         </h2>
         <button
@@ -169,7 +169,7 @@ export default function BankAccountsManager() {
             setShowModal(true);
           }}
           className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Plus className="w-5 h-5" />
           Nova Conta
@@ -187,7 +187,7 @@ export default function BankAccountsManager() {
             <div key={account.id} className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" style={{ color: conktColors.primary.blue }} />
+                  <CreditCard className="w-5 h-5" style={{ color: arcoColors.primary.blue }} />
                   <h3 className="font-semibold text-gray-900">{account.name}</h3>
                 </div>
                 <span
@@ -224,7 +224,7 @@ export default function BankAccountsManager() {
                 )}
                 <div className="pt-2 border-t">
                   <span className="text-gray-600">Saldo Atual:</span>
-                  <div className="text-lg font-bold" style={{ color: conktColors.primary.blue }}>
+                  <div className="text-lg font-bold" style={{ color: arcoColors.primary.blue }}>
                     {formatCurrency(account.current_balance)}
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export default function BankAccountsManager() {
                 <button
                   onClick={() => handleEdit(account)}
                   className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm border rounded hover:bg-gray-50"
-                  style={{ color: conktColors.primary.blue, borderColor: conktColors.primary.blue }}
+                  style={{ color: arcoColors.primary.blue, borderColor: arcoColors.primary.blue }}
                 >
                   <Edit className="w-4 h-4" />
                   Editar
@@ -255,7 +255,7 @@ export default function BankAccountsManager() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
-              <h2 className="text-xl font-semibold" style={{ color: conktColors.primary.blue }}>
+              <h2 className="text-xl font-semibold" style={{ color: arcoColors.primary.blue }}>
                 {editingAccount ? 'Editar Conta Bancária' : 'Nova Conta Bancária'}
               </h2>
             </div>
@@ -382,7 +382,7 @@ export default function BankAccountsManager() {
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2 text-white rounded-lg"
-                  style={{ backgroundColor: conktColors.primary.blue }}
+                  style={{ backgroundColor: arcoColors.primary.blue }}
                 >
                   {editingAccount ? 'Atualizar' : 'Criar'}
                 </button>

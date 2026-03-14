@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { ClientPermission, AVAILABLE_MODULES } from '../../types/client';
 
@@ -187,8 +187,8 @@ export default function ClientAcessosTab({ clientId}: ClientAcessosTabProps) {
                 <div
                   className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
                   style={{
-                    borderColor: selectAllPortal ? conktColors.primary.blue : '#d1d5db',
-                    backgroundColor: selectAllPortal ? conktColors.primary.blue : 'white'
+                    borderColor: selectAllPortal ? arcoColors.primary.blue : '#d1d5db',
+                    backgroundColor: selectAllPortal ? arcoColors.primary.blue : 'white'
                   }}
                 >
                   {selectAllPortal && <Check className="w-4 h-4 text-gray-900" />}
@@ -217,8 +217,8 @@ export default function ClientAcessosTab({ clientId}: ClientAcessosTabProps) {
                           disabled={loading}
                           className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors disabled:opacity-50"
                           style={{
-                            borderColor: isChecked ? conktColors.primary.blue : '#d1d5db',
-                            backgroundColor: isChecked ? conktColors.primary.blue : 'white'
+                            borderColor: isChecked ? arcoColors.primary.blue : '#d1d5db',
+                            backgroundColor: isChecked ? arcoColors.primary.blue : 'white'
                           }}
                         >
                           {isChecked && <Check className="w-4 h-4 text-gray-900" />}
@@ -246,8 +246,8 @@ export default function ClientAcessosTab({ clientId}: ClientAcessosTabProps) {
               <div
                 className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
                 style={{
-                  borderColor: selectAllMobile ? conktColors.primary.blue : '#d1d5db',
-                  backgroundColor: selectAllMobile ? conktColors.primary.blue : 'white'
+                  borderColor: selectAllMobile ? arcoColors.primary.blue : '#d1d5db',
+                  backgroundColor: selectAllMobile ? arcoColors.primary.blue : 'white'
                 }}
               >
                 {selectAllMobile && <Check className="w-4 h-4 text-gray-900" />}
@@ -276,8 +276,8 @@ export default function ClientAcessosTab({ clientId}: ClientAcessosTabProps) {
                         disabled={loading}
                         className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors disabled:opacity-50"
                         style={{
-                          borderColor: isChecked ? conktColors.primary.blue : '#d1d5db',
-                          backgroundColor: isChecked ? conktColors.primary.blue : 'white'
+                          borderColor: isChecked ? arcoColors.primary.blue : '#d1d5db',
+                          backgroundColor: isChecked ? arcoColors.primary.blue : 'white'
                         }}
                       >
                         {isChecked && <Check className="w-4 h-4 text-gray-900" />}

@@ -1,4 +1,4 @@
-import { conktColors } from '../styles/colors';
+import { arcoColors } from '../styles/colors';
 
 export default function PlanosPage() {
   return (
@@ -8,7 +8,7 @@ export default function PlanosPage() {
           <div className="mb-8">
             <img
               src="/logo_conkt-removebg-preview.png"
-              alt="CONKT Logo"
+              alt="ARCO Logo"
               className="h-24 mx-auto mb-6"
             />
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -23,7 +23,7 @@ export default function PlanosPage() {
             <a
               href="/"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-all hover:opacity-90"
-              style={{ backgroundColor: conktColors.sidebar.main }}
+              style={{ backgroundColor: arcoColors.sidebar.main }}
             >
               Voltar para o Login
             </a>

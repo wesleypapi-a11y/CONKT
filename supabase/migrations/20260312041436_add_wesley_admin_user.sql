@@ -6,7 +6,7 @@
   
   Credenciais:
   - Email: wesleypapi@gmail.com
-  - Senha: Conkt@2024
+  - Senha: Arco@2024
   - Role: admin
 */
 
@@ -40,7 +40,7 @@ BEGIN
       user_id,
       '00000000-0000-0000-0000-000000000000',
       'wesleypapi@gmail.com',
-      crypt('Conkt@2024', gen_salt('bf')),
+      crypt('Arco@2024', gen_salt('bf')),
       NOW(),
       NOW(),
       NOW(),

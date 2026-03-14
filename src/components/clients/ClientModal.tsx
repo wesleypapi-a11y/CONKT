@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Client } from '../../types/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -190,7 +190,7 @@ export default function ClientModal({ isOpen, onClose, clientId, onSave, onNavig
                     ? 'text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
-                style={activeTab === tab.id ? { backgroundColor: conktColors.primary.blue } : {}}
+                style={activeTab === tab.id ? { backgroundColor: arcoColors.primary.blue } : {}}
               >
                 {tab.label}
               </button>
@@ -231,7 +231,7 @@ export default function ClientModal({ isOpen, onClose, clientId, onSave, onNavig
               checked={client.active}
               onChange={(e) => handleClientChange({ active: e.target.checked })}
               className="w-4 h-4 rounded"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm font-medium text-gray-700">Ativo</span>
           </label>
@@ -240,7 +240,7 @@ export default function ClientModal({ isOpen, onClose, clientId, onSave, onNavig
             onClick={handleSave}
             disabled={saving || !client.name?.trim()}
             className="px-6 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
           >
             {saving ? 'Salvando...' : 'Salvar'}
           </button>

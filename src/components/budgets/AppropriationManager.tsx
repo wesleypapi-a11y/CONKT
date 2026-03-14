@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Eye, CreditCard as Edit2, RefreshCw } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { useAlert } from '../../hooks/useAlert';
 
@@ -89,7 +89,7 @@ function PurchaseDetailModal({ isOpen, onClose, title, purchases, loading, onRea
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="px-6 py-4 border-b flex items-center justify-between" style={{ backgroundColor: conktColors.primary.blue }}>
+        <div className="px-6 py-4 border-b flex items-center justify-between" style={{ backgroundColor: arcoColors.primary.blue }}>
           <div>
             <h3 className="text-xl font-bold text-white">Detalhamento de Compras</h3>
             <p className="text-sm text-white text-opacity-90 mt-1">{title}</p>
@@ -105,7 +105,7 @@ function PurchaseDetailModal({ isOpen, onClose, title, purchases, loading, onRea
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <RefreshCw className="w-8 h-8 animate-spin" style={{ color: conktColors.primary.blue }} />
+              <RefreshCw className="w-8 h-8 animate-spin" style={{ color: arcoColors.primary.blue }} />
               <span className="ml-3 text-gray-600">Carregando compras...</span>
             </div>
           ) : purchases.length === 0 ? (
@@ -141,7 +141,7 @@ function PurchaseDetailModal({ isOpen, onClose, title, purchases, loading, onRea
                       <button
                         onClick={handleBulkReallocation}
                         className="px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
-                        style={{ backgroundColor: conktColors.primary.blue }}
+                        style={{ backgroundColor: arcoColors.primary.blue }}
                       >
                         <Edit2 className="w-4 h-4" />
                         Realocar Selecionados
@@ -154,14 +154,14 @@ function PurchaseDetailModal({ isOpen, onClose, title, purchases, loading, onRea
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50">
-                    <tr className="border-b-2" style={{ borderColor: conktColors.primary.blue }}>
+                    <tr className="border-b-2" style={{ borderColor: arcoColors.primary.blue }}>
                       <th className="px-3 py-3 text-center font-bold text-gray-700 w-12">
                         <input
                           type="checkbox"
                           checked={selectedIds.size === purchases.length && purchases.length > 0}
                           onChange={toggleSelectAll}
                           className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-                          style={{ accentColor: conktColors.primary.blue }}
+                          style={{ accentColor: arcoColors.primary.blue }}
                         />
                       </th>
                       <th className="px-3 py-3 text-left font-bold text-gray-700">Pedido</th>
@@ -187,7 +187,7 @@ function PurchaseDetailModal({ isOpen, onClose, title, purchases, loading, onRea
                             checked={selectedIds.has(purchase.id)}
                             onChange={() => toggleSelect(purchase.id)}
                             className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-                            style={{ accentColor: conktColors.primary.blue }}
+                            style={{ accentColor: arcoColors.primary.blue }}
                           />
                         </td>
                         <td className="px-3 py-3 font-medium text-gray-900">{purchase.order_number}</td>
@@ -215,7 +215,7 @@ function PurchaseDetailModal({ isOpen, onClose, title, purchases, loading, onRea
                               onClick={() => onReallocation(purchase.id)}
                               className="p-1.5 rounded hover:bg-blue-100 transition-colors"
                               title="Realocar centro de custo"
-                              style={{ color: conktColors.primary.blue }}
+                              style={{ color: arcoColors.primary.blue }}
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
@@ -234,7 +234,7 @@ function PurchaseDetailModal({ isOpen, onClose, title, purchases, loading, onRea
           <button
             onClick={onClose}
             className="px-6 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
           >
             Fechar
           </button>
@@ -375,7 +375,7 @@ function ReallocationModal({ isOpen, onClose, purchaseRealizedId, currentPhaseId
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         <div className="p-6">
-          <h3 className="text-xl font-bold mb-4" style={{ color: conktColors.primary.blue }}>
+          <h3 className="text-xl font-bold mb-4" style={{ color: arcoColors.primary.blue }}>
             Realocar Centro de Custo
           </h3>
 
@@ -441,7 +441,7 @@ function ReallocationModal({ isOpen, onClose, purchaseRealizedId, currentPhaseId
               className="px-4 py-2 rounded-md text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:opacity-90"
               style={{
                 backgroundColor: selectedPhaseId && !loading
-                  ? conktColors.primary.blue
+                  ? arcoColors.primary.blue
                   : undefined
               }}
             >
@@ -579,7 +579,7 @@ function BulkReallocationModal({ isOpen, onClose, purchaseRealizedIds, workId, o
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         <div className="p-6">
-          <h3 className="text-xl font-bold mb-4" style={{ color: conktColors.primary.blue }}>
+          <h3 className="text-xl font-bold mb-4" style={{ color: arcoColors.primary.blue }}>
             Realocar {purchaseRealizedIds.length} {purchaseRealizedIds.length === 1 ? 'Item' : 'Itens'}
           </h3>
 
@@ -645,7 +645,7 @@ function BulkReallocationModal({ isOpen, onClose, purchaseRealizedIds, workId, o
               className="px-4 py-2 rounded-md text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:opacity-90"
               style={{
                 backgroundColor: selectedPhaseId && !loading
-                  ? conktColors.primary.blue
+                  ? arcoColors.primary.blue
                   : undefined
               }}
             >
@@ -1071,7 +1071,7 @@ export default function AppropriationManager() {
     <div className="space-y-6">
       <div className="bg-white rounded-lg border shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold" style={{ color: conktColors.primary.blue }}>
+          <h2 className="text-2xl font-bold" style={{ color: arcoColors.primary.blue }}>
             Apropriação - Espelho do Orçamento
           </h2>
           {selectedWorkId && (
@@ -1079,7 +1079,7 @@ export default function AppropriationManager() {
               onClick={loadBudgetData}
               disabled={loading}
               className="flex items-center gap-2 px-4 py-2 rounded-md text-white hover:opacity-90 disabled:opacity-50"
-              style={{ backgroundColor: conktColors.primary.blue }}
+              style={{ backgroundColor: arcoColors.primary.blue }}
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Atualizar
@@ -1242,7 +1242,7 @@ export default function AppropriationManager() {
                             }}
                             className="p-1.5 rounded hover:bg-blue-100 transition-colors inline-flex items-center gap-1"
                             title="Ver compras alocadas"
-                            style={{ color: conktColors.primary.blue }}
+                            style={{ color: arcoColors.primary.blue }}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -1258,7 +1258,7 @@ export default function AppropriationManager() {
 
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <RefreshCw className="w-8 h-8 animate-spin" style={{ color: conktColors.primary.blue }} />
+            <RefreshCw className="w-8 h-8 animate-spin" style={{ color: arcoColors.primary.blue }} />
             <span className="ml-3 text-gray-600">Carregando dados do orçamento...</span>
           </div>
         )}

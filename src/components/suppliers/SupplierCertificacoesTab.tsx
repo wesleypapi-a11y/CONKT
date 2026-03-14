@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2, FileText, Download } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { SupplierCertification } from '../../types/supplier';
 import { useAuth } from '../../contexts/AuthContext';

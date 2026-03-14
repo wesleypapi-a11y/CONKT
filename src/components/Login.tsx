@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Upload, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { conktColors } from '../styles/colors';
+import { arcoColors } from '../styles/colors';
 
 export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -84,7 +84,7 @@ export default function Login() {
     <div className="min-h-screen flex">
       <div
         className="flex-1 flex items-center justify-center p-8"
-        style={{ backgroundColor: conktColors.neutral.gray50 }}
+        style={{ backgroundColor: arcoColors.neutral.gray50 }}
       >
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl p-6">
@@ -93,7 +93,7 @@ export default function Login() {
                 <div className="mb-3">
                   <img
                     src="/logo_conkt-removebg-preview.png"
-                    alt="CONKT Logo"
+                    alt="ARCO Logo"
                     className="h-20 mx-auto"
                   />
                 </div>
@@ -121,14 +121,14 @@ export default function Login() {
                       ) : (
                         <div
                           className="w-20 h-20 rounded-full flex items-center justify-center border-4 border-dashed border-gray-300"
-                          style={{ backgroundColor: conktColors.neutral.gray100 }}
+                          style={{ backgroundColor: arcoColors.neutral.gray100 }}
                         >
                           <User size={28} className="text-gray-400" />
                         </div>
                       )}
                       <div
                         className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center text-white shadow-lg"
-                        style={{ backgroundColor: conktColors.sidebar.main }}
+                        style={{ backgroundColor: arcoColors.sidebar.main }}
                       >
                         <Upload size={14} />
                       </div>
@@ -152,7 +152,7 @@ export default function Login() {
               {error && (
                 <div
                   className="p-4 rounded-lg text-sm text-white"
-                  style={{ backgroundColor: conktColors.status.error }}
+                  style={{ backgroundColor: arcoColors.status.error }}
                 >
                   {error}
                 </div>
@@ -161,7 +161,7 @@ export default function Login() {
               {success && (
                 <div
                   className="p-4 rounded-lg text-sm text-white"
-                  style={{ backgroundColor: conktColors.status.success }}
+                  style={{ backgroundColor: arcoColors.status.success }}
                 >
                   {success}
                 </div>
@@ -272,7 +272,7 @@ export default function Login() {
                 disabled={loading}
                 className="w-full py-2.5 px-4 rounded-lg text-white font-medium transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: conktColors.sidebar.main,
+                  backgroundColor: arcoColors.sidebar.main,
                 }}
               >
                 {loading ? 'Processando...' : isSignUp ? 'Criar Conta' : 'Entrar'}
@@ -284,7 +284,7 @@ export default function Login() {
                 <a
                   href="/planos"
                   className="text-sm font-medium transition-colors hover:underline"
-                  style={{ color: conktColors.sidebar.main }}
+                  style={{ color: arcoColors.sidebar.main }}
                 >
                   Clique aqui e conheça nossos planos
                 </a>
@@ -310,7 +310,7 @@ export default function Login() {
                     setAvatarPreview(null);
                   }}
                   className="text-sm font-medium transition-colors"
-                  style={{ color: conktColors.sidebar.main }}
+                  style={{ color: arcoColors.sidebar.main }}
                 >
                   Voltar para login
                 </button>

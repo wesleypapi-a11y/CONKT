@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { Work } from '../../types/work';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import WorkDadosTab from './WorkDadosTab';
 import WorkEnderecoTab from './WorkEnderecoTab';
 import WorkPastaTab from './WorkPastaTab';
@@ -113,7 +113,7 @@ export default function WorkModal({ work: initialWork, onClose, onNavigateHome, 
       <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
           <div>
-            <h2 className="text-xl font-bold" style={{ color: conktColors.primary.blue }}>
+            <h2 className="text-xl font-bold" style={{ color: arcoColors.primary.blue }}>
               {initialWork ? `Obra: ${work.name || 'Sem nome'}` : 'Nova Obra'}
               {clientName && (
                 <span className="text-sm font-normal text-gray-500 ml-2">
@@ -143,7 +143,7 @@ export default function WorkModal({ work: initialWork, onClose, onNavigateHome, 
                 }`}
                 style={
                   activeTab === tab.id
-                    ? { backgroundColor: conktColors.primary.blue }
+                    ? { backgroundColor: arcoColors.primary.blue }
                     : {}
                 }
               >
@@ -175,7 +175,7 @@ export default function WorkModal({ work: initialWork, onClose, onNavigateHome, 
                   handleChange({ status: e.target.checked ? 'em_andamento' : 'pre_obra' })
                 }
                 className="w-4 h-4"
-                style={{ accentColor: conktColors.primary.blue }}
+                style={{ accentColor: arcoColors.primary.blue }}
               />
               <span className="text-sm font-medium text-gray-700">Em andamento</span>
             </label>
@@ -192,7 +192,7 @@ export default function WorkModal({ work: initialWork, onClose, onNavigateHome, 
               onClick={handleSave}
               disabled={saving}
               className="px-6 py-2 text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50"
-              style={{ backgroundColor: conktColors.primary.blue }}
+              style={{ backgroundColor: arcoColors.primary.blue }}
             >
               {saving ? 'Salvando...' : 'Salvar'}
             </button>

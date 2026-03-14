@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FileText, Package, DollarSign } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import PurchaseRequestsList from './PurchaseRequestsList';
 import QuotationsManager from './QuotationsManager';
 import PurchaseOrdersManager from './PurchaseOrdersManager';
@@ -22,7 +22,7 @@ export default function PurchasesManager({ onNavigateHome }: PurchasesManagerPro
               ? 'text-gray-900'
               : 'text-gray-500 hover:text-gray-700 border-transparent'
           }`}
-          style={activeView === 'requests' ? { borderBottomColor: conktColors.primary.blue } : {}}
+          style={activeView === 'requests' ? { borderBottomColor: arcoColors.primary.blue } : {}}
         >
           <FileText className="w-4 h-4" />
           Solicitações
@@ -34,7 +34,7 @@ export default function PurchasesManager({ onNavigateHome }: PurchasesManagerPro
               ? 'text-gray-900'
               : 'text-gray-500 hover:text-gray-700 border-transparent'
           }`}
-          style={activeView === 'quotations' ? { borderBottomColor: conktColors.primary.blue } : {}}
+          style={activeView === 'quotations' ? { borderBottomColor: arcoColors.primary.blue } : {}}
         >
           <DollarSign className="w-4 h-4" />
           Cotações
@@ -46,7 +46,7 @@ export default function PurchasesManager({ onNavigateHome }: PurchasesManagerPro
               ? 'text-gray-900'
               : 'text-gray-500 hover:text-gray-700 border-transparent'
           }`}
-          style={activeView === 'orders' ? { borderBottomColor: conktColors.primary.blue } : {}}
+          style={activeView === 'orders' ? { borderBottomColor: arcoColors.primary.blue } : {}}
         >
           <Package className="w-4 h-4" />
           Pedidos

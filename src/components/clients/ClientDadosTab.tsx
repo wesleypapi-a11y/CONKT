@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, Camera } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Client, ClientType } from '../../types/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -119,7 +119,7 @@ export default function ClientDadosTab({ client, onChange}: ClientDadosTabProps)
                     });
                   }}
                   className="w-4 h-4"
-                  style={{ accentColor: conktColors.primary.blue }}
+                  style={{ accentColor: arcoColors.primary.blue }}
                 />
                 <span className="text-sm text-gray-700">Pessoa física</span>
               </label>
@@ -140,7 +140,7 @@ export default function ClientDadosTab({ client, onChange}: ClientDadosTabProps)
                     });
                   }}
                   className="w-4 h-4"
-                  style={{ accentColor: conktColors.primary.blue }}
+                  style={{ accentColor: arcoColors.primary.blue }}
                 />
                 <span className="text-sm text-gray-700">Pessoa jurídica</span>
               </label>
@@ -238,7 +238,7 @@ export default function ClientDadosTab({ client, onChange}: ClientDadosTabProps)
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>Contato</h3>
+        <h3 className="text-base font-semibold mb-3" style={{ color: arcoColors.text.primary }}>Contato</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
@@ -273,7 +273,7 @@ export default function ClientDadosTab({ client, onChange}: ClientDadosTabProps)
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>Endereço</h3>
+        <h3 className="text-base font-semibold mb-3" style={{ color: arcoColors.text.primary }}>Endereço</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>

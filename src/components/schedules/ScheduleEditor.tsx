@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Schedule, ScheduleTask, ScheduleHoliday } from '../../types/schedule';
 import { Work } from '../../types/work';
@@ -108,7 +108,7 @@ export default function ScheduleEditor({ scheduleId, onBack }: ScheduleEditorPro
           <button
             onClick={onBack}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            style={{ color: conktColors.primary.blue }}
+            style={{ color: arcoColors.primary.blue }}
             title="Voltar"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -131,7 +131,7 @@ export default function ScheduleEditor({ scheduleId, onBack }: ScheduleEditorPro
                 ? 'text-white'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
-            style={activeTab === 'cronograma' ? { backgroundColor: conktColors.primary.blue } : {}}
+            style={activeTab === 'cronograma' ? { backgroundColor: arcoColors.primary.blue } : {}}
           >
             Cronograma
           </button>
@@ -142,7 +142,7 @@ export default function ScheduleEditor({ scheduleId, onBack }: ScheduleEditorPro
                 ? 'text-white'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
-            style={activeTab === 'metas' ? { backgroundColor: conktColors.primary.blue } : {}}
+            style={activeTab === 'metas' ? { backgroundColor: arcoColors.primary.blue } : {}}
           >
             Metas
           </button>

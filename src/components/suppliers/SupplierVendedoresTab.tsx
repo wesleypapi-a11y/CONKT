@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { SupplierVendor } from '../../types/supplier';
 
@@ -173,7 +173,7 @@ export default function SupplierVendedoresTab({ supplierId }: SupplierVendedores
           onClick={handleAddVendor}
           disabled={loading || !newVendor.name.trim()}
           className="px-4 py-2 rounded-md text-white font-medium flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Plus className="w-4 h-4" />
           Adicionar

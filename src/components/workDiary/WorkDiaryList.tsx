@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Home, FileText, ArrowLeft, CreditCard as Edit2, Trash2, Camera, Video, Paperclip } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Work } from '../../types/work';
 import { WorkDiary } from '../../types/workDiary';
@@ -285,7 +285,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
           onClick={onNavigateHome}
           className="absolute top-0 right-0 z-10 p-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
           style={{
-            backgroundColor: conktColors.primary.blue,
+            backgroundColor: arcoColors.primary.blue,
             color: '#000000'
           }}
           title="Voltar ao Início"
@@ -300,7 +300,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
               onClick={handleBackToWorks}
               className="px-4 py-2 rounded-md font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
               style={{
-                backgroundColor: conktColors.neutral.gray300,
+                backgroundColor: arcoColors.neutral.gray300,
                 color: '#1F2937'
               }}
             >
@@ -318,7 +318,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
               onClick={handleEditWork}
               className="p-2 rounded-md hover:opacity-90 transition-opacity"
               style={{
-                backgroundColor: conktColors.primary.blue,
+                backgroundColor: arcoColors.primary.blue,
                 color: '#000000'
               }}
               title="Editar Obra"
@@ -360,7 +360,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
               onClick={handleAddRDO}
               className="px-4 py-2 rounded-md font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
               style={{
-                backgroundColor: conktColors.primary.green,
+                backgroundColor: arcoColors.primary.green,
                 color: '#000000'
               }}
             >
@@ -385,7 +385,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
                 onClick={handleAddRDO}
                 className="px-6 py-3 rounded-md font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
                 style={{
-                  backgroundColor: conktColors.primary.green,
+                  backgroundColor: arcoColors.primary.green,
                   color: '#000000'
                 }}
               >
@@ -543,7 +543,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
         onClick={onNavigateHome}
         className="absolute top-0 right-0 z-10 p-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
         style={{
-          backgroundColor: conktColors.primary.blue,
+          backgroundColor: arcoColors.primary.blue,
           color: '#000000'
         }}
         title="Voltar ao Início"
@@ -556,7 +556,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
           onClick={handleAddWork}
           className="px-4 py-2 rounded-md font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
           style={{
-            backgroundColor: conktColors.primary.blue,
+            backgroundColor: arcoColors.primary.blue,
             color: '#1F2937'
           }}
         >
@@ -568,7 +568,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
           onClick={handleAddRDO}
           className="px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-md"
           style={{
-            backgroundColor: conktColors.primary.green,
+            backgroundColor: arcoColors.primary.green,
             color: '#000000'
           }}
         >
@@ -607,7 +607,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
                     ) : (
                       <div
                         className="w-full h-full flex items-center justify-center text-white text-3xl font-bold cursor-pointer"
-                        style={{ backgroundColor: conktColors.primary.blue }}
+                        style={{ backgroundColor: arcoColors.primary.blue }}
                         onClick={() => handleWorkClick(work)}
                       >
                         {work.name.charAt(0).toUpperCase()}
@@ -626,7 +626,7 @@ export default function WorkDiaryList({ onNavigateHome }: WorkDiaryListProps) {
                         style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
                         title="Editar"
                       >
-                        <Edit2 className="w-4 h-4" style={{ color: conktColors.primary.blue }} />
+                        <Edit2 className="w-4 h-4" style={{ color: arcoColors.primary.blue }} />
                       </button>
 
                       <button

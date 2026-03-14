@@ -1,4 +1,4 @@
-export const conktColors = {
+export const arcoColors = {
   primary: {
     pink: '#E91E63',
     magenta: '#D81B60',

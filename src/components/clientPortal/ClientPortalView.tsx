@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, TrendingUp, Calendar, FileText, BarChart3, DollarSign, Building2 } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import ClientBudgetView from './ClientBudgetView';
 import ClientScheduleView from './ClientScheduleView';
@@ -121,7 +121,7 @@ export default function ClientPortalView({ access, onBack }: ClientPortalViewPro
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <Building2 className="w-8 h-8" style={{ color: conktColors.primary.blue }} />
+                <Building2 className="w-8 h-8" style={{ color: arcoColors.primary.blue }} />
                 <div>
                   <h1 className="text-2xl font-bold text-gray-800">{work?.name}</h1>
                   <p className="text-sm text-gray-600">

@@ -1,4 +1,4 @@
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { Work, Frequency, TrackingType, TaxAdminType } from '../../types/work';
 
 interface WorkConfiguracoesTabProps {
@@ -46,7 +46,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.billing_frequency === 'semanal'}
               onChange={(e) => onChange({ billing_frequency: e.target.value as Frequency })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Semanal</span>
           </label>
@@ -58,7 +58,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.billing_frequency === 'quinzenal'}
               onChange={(e) => onChange({ billing_frequency: e.target.value as Frequency })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Quinzenal</span>
           </label>
@@ -70,7 +70,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.billing_frequency === 'mensal'}
               onChange={(e) => onChange({ billing_frequency: e.target.value as Frequency })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Mensal</span>
           </label>
@@ -103,7 +103,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.planning_frequency === 'semanal'}
               onChange={(e) => onChange({ planning_frequency: e.target.value as Frequency })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Semanal</span>
           </label>
@@ -115,7 +115,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.planning_frequency === 'quinzenal'}
               onChange={(e) => onChange({ planning_frequency: e.target.value as Frequency })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Quinzenal</span>
           </label>
@@ -127,7 +127,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.planning_frequency === 'mensal'}
               onChange={(e) => onChange({ planning_frequency: e.target.value as Frequency })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Mensal</span>
           </label>
@@ -147,7 +147,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.tracking_type === 'custo'}
               onChange={(e) => onChange({ tracking_type: e.target.value as TrackingType })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Pelo custo</span>
           </label>
@@ -159,7 +159,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.tracking_type === 'valor_vendas'}
               onChange={(e) => onChange({ tracking_type: e.target.value as TrackingType })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Pelo valor de vendas+taxas</span>
           </label>
@@ -171,7 +171,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.tracking_type === 'ambos'}
               onChange={(e) => onChange({ tracking_type: e.target.value as TrackingType })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Ambos</span>
           </label>
@@ -194,7 +194,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
                     ? 'text-gray-900'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
-                style={isSelected ? { backgroundColor: conktColors.primary.blue } : {}}
+                style={isSelected ? { backgroundColor: arcoColors.primary.blue } : {}}
               >
                 {day}
               </button>
@@ -227,7 +227,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.client_access === true}
               onChange={() => onChange({ client_access: true })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Sim</span>
           </label>
@@ -239,7 +239,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.client_access === false}
               onChange={() => onChange({ client_access: false })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Não</span>
           </label>
@@ -259,7 +259,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.tax_admin_type === 'tipo_custo'}
               onChange={(e) => onChange({ tax_admin_type: e.target.value as TaxAdminType })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Por tipo de custo</span>
           </label>
@@ -271,7 +271,7 @@ export default function WorkConfiguracoesTab({ work, onChange}: WorkConfiguracoe
               checked={work.tax_admin_type === 'fase_obra'}
               onChange={(e) => onChange({ tax_admin_type: e.target.value as TaxAdminType })}
               className="w-4 h-4"
-              style={{ accentColor: conktColors.primary.blue }}
+              style={{ accentColor: arcoColors.primary.blue }}
             />
             <span className="text-sm text-gray-700">Por fase da obra</span>
           </label>

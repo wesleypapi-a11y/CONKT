@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { WorkDiary } from '../../types/workDiary';
 import { Work } from '../../types/work';
@@ -79,7 +79,7 @@ export default function RDODetailsTab({ rdo }: RDODetailsTabProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: arcoColors.text.primary }}>
           Detalhes do relatório
         </h3>
 

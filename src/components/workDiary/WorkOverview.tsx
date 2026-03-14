@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Image as ImageIcon, Video, Paperclip, ArrowLeft, CreditCard as Edit2, Trash2, AlertTriangle, MessageSquare, Printer } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { Work } from '../../types/work';
 import { supabase } from '../../lib/supabase';
 import { generateRDOPDF, generateBatchRDOPDF } from '../../utils/rdoPdfGenerator';
@@ -132,7 +132,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
             border: 'none',
             borderRadius: '8px',
             backgroundColor: '#4285f4',
-            color: conktColors.neutral.white,
+            color: arcoColors.neutral.white,
             fontSize: '14px',
             fontWeight: 600,
             cursor: 'pointer',
@@ -162,7 +162,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
             margin: '0 0 40px 0',
             fontSize: '28px',
             fontWeight: 700,
-            color: conktColors.neutral.gray900
+            color: arcoColors.neutral.gray900
           }}
         >
           Visão Geral
@@ -170,7 +170,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
 
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px', color: conktColors.neutral.gray400 }}>
+          <div style={{ textAlign: 'center', padding: '60px', color: arcoColors.neutral.gray400 }}>
             Carregando...
           </div>
         ) : (
@@ -189,7 +189,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                 background: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
                 borderRadius: '12px',
                 padding: '20px',
-                color: conktColors.neutral.white,
+                color: arcoColors.neutral.white,
                 boxShadow: '0 2px 8px rgba(168, 85, 247, 0.3)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -240,7 +240,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 borderRadius: '12px',
                 padding: '20px',
-                color: conktColors.neutral.white,
+                color: arcoColors.neutral.white,
                 boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -291,7 +291,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                 background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
                 borderRadius: '12px',
                 padding: '20px',
-                color: conktColors.neutral.white,
+                color: arcoColors.neutral.white,
                 boxShadow: '0 2px 8px rgba(249, 115, 22, 0.3)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -342,7 +342,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                 background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
                 borderRadius: '12px',
                 padding: '20px',
-                color: conktColors.neutral.white,
+                color: arcoColors.neutral.white,
                 boxShadow: '0 2px 8px rgba(236, 72, 153, 0.3)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -393,7 +393,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                 background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                 borderRadius: '12px',
                 padding: '20px',
-                color: conktColors.neutral.white,
+                color: arcoColors.neutral.white,
                 boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -444,7 +444,7 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                 background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                 borderRadius: '12px',
                 padding: '20px',
-                color: conktColors.neutral.white,
+                color: arcoColors.neutral.white,
                 boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
                 position: 'relative',
                 overflow: 'hidden',
@@ -495,18 +495,18 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                 style={{
                   marginTop: '32px',
                   padding: '24px',
-                  backgroundColor: conktColors.neutral.white,
+                  backgroundColor: arcoColors.neutral.white,
                   borderRadius: '12px',
-                  border: `1px solid ${conktColors.neutral.gray200}`,
+                  border: `1px solid ${arcoColors.neutral.gray200}`,
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
                 }}
               >
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: conktColors.neutral.gray900, marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: arcoColors.neutral.gray900, marginBottom: '16px' }}>
                 Filtrar por Período
               </h3>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
                 <div style={{ flex: '1', minWidth: '200px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: conktColors.neutral.gray700, marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: arcoColors.neutral.gray700, marginBottom: '8px' }}>
                     Data Inicial
                   </label>
                   <input
@@ -517,16 +517,16 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                       width: '100%',
                       padding: '10px 12px',
                       borderRadius: '8px',
-                      border: `1px solid ${conktColors.neutral.gray300}`,
+                      border: `1px solid ${arcoColors.neutral.gray300}`,
                       fontSize: '14px',
-                      color: conktColors.neutral.gray900,
+                      color: arcoColors.neutral.gray900,
                       outline: 'none',
                       transition: 'all 0.2s'
                     }}
                   />
                 </div>
                 <div style={{ flex: '1', minWidth: '200px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: conktColors.neutral.gray700, marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: arcoColors.neutral.gray700, marginBottom: '8px' }}>
                     Data Final
                   </label>
                   <input
@@ -537,9 +537,9 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                       width: '100%',
                       padding: '10px 12px',
                       borderRadius: '8px',
-                      border: `1px solid ${conktColors.neutral.gray300}`,
+                      border: `1px solid ${arcoColors.neutral.gray300}`,
                       fontSize: '14px',
-                      color: conktColors.neutral.gray900,
+                      color: arcoColors.neutral.gray900,
                       outline: 'none',
                       transition: 'all 0.2s'
                     }}
@@ -554,18 +554,18 @@ const WorkOverview: React.FC<WorkOverviewProps> = ({
                     padding: '10px 20px',
                     borderRadius: '8px',
                     border: 'none',
-                    backgroundColor: conktColors.neutral.gray100,
-                    color: conktColors.neutral.gray700,
+                    backgroundColor: arcoColors.neutral.gray100,
+                    color: arcoColors.neutral.gray700,
                     fontSize: '14px',
                     fontWeight: 600,
                     cursor: 'pointer',
                     transition: 'all 0.2s'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = conktColors.neutral.gray200;
+                    e.currentTarget.style.backgroundColor = arcoColors.neutral.gray200;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = conktColors.neutral.gray100;
+                    e.currentTarget.style.backgroundColor = arcoColors.neutral.gray100;
                   }}
                 >
                   Limpar Filtros
@@ -756,15 +756,15 @@ const ReportsView: React.FC<{ workId: string; startDate: string; endDate: string
   };
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: conktColors.neutral.gray400 }}>Carregando RDOs...</div>;
+    return <div style={{ textAlign: 'center', padding: '40px', color: arcoColors.neutral.gray400 }}>Carregando RDOs...</div>;
   }
 
   if (reports.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
-        <FileText size={48} style={{ margin: '0 auto 16px', color: conktColors.neutral.gray400 }} />
-        <p style={{ color: conktColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum RDO encontrado</p>
-        <p style={{ color: conktColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
+        <FileText size={48} style={{ margin: '0 auto 16px', color: arcoColors.neutral.gray400 }} />
+        <p style={{ color: arcoColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum RDO encontrado</p>
+        <p style={{ color: arcoColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
           Os RDOs criados para esta obra aparecerão aqui
         </p>
       </div>
@@ -774,7 +774,7 @@ const ReportsView: React.FC<{ workId: string; startDate: string; endDate: string
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: conktColors.neutral.gray900, margin: 0 }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, color: arcoColors.neutral.gray900, margin: 0 }}>
           Todos os RDOs da Obra
         </h2>
         <div style={{ display: 'flex', gap: '12px' }}>
@@ -785,7 +785,7 @@ const ReportsView: React.FC<{ workId: string; startDate: string; endDate: string
               borderRadius: '8px',
               border: 'none',
               backgroundColor: '#4285f4',
-              color: conktColors.neutral.white,
+              color: arcoColors.neutral.white,
               fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -807,8 +807,8 @@ const ReportsView: React.FC<{ workId: string; startDate: string; endDate: string
               padding: '10px 20px',
               borderRadius: '8px',
               border: 'none',
-              backgroundColor: selectedReports.size === 0 ? conktColors.neutral.gray300 : '#f59e0b',
-              color: conktColors.neutral.white,
+              backgroundColor: selectedReports.size === 0 ? arcoColors.neutral.gray300 : '#f59e0b',
+              color: arcoColors.neutral.white,
               fontSize: '14px',
               fontWeight: 600,
               cursor: selectedReports.size === 0 ? 'not-allowed' : 'pointer',
@@ -831,17 +831,17 @@ const ReportsView: React.FC<{ workId: string; startDate: string; endDate: string
       </div>
       {Object.keys(groupedReports).map(date => (
         <div key={date} style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: conktColors.neutral.gray700, marginBottom: '12px', paddingBottom: '8px', borderBottom: `2px solid ${conktColors.neutral.gray200}` }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: arcoColors.neutral.gray700, marginBottom: '12px', paddingBottom: '8px', borderBottom: `2px solid ${arcoColors.neutral.gray200}` }}>
             {date}
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', backgroundColor: conktColors.neutral.gray200, borderRadius: '8px', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', backgroundColor: arcoColors.neutral.gray200, borderRadius: '8px', overflow: 'hidden' }}>
             {groupedReports[date].map((report, index) => (
               <div
                 key={report.id}
                 style={{
                   padding: '14px 16px',
-                  backgroundColor: conktColors.neutral.white,
-                  borderTop: index > 0 ? `1px solid ${conktColors.neutral.gray200}` : 'none',
+                  backgroundColor: arcoColors.neutral.white,
+                  borderTop: index > 0 ? `1px solid ${arcoColors.neutral.gray200}` : 'none',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
@@ -861,29 +861,29 @@ const ReportsView: React.FC<{ workId: string; startDate: string; endDate: string
                 />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '15px', fontWeight: 600, color: conktColors.neutral.gray900 }}>
+                    <span style={{ fontSize: '15px', fontWeight: 600, color: arcoColors.neutral.gray900 }}>
                       RDO #{report.report_number}
                     </span>
-                    <span style={{ fontSize: '13px', fontWeight: 400, color: conktColors.neutral.gray600 }}>
+                    <span style={{ fontSize: '13px', fontWeight: 400, color: arcoColors.neutral.gray600 }}>
                       {new Date(report.report_date).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <ImageIcon size={14} style={{ color: '#4285f4' }} />
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: conktColors.neutral.gray700 }}>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: arcoColors.neutral.gray700 }}>
                         {report.photos_count}
                       </span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Video size={14} style={{ color: '#9333ea' }} />
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: conktColors.neutral.gray700 }}>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: arcoColors.neutral.gray700 }}>
                         {report.videos_count}
                       </span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Paperclip size={14} style={{ color: '#10b981' }} />
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: conktColors.neutral.gray700 }}>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: arcoColors.neutral.gray700 }}>
                         {report.attachments_count}
                       </span>
                     </div>
@@ -1041,15 +1041,15 @@ const PhotosView: React.FC<{ workId: string; startDate: string; endDate: string 
   };
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: conktColors.neutral.gray400 }}>Carregando fotos...</div>;
+    return <div style={{ textAlign: 'center', padding: '40px', color: arcoColors.neutral.gray400 }}>Carregando fotos...</div>;
   }
 
   if (photos.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
-        <ImageIcon size={48} style={{ margin: '0 auto 16px', color: conktColors.neutral.gray400 }} />
-        <p style={{ color: conktColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhuma foto encontrada</p>
-        <p style={{ color: conktColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
+        <ImageIcon size={48} style={{ margin: '0 auto 16px', color: arcoColors.neutral.gray400 }} />
+        <p style={{ color: arcoColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhuma foto encontrada</p>
+        <p style={{ color: arcoColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
           As fotos adicionadas aos RDOs desta obra aparecerão aqui
         </p>
       </div>
@@ -1058,12 +1058,12 @@ const PhotosView: React.FC<{ workId: string; startDate: string; endDate: string 
 
   return (
     <div>
-      <h2 style={{ fontSize: '24px', fontWeight: 700, color: conktColors.neutral.gray900, marginBottom: '24px' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, color: arcoColors.neutral.gray900, marginBottom: '24px' }}>
         Todas as Fotos da Obra
       </h2>
       {Object.keys(groupedPhotos).map(date => (
         <div key={date} style={{ marginBottom: '40px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: conktColors.neutral.gray700, marginBottom: '16px', borderBottom: `2px solid ${conktColors.neutral.gray200}`, paddingBottom: '8px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: arcoColors.neutral.gray700, marginBottom: '16px', borderBottom: `2px solid ${arcoColors.neutral.gray200}`, paddingBottom: '8px' }}>
             {date}
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
@@ -1071,7 +1071,7 @@ const PhotosView: React.FC<{ workId: string; startDate: string; endDate: string 
               <div
                 key={photo.id}
                 style={{
-                  border: `1px solid ${conktColors.neutral.gray200}`,
+                  border: `1px solid ${arcoColors.neutral.gray200}`,
                   borderRadius: '8px',
                   overflow: 'hidden',
                   cursor: 'pointer',
@@ -1091,7 +1091,7 @@ const PhotosView: React.FC<{ workId: string; startDate: string; endDate: string 
                   style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                 />
                 <div style={{ padding: '12px' }}>
-                  <p style={{ fontSize: '12px', color: conktColors.neutral.gray600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{ fontSize: '12px', color: arcoColors.neutral.gray600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {photo.file_name}
                   </p>
                 </div>
@@ -1176,15 +1176,15 @@ const VideosView: React.FC<{ workId: string; startDate: string; endDate: string 
   };
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: conktColors.neutral.gray400 }}>Carregando vídeos...</div>;
+    return <div style={{ textAlign: 'center', padding: '40px', color: arcoColors.neutral.gray400 }}>Carregando vídeos...</div>;
   }
 
   if (videos.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
-        <Video size={48} style={{ margin: '0 auto 16px', color: conktColors.neutral.gray400 }} />
-        <p style={{ color: conktColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum vídeo encontrado</p>
-        <p style={{ color: conktColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
+        <Video size={48} style={{ margin: '0 auto 16px', color: arcoColors.neutral.gray400 }} />
+        <p style={{ color: arcoColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum vídeo encontrado</p>
+        <p style={{ color: arcoColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
           Os vídeos adicionados aos RDOs desta obra aparecerão aqui
         </p>
       </div>
@@ -1193,12 +1193,12 @@ const VideosView: React.FC<{ workId: string; startDate: string; endDate: string 
 
   return (
     <div>
-      <h2 style={{ fontSize: '24px', fontWeight: 700, color: conktColors.neutral.gray900, marginBottom: '24px' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, color: arcoColors.neutral.gray900, marginBottom: '24px' }}>
         Todos os Vídeos da Obra
       </h2>
       {Object.keys(groupedVideos).map(date => (
         <div key={date} style={{ marginBottom: '40px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: conktColors.neutral.gray700, marginBottom: '16px', borderBottom: `2px solid ${conktColors.neutral.gray200}`, paddingBottom: '8px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: arcoColors.neutral.gray700, marginBottom: '16px', borderBottom: `2px solid ${arcoColors.neutral.gray200}`, paddingBottom: '8px' }}>
             {date}
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
@@ -1206,11 +1206,11 @@ const VideosView: React.FC<{ workId: string; startDate: string; endDate: string 
               <div
                 key={video.id}
                 style={{
-                  border: `1px solid ${conktColors.neutral.gray200}`,
+                  border: `1px solid ${arcoColors.neutral.gray200}`,
                   borderRadius: '8px',
                   overflow: 'hidden',
                   padding: '16px',
-                  backgroundColor: conktColors.neutral.white
+                  backgroundColor: arcoColors.neutral.white
                 }}
               >
                 <video
@@ -1219,7 +1219,7 @@ const VideosView: React.FC<{ workId: string; startDate: string; endDate: string 
                 >
                   <source src={video.file_path} type="video/mp4" />
                 </video>
-                <p style={{ fontSize: '12px', color: conktColors.neutral.gray600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <p style={{ fontSize: '12px', color: arcoColors.neutral.gray600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {video.file_name}
                 </p>
               </div>
@@ -1310,15 +1310,15 @@ const AttachmentsView: React.FC<{ workId: string; startDate: string; endDate: st
   };
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: conktColors.neutral.gray400 }}>Carregando anexos...</div>;
+    return <div style={{ textAlign: 'center', padding: '40px', color: arcoColors.neutral.gray400 }}>Carregando anexos...</div>;
   }
 
   if (attachments.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
-        <Paperclip size={48} style={{ margin: '0 auto 16px', color: conktColors.neutral.gray400 }} />
-        <p style={{ color: conktColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum anexo encontrado</p>
-        <p style={{ color: conktColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
+        <Paperclip size={48} style={{ margin: '0 auto 16px', color: arcoColors.neutral.gray400 }} />
+        <p style={{ color: arcoColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum anexo encontrado</p>
+        <p style={{ color: arcoColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
           Os anexos adicionados aos RDOs desta obra aparecerão aqui
         </p>
       </div>
@@ -1327,12 +1327,12 @@ const AttachmentsView: React.FC<{ workId: string; startDate: string; endDate: st
 
   return (
     <div>
-      <h2 style={{ fontSize: '24px', fontWeight: 700, color: conktColors.neutral.gray900, marginBottom: '24px' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, color: arcoColors.neutral.gray900, marginBottom: '24px' }}>
         Todos os Anexos da Obra
       </h2>
       {Object.keys(groupedAttachments).map(date => (
         <div key={date} style={{ marginBottom: '40px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: conktColors.neutral.gray700, marginBottom: '16px', borderBottom: `2px solid ${conktColors.neutral.gray200}`, paddingBottom: '8px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: arcoColors.neutral.gray700, marginBottom: '16px', borderBottom: `2px solid ${arcoColors.neutral.gray200}`, paddingBottom: '8px' }}>
             {date}
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
@@ -1340,10 +1340,10 @@ const AttachmentsView: React.FC<{ workId: string; startDate: string; endDate: st
               <div
                 key={attachment.id}
                 style={{
-                  border: `1px solid ${conktColors.neutral.gray200}`,
+                  border: `1px solid ${arcoColors.neutral.gray200}`,
                   borderRadius: '8px',
                   padding: '16px',
-                  backgroundColor: conktColors.neutral.white,
+                  backgroundColor: arcoColors.neutral.white,
                   cursor: 'pointer',
                   transition: 'all 0.2s'
                 }}
@@ -1356,14 +1356,14 @@ const AttachmentsView: React.FC<{ workId: string; startDate: string; endDate: st
                 onClick={() => window.open(attachment.file_path, '_blank')}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: conktColors.neutral.gray100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Paperclip size={20} style={{ color: conktColors.neutral.gray600 }} />
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: arcoColors.neutral.gray100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Paperclip size={20} style={{ color: arcoColors.neutral.gray600 }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '14px', fontWeight: 600, color: conktColors.neutral.gray900, margin: '0 0 4px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: '14px', fontWeight: 600, color: arcoColors.neutral.gray900, margin: '0 0 4px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {attachment.file_name}
                     </p>
-                    <p style={{ fontSize: '12px', color: conktColors.neutral.gray500, margin: 0 }}>
+                    <p style={{ fontSize: '12px', color: arcoColors.neutral.gray500, margin: 0 }}>
                       {formatFileSize(attachment.file_size)}
                     </p>
                   </div>
@@ -1449,15 +1449,15 @@ const OccurrencesView: React.FC<{ workId: string; startDate: string; endDate: st
   };
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: conktColors.neutral.gray400 }}>Carregando ocorrências...</div>;
+    return <div style={{ textAlign: 'center', padding: '40px', color: arcoColors.neutral.gray400 }}>Carregando ocorrências...</div>;
   }
 
   if (occurrences.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
-        <AlertTriangle size={48} style={{ margin: '0 auto 16px', color: conktColors.neutral.gray400 }} />
-        <p style={{ color: conktColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhuma ocorrência encontrada</p>
-        <p style={{ color: conktColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
+        <AlertTriangle size={48} style={{ margin: '0 auto 16px', color: arcoColors.neutral.gray400 }} />
+        <p style={{ color: arcoColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhuma ocorrência encontrada</p>
+        <p style={{ color: arcoColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
           As ocorrências adicionadas aos RDOs desta obra aparecerão aqui
         </p>
       </div>
@@ -1466,12 +1466,12 @@ const OccurrencesView: React.FC<{ workId: string; startDate: string; endDate: st
 
   return (
     <div>
-      <h2 style={{ fontSize: '24px', fontWeight: 700, color: conktColors.neutral.gray900, marginBottom: '24px' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, color: arcoColors.neutral.gray900, marginBottom: '24px' }}>
         Todas as Ocorrências da Obra
       </h2>
       {Object.keys(groupedOccurrences).map(date => (
         <div key={date} style={{ marginBottom: '40px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: conktColors.neutral.gray700, marginBottom: '16px', paddingBottom: '12px', borderBottom: `2px solid ${conktColors.neutral.gray200}` }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: arcoColors.neutral.gray700, marginBottom: '16px', paddingBottom: '12px', borderBottom: `2px solid ${arcoColors.neutral.gray200}` }}>
             {date}
           </h3>
           <div style={{ display: 'grid', gap: '16px' }}>
@@ -1481,8 +1481,8 @@ const OccurrencesView: React.FC<{ workId: string; startDate: string; endDate: st
                 style={{
                   padding: '16px',
                   borderRadius: '12px',
-                  backgroundColor: conktColors.neutral.white,
-                  border: `1px solid ${conktColors.neutral.gray200}`,
+                  backgroundColor: arcoColors.neutral.white,
+                  border: `1px solid ${arcoColors.neutral.gray200}`,
                   transition: 'all 0.2s',
                   cursor: 'default'
                 }}
@@ -1492,10 +1492,10 @@ const OccurrencesView: React.FC<{ workId: string; startDate: string; endDate: st
                     <AlertTriangle size={20} style={{ color: '#f59e0b' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '14px', fontWeight: 600, color: conktColors.neutral.gray900, margin: '0 0 8px 0' }}>
+                    <p style={{ fontSize: '14px', fontWeight: 600, color: arcoColors.neutral.gray900, margin: '0 0 8px 0' }}>
                       {occurrence.title || 'Sem título'}
                     </p>
-                    <p style={{ fontSize: '13px', color: conktColors.neutral.gray600, margin: 0, lineHeight: '1.5' }}>
+                    <p style={{ fontSize: '13px', color: arcoColors.neutral.gray600, margin: 0, lineHeight: '1.5' }}>
                       {occurrence.description || 'Sem descrição'}
                     </p>
                   </div>
@@ -1581,15 +1581,15 @@ const CommentsView: React.FC<{ workId: string; startDate: string; endDate: strin
   };
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px', color: conktColors.neutral.gray400 }}>Carregando comentários...</div>;
+    return <div style={{ textAlign: 'center', padding: '40px', color: arcoColors.neutral.gray400 }}>Carregando comentários...</div>;
   }
 
   if (comments.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
-        <MessageSquare size={48} style={{ margin: '0 auto 16px', color: conktColors.neutral.gray400 }} />
-        <p style={{ color: conktColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum comentário encontrado</p>
-        <p style={{ color: conktColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
+        <MessageSquare size={48} style={{ margin: '0 auto 16px', color: arcoColors.neutral.gray400 }} />
+        <p style={{ color: arcoColors.neutral.gray600, fontSize: '16px', fontWeight: 600 }}>Nenhum comentário encontrado</p>
+        <p style={{ color: arcoColors.neutral.gray500, fontSize: '14px', marginTop: '8px' }}>
           Os comentários adicionados aos RDOs desta obra aparecerão aqui
         </p>
       </div>
@@ -1598,12 +1598,12 @@ const CommentsView: React.FC<{ workId: string; startDate: string; endDate: strin
 
   return (
     <div>
-      <h2 style={{ fontSize: '24px', fontWeight: 700, color: conktColors.neutral.gray900, marginBottom: '24px' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, color: arcoColors.neutral.gray900, marginBottom: '24px' }}>
         Todos os Comentários da Obra
       </h2>
       {Object.keys(groupedComments).map(date => (
         <div key={date} style={{ marginBottom: '40px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: conktColors.neutral.gray700, marginBottom: '16px', paddingBottom: '12px', borderBottom: `2px solid ${conktColors.neutral.gray200}` }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: arcoColors.neutral.gray700, marginBottom: '16px', paddingBottom: '12px', borderBottom: `2px solid ${arcoColors.neutral.gray200}` }}>
             {date}
           </h3>
           <div style={{ display: 'grid', gap: '16px' }}>
@@ -1613,8 +1613,8 @@ const CommentsView: React.FC<{ workId: string; startDate: string; endDate: strin
                 style={{
                   padding: '16px',
                   borderRadius: '12px',
-                  backgroundColor: conktColors.neutral.white,
-                  border: `1px solid ${conktColors.neutral.gray200}`,
+                  backgroundColor: arcoColors.neutral.white,
+                  border: `1px solid ${arcoColors.neutral.gray200}`,
                   transition: 'all 0.2s',
                   cursor: 'default'
                 }}
@@ -1624,11 +1624,11 @@ const CommentsView: React.FC<{ workId: string; startDate: string; endDate: strin
                     <MessageSquare size={20} style={{ color: '#3b82f6' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '13px', color: conktColors.neutral.gray600, margin: 0, lineHeight: '1.5' }}>
+                    <p style={{ fontSize: '13px', color: arcoColors.neutral.gray600, margin: 0, lineHeight: '1.5' }}>
                       {comment.comment || 'Sem comentário'}
                     </p>
                     {comment.author && (
-                      <p style={{ fontSize: '12px', color: conktColors.neutral.gray500, margin: '8px 0 0 0', fontStyle: 'italic' }}>
+                      <p style={{ fontSize: '12px', color: arcoColors.neutral.gray500, margin: '8px 0 0 0', fontStyle: 'italic' }}>
                         — {comment.author}
                       </p>
                     )}

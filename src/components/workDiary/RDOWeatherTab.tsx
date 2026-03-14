@@ -1,4 +1,4 @@
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { WorkDiary, WeatherType, WeatherCondition } from '../../types/workDiary';
 
 interface RDOWeatherTabProps {
@@ -27,7 +27,7 @@ export default function RDOWeatherTab({ rdo, onChange }: RDOWeatherTabProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: arcoColors.text.primary }}>
           Condição climática
         </h3>
 
@@ -66,7 +66,7 @@ export default function RDOWeatherTab({ rdo, onChange }: RDOWeatherTabProps) {
                             checked={rdo[`${period.key}_weather` as keyof WorkDiary] === option.value}
                             onChange={(e) => onChange({ [`${period.key}_weather`]: e.target.value as WeatherType })}
                             className="w-4 h-4"
-                            style={{ accentColor: conktColors.primary.blue }}
+                            style={{ accentColor: arcoColors.primary.blue }}
                           />
                           <span className="text-sm text-gray-700">{option.label}</span>
                         </label>
@@ -87,7 +87,7 @@ export default function RDOWeatherTab({ rdo, onChange }: RDOWeatherTabProps) {
                             checked={rdo[`${period.key}_condition` as keyof WorkDiary] === option.value}
                             onChange={(e) => onChange({ [`${period.key}_condition`]: e.target.value as WeatherCondition })}
                             className="w-4 h-4"
-                            style={{ accentColor: conktColors.primary.blue }}
+                            style={{ accentColor: arcoColors.primary.blue }}
                           />
                           <span className="text-sm text-gray-700">{option.label}</span>
                         </label>

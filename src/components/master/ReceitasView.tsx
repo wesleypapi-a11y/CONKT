@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DollarSign, Building2, TrendingUp, Calendar, Download } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 
 interface EmpresaReceita {
   empresa_id: string;
@@ -110,7 +110,7 @@ export default function ReceitasView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: conktColors.primary.blue }} />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: arcoColors.primary.blue }} />
       </div>
     );
   }
@@ -168,7 +168,7 @@ export default function ReceitasView() {
               <button
                 onClick={exportarCSV}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all hover:opacity-90"
-                style={{ backgroundColor: conktColors.primary.blue }}
+                style={{ backgroundColor: arcoColors.primary.blue }}
               >
                 <Download size={16} />
                 Exportar CSV
@@ -213,8 +213,8 @@ export default function ReceitasView() {
                   <tr key={receita.empresa_id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: conktColors.primary.blue + '20' }}>
-                          <Building2 size={20} style={{ color: conktColors.primary.blue }} />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: arcoColors.primary.blue + '20' }}>
+                          <Building2 size={20} style={{ color: arcoColors.primary.blue }} />
                         </div>
                         <div>
                           <div className="font-semibold text-gray-900">{receita.empresa_nome}</div>
@@ -227,7 +227,7 @@ export default function ReceitasView() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="font-semibold text-lg" style={{ color: conktColors.primary.blue }}>
+                      <div className="font-semibold text-lg" style={{ color: arcoColors.primary.blue }}>
                         R$ {receita.valor_mensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </div>
                       <div className="text-xs text-gray-500">
@@ -272,7 +272,7 @@ export default function ReceitasView() {
                     TOTAL ({receitasFiltradas.filter(r => r.status === 'ativo').length} empresas ativas)
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="text-lg font-bold" style={{ color: conktColors.primary.blue }}>
+                    <div className="text-lg font-bold" style={{ color: arcoColors.primary.blue }}>
                       R$ {totalMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </div>
                     <div className="text-xs text-gray-500">

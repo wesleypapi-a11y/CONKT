@@ -1,5 +1,5 @@
 import { DollarSign } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 
 interface Props {
   workId: string;
@@ -9,7 +9,7 @@ export default function BillingRulesManager({ workId }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold" style={{ color: conktColors.primary.blue }}>
+        <h2 className="text-xl font-semibold" style={{ color: arcoColors.primary.blue }}>
           Regras de Faturamento
         </h2>
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2, FileText, Download, Paperclip, File } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { WorkDiaryAttachment } from '../../types/workDiary';
 import { useAuth } from '../../contexts/AuthContext';
@@ -155,7 +155,7 @@ export default function RDOAttachmentsTab({ rdoId }: RDOAttachmentsTabProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: arcoColors.text.primary }}>
           Anexos
         </h3>
 

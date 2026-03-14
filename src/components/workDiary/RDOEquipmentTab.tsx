@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { WorkDiaryEquipment } from '../../types/workDiary';
 import { useAuth } from '../../contexts/AuthContext';
@@ -148,7 +148,7 @@ export default function RDOEquipmentTab({ rdoId }: RDOEquipmentTabProps) {
           onClick={handleAdd}
           disabled={loading || !name.trim()}
           className="px-4 py-2 rounded-md text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           Adicionar
         </button>

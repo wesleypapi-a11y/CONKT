@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { XCircle, Plus, Trash2, Save, CreditCard as Edit, FileText } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { PurchaseOrder } from '../../types/purchase';
 import { updateBudgetRealizedFromOrder } from '../../utils/budgetRealized';
@@ -561,7 +561,7 @@ export default function PurchaseOrderEditModal({
       <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-6 border-b">
           <div>
-            <h2 className="text-2xl font-bold" style={{ color: conktColors.primary.blue }}>
+            <h2 className="text-2xl font-bold" style={{ color: arcoColors.primary.blue }}>
               Editar Pedido {order.order_number}
             </h2>
             <p className="text-sm text-gray-600 mt-1">
@@ -771,7 +771,7 @@ export default function PurchaseOrderEditModal({
                 <button
                   onClick={addItem}
                   className="px-3 py-1 rounded-md text-white flex items-center gap-2 text-sm"
-                  style={{ backgroundColor: conktColors.primary.blue }}
+                  style={{ backgroundColor: arcoColors.primary.blue }}
                   disabled={saving}
                 >
                   <Plus className="w-4 h-4" />
@@ -915,7 +915,7 @@ export default function PurchaseOrderEditModal({
                   </div>
                   <div className="flex justify-between py-2 text-lg border-t border-gray-300 mt-2 pt-2">
                     <span className="font-bold text-gray-700">Total:</span>
-                    <span className="font-bold" style={{ color: conktColors.primary.blue }}>
+                    <span className="font-bold" style={{ color: arcoColors.primary.blue }}>
                       {calculateTotal().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </span>
                   </div>

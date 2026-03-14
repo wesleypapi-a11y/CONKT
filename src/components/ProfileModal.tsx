@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Upload, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { conktColors } from '../styles/colors';
+import { arcoColors } from '../styles/colors';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -95,7 +95,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           {error && (
             <div
               className="p-4 rounded-lg text-sm text-white"
-              style={{ backgroundColor: conktColors.status.error }}
+              style={{ backgroundColor: arcoColors.status.error }}
             >
               {error}
             </div>
@@ -104,7 +104,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           {success && (
             <div
               className="p-4 rounded-lg text-sm text-white"
-              style={{ backgroundColor: conktColors.status.success }}
+              style={{ backgroundColor: arcoColors.status.success }}
             >
               {success}
             </div>
@@ -122,14 +122,14 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 ) : (
                   <div
                     className="w-32 h-32 rounded-full flex items-center justify-center border-4 border-dashed border-gray-300"
-                    style={{ backgroundColor: conktColors.neutral.gray100 }}
+                    style={{ backgroundColor: arcoColors.neutral.gray100 }}
                   >
                     <User size={48} className="text-gray-400" />
                   </div>
                 )}
                 <div
                   className="absolute bottom-0 right-0 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg"
-                  style={{ backgroundColor: conktColors.sidebar.main }}
+                  style={{ backgroundColor: arcoColors.sidebar.main }}
                 >
                   <Upload size={20} />
                 </div>
@@ -210,7 +210,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               type="submit"
               disabled={loading}
               className="flex-1 py-3 px-4 rounded-lg text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: conktColors.sidebar.main }}
+              style={{ backgroundColor: arcoColors.sidebar.main }}
             >
               {loading ? 'Salvando...' : 'Salvar'}
             </button>

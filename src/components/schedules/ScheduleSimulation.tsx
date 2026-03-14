@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Calendar, TrendingUp, Activity } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { Schedule, ScheduleTask, ScheduleHoliday } from '../../types/schedule';
 import { parseDate } from '../../utils/scheduleCalculations';
 
@@ -97,7 +97,7 @@ export default function ScheduleSimulation({ schedule, tasks_holidays }: Schedul
                 className="h-4 rounded-full transition-all"
                 style={{
                   width: `${currentProgress}%`,
-                  backgroundColor: conktColors.primary.blue
+                  backgroundColor: arcoColors.primary.blue
                 }}
               />
             </div>

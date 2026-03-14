@@ -70,7 +70,7 @@ EXISTS (
 ### 5. Usuário Wesley
 
 A migration `20260313120001_ensure_wesley_is_master.sql` garante que:
-- wesley@conkt.com.br tem `role = 'master'`
+- wesley@arco.com.br tem `role = 'master'`
 - `empresa_id = NULL` (master não pertence a empresa específica)
 
 ### 6. Tratamento de Erros
@@ -109,7 +109,7 @@ if (error) {
    - `=== INICIANDO CADASTRO DE EMPRESA ===`
    - `Dados do formulário: {...}`
    - `Validação OK`
-   - `Usuário logado: wesley@conkt.com.br`
+   - `Usuário logado: wesley@arco.com.br`
    - `Perfil do usuário: {role: 'master', ...}`
    - `Modo CADASTRO - inserindo nova empresa`
    - `Tentando inserir: {...}`
@@ -124,8 +124,8 @@ if (error) {
 Se o cadastro não funcionar, o erro pode ser:
 
 ### A) RLS bloqueando insert
-- **Verificar**: O perfil `wesley@conkt.com.br` realmente tem `role = 'master'`?
-- **Solução**: Executar manualmente `UPDATE profiles SET role = 'master', empresa_id = NULL WHERE email = 'wesley@conkt.com.br';`
+- **Verificar**: O perfil `wesley@arco.com.br` realmente tem `role = 'master'`?
+- **Solução**: Executar manualmente `UPDATE profiles SET role = 'master', empresa_id = NULL WHERE email = 'wesley@arco.com.br';`
 
 ### B) Campo com formato incorreto
 - **Verificar**: As datas estão no formato `YYYY-MM-DD`?

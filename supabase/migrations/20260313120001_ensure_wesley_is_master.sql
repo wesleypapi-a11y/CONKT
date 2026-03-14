@@ -2,7 +2,7 @@
   # Garantir que Wesley seja Master
 
   1. Atualização
-    - Garantir que wesley@conkt.com.br seja master
+    - Garantir que wesley@arco.com.br seja master
     - Remover empresa_id do perfil master
   
   2. Segurança
@@ -15,7 +15,7 @@ UPDATE profiles
 SET 
   role = 'master',
   empresa_id = NULL
-WHERE email = 'wesley@conkt.com.br';
+WHERE email = 'wesley@arco.com.br';
 
 -- Se não encontrou, tentar pelo ID conhecido
 UPDATE profiles 

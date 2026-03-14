@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Building2 } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { Plus, CreditCard as Edit, Trash2, Building2 } from 'lucide-react';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { FinancialAccount } from '../../types/financial';
 import { useAuth } from '../../contexts/AuthContext';
@@ -168,7 +168,7 @@ export default function FinancialAccountsManager() {
       <AlertComponent />
 
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold" style={{ color: conktColors.primary.blue }}>
+        <h2 className="text-xl font-semibold" style={{ color: arcoColors.primary.blue }}>
           Contas Gerenciais
         </h2>
         <button
@@ -177,7 +177,7 @@ export default function FinancialAccountsManager() {
             setShowModal(true);
           }}
           className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Plus className="w-5 h-5" />
           Nova Conta
@@ -206,7 +206,7 @@ export default function FinancialAccountsManager() {
                 <tr key={account.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4" style={{ color: conktColors.primary.blue }} />
+                      <Building2 className="w-4 h-4" style={{ color: arcoColors.primary.blue }} />
                       <span className="font-medium">{account.name}</span>
                     </div>
                   </td>
@@ -230,7 +230,7 @@ export default function FinancialAccountsManager() {
                       <button
                         onClick={() => handleEdit(account)}
                         className="p-1 hover:bg-blue-50 rounded"
-                        style={{ color: conktColors.primary.blue }}
+                        style={{ color: arcoColors.primary.blue }}
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -253,7 +253,7 @@ export default function FinancialAccountsManager() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
-              <h2 className="text-xl font-semibold" style={{ color: conktColors.primary.blue }}>
+              <h2 className="text-xl font-semibold" style={{ color: arcoColors.primary.blue }}>
                 {editingAccount ? 'Editar Conta Gerencial' : 'Nova Conta Gerencial'}
               </h2>
             </div>
@@ -350,7 +350,7 @@ export default function FinancialAccountsManager() {
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2 text-white rounded-lg"
-                  style={{ backgroundColor: conktColors.primary.blue }}
+                  style={{ backgroundColor: arcoColors.primary.blue }}
                 >
                   {editingAccount ? 'Atualizar' : 'Criar'}
                 </button>

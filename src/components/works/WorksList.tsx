@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, Home } from 'lucide-react';
+import { Plus, Search, CreditCard as Edit2, Trash2, Home } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { Work } from '../../types/work';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import WorkModal from './WorkModal';
 
 interface WorksListProps {
@@ -149,7 +149,7 @@ export default function WorksList({ onNavigateHome }: WorksListProps) {
             onClick={onNavigateHome}
             className="absolute top-0 right-0 z-10 p-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
             style={{
-              backgroundColor: conktColors.primary.blue,
+              backgroundColor: arcoColors.primary.blue,
               color: '#000000'
             }}
             title="Voltar ao Início"
@@ -167,14 +167,14 @@ export default function WorksList({ onNavigateHome }: WorksListProps) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50"
-              style={{ borderColor: conktColors.primary.blue }}
+              style={{ borderColor: arcoColors.primary.blue }}
             />
           </div>
 
           <button
             onClick={handleNewWork}
             className="px-4 py-2 text-white rounded-lg hover:opacity-90 transition-all flex items-center gap-2"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
           >
             <Plus size={20} />
             Nova Obra
@@ -223,7 +223,7 @@ export default function WorksList({ onNavigateHome }: WorksListProps) {
                         ) : (
                           <div
                             className="w-10 h-10 rounded flex items-center justify-center text-white font-semibold"
-                            style={{ backgroundColor: conktColors.primary.blue }}
+                            style={{ backgroundColor: arcoColors.primary.blue }}
                           >
                             {work.name.charAt(0).toUpperCase()}
                           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { XCircle, Save, TrendingUp, Calendar, FileText, BarChart3, DollarSign } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -345,7 +345,7 @@ export default function ClientPortalAccessModal({
             onClick={handleSave}
             disabled={saving}
             className="px-4 py-2 rounded-md text-white flex items-center gap-2 font-medium"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
           >
             <Save className="w-4 h-4" />
             {saving ? 'Salvando...' : 'Salvar'}

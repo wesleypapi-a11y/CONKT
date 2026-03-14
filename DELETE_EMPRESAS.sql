@@ -7,7 +7,7 @@ BEGIN;
 ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_empresa_id_fkey;
 
 -- Passo 2: Deletar as empresas
-DELETE FROM empresas WHERE nome IN ('OMEGA', 'BETA', 'ALPHA', 'CONKT');
+DELETE FROM empresas WHERE nome IN ('OMEGA', 'BETA', 'ALPHA', 'ARCO');
 
 -- Passo 3: Recriar a constraint com CASCADE DELETE
 ALTER TABLE profiles

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Plus, Trash2, FileText, Send } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { PurchaseRequest, PurchaseRequestItem } from '../../types/purchase';
 import { Work } from '../../types/work';
@@ -899,7 +899,7 @@ export default function PurchaseRequestModal({ request, onClose }: PurchaseReque
                 ? 'text-white'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
-            style={activeTab === 'dados' ? { backgroundColor: conktColors.primary.blue } : {}}
+            style={activeTab === 'dados' ? { backgroundColor: arcoColors.primary.blue } : {}}
           >
             Dados
           </button>
@@ -910,7 +910,7 @@ export default function PurchaseRequestModal({ request, onClose }: PurchaseReque
                 ? 'text-white'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
-            style={activeTab === 'anexos' ? { backgroundColor: conktColors.primary.blue } : {}}
+            style={activeTab === 'anexos' ? { backgroundColor: arcoColors.primary.blue } : {}}
             disabled={!request}
           >
             Anexos
@@ -1507,7 +1507,7 @@ export default function PurchaseRequestModal({ request, onClose }: PurchaseReque
               onClick={handleSave}
               disabled={loading}
               className="px-4 py-2 rounded-md text-white hover:opacity-90 transition-opacity disabled:opacity-50"
-              style={{ backgroundColor: conktColors.primary.blue }}
+              style={{ backgroundColor: arcoColors.primary.blue }}
             >
               {loading ? 'Salvando...' : 'Salvar'}
             </button>

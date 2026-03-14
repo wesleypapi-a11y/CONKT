@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, FileText, Download, Calendar, CheckSquare, Camera, TrendingUp } from 'lucide-react';
-import { conktColors } from '../styles/colors';
+import { arcoColors } from '../styles/colors';
 import { supabase } from '../lib/supabase';
 import { generateConsolidatedReport } from '../utils/consolidatedReportGenerator';
 import { Work } from '../types/work';
@@ -164,7 +164,7 @@ export default function ReportPage() {
         <div className="flex items-center gap-3 mb-2">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
           >
             <FileText className="w-6 h-6 text-white" />
           </div>
@@ -362,7 +362,7 @@ export default function ReportPage() {
                   onClick={handleGenerateReport}
                   disabled={loading || !selectedWork || enabledCount === 0}
                   className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: conktColors.primary.blue }}
+                  style={{ backgroundColor: arcoColors.primary.blue }}
                 >
                   <Download className="w-5 h-5" />
                   {loading ? 'Gerando Relatório...' : 'GERAR RELATÓRIO'}

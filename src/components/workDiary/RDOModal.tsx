@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Plus, Trash2, ChevronDown, ChevronUp, Upload, Image as ImageIcon, Video, Paperclip } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { WorkDiary, RDOStatus, WeatherType, WeatherCondition, WorkDiaryLabor, WorkDiaryActivity, WorkDiaryOccurrence, WorkDiaryComment, WorkDiaryPhoto, WorkDiaryVideo, WorkDiaryAttachment } from '../../types/workDiary';
 import { Work } from '../../types/work';
@@ -843,7 +843,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
           <div className="flex items-center gap-2 sm:gap-4">
             <img
               src="/logo_conkt-removebg-preview.png"
-              alt="CONKT"
+              alt="ARCO"
               className="h-8 sm:h-10"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
@@ -915,7 +915,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                               if (e.target.checked) setCopyFromSpecific(false);
                             }}
                             className="w-4 h-4 rounded"
-                            style={{ accentColor: conktColors.primary.blue }}
+                            style={{ accentColor: arcoColors.primary.blue }}
                             disabled={!rdo.work_id}
                           />
                           <span className="text-sm font-medium text-gray-700">
@@ -933,7 +933,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                                 if (e.target.checked) setCopyFromLast(false);
                               }}
                               className="w-4 h-4 rounded"
-                              style={{ accentColor: conktColors.primary.blue }}
+                              style={{ accentColor: arcoColors.primary.blue }}
                               disabled={!rdo.work_id}
                             />
                             <span className="text-sm font-medium text-gray-700">
@@ -1036,7 +1036,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                                         checked={rdo[`${period.key}_weather` as keyof WorkDiary] === option.value}
                                         onChange={(e) => setRdo(prev => ({ ...prev, [`${period.key}_weather`]: e.target.value as WeatherType }))}
                                         className="w-4 h-4"
-                                        style={{ accentColor: conktColors.primary.blue }}
+                                        style={{ accentColor: arcoColors.primary.blue }}
                                       />
                                       <span className="text-sm text-gray-700">{option.label}</span>
                                     </label>
@@ -1057,7 +1057,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                                         checked={rdo[`${period.key}_condition` as keyof WorkDiary] === option.value}
                                         onChange={(e) => setRdo(prev => ({ ...prev, [`${period.key}_condition`]: e.target.value as WeatherCondition }))}
                                         className="w-4 h-4"
-                                        style={{ accentColor: conktColors.primary.blue }}
+                                        style={{ accentColor: arcoColors.primary.blue }}
                                       />
                                       <span className="text-sm text-gray-700">{option.label}</span>
                                     </label>
@@ -1079,7 +1079,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                       <div className="p-4 sm:p-6 space-y-8">
                         {/* Mão de obra */}
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: conktColors.primary.blue }}>
+                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: arcoColors.primary.blue }}>
                             Mão de obra
                           </h3>
                           <div className="flex gap-2">
@@ -1099,7 +1099,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                             <button
                               onClick={addLabor}
                               className="px-4 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity"
-                              style={{ backgroundColor: conktColors.primary.blue }}
+                              style={{ backgroundColor: arcoColors.primary.blue }}
                             >
                               <Plus className="w-5 h-5" />
                             </button>
@@ -1126,7 +1126,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
 
                         {/* Atividades */}
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: conktColors.primary.blue }}>
+                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: arcoColors.primary.blue }}>
                             Atividades
                           </h3>
                           <div className="flex gap-2">
@@ -1146,7 +1146,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                             <button
                               onClick={addActivity}
                               className="px-4 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity"
-                              style={{ backgroundColor: conktColors.primary.blue }}
+                              style={{ backgroundColor: arcoColors.primary.blue }}
                             >
                               <Plus className="w-5 h-5" />
                             </button>
@@ -1173,7 +1173,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
 
                         {/* Ocorrências */}
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: conktColors.primary.blue }}>
+                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: arcoColors.primary.blue }}>
                             Ocorrências
                           </h3>
                           <div className="flex gap-2">
@@ -1193,7 +1193,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                             <button
                               onClick={addOccurrence}
                               className="px-4 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity"
-                              style={{ backgroundColor: conktColors.primary.blue }}
+                              style={{ backgroundColor: arcoColors.primary.blue }}
                             >
                               <Plus className="w-5 h-5" />
                             </button>
@@ -1220,7 +1220,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
 
                         {/* Comentários */}
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: conktColors.primary.blue }}>
+                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: arcoColors.primary.blue }}>
                             Comentários
                           </h3>
                           <div className="flex gap-2">
@@ -1240,7 +1240,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                             <button
                               onClick={addComment}
                               className="px-4 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity"
-                              style={{ backgroundColor: conktColors.primary.blue }}
+                              style={{ backgroundColor: arcoColors.primary.blue }}
                             >
                               <Plus className="w-5 h-5" />
                             </button>
@@ -1267,7 +1267,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
 
                         {/* Fotos */}
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: conktColors.primary.blue }}>
+                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: arcoColors.primary.blue }}>
                             Fotos
                           </h3>
                           {!viewOnly && (
@@ -1275,7 +1275,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                               <label
                                 htmlFor="photo-upload"
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer inline-flex"
-                                style={{ backgroundColor: conktColors.primary.blue }}
+                                style={{ backgroundColor: arcoColors.primary.blue }}
                               >
                                 <Upload className="w-5 h-5" />
                                 Adicionar Fotos
@@ -1326,7 +1326,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
 
                         {/* Vídeos */}
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: conktColors.primary.blue }}>
+                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: arcoColors.primary.blue }}>
                             Vídeos
                           </h3>
                           {!viewOnly && (
@@ -1334,7 +1334,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                               <label
                                 htmlFor="video-upload"
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer inline-flex"
-                                style={{ backgroundColor: conktColors.primary.blue }}
+                                style={{ backgroundColor: arcoColors.primary.blue }}
                               >
                                 <Upload className="w-5 h-5" />
                                 Adicionar Vídeos
@@ -1385,7 +1385,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
 
                         {/* Anexos */}
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: conktColors.primary.blue }}>
+                          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2" style={{ borderColor: arcoColors.primary.blue }}>
                             Anexos
                           </h3>
                           {!viewOnly && (
@@ -1393,7 +1393,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                               <label
                                 htmlFor="attachment-upload"
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer inline-flex"
-                                style={{ backgroundColor: conktColors.primary.blue }}
+                                style={{ backgroundColor: arcoColors.primary.blue }}
                               >
                                 <Upload className="w-5 h-5" />
                                 Adicionar Anexos
@@ -1446,7 +1446,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
           <button
             onClick={onClose}
             className="px-4 sm:px-6 py-2 rounded-lg font-medium border-2 hover:bg-gray-50 transition-colors order-2 sm:order-1"
-            style={{ borderColor: conktColors.neutral.gray300, color: conktColors.neutral.gray700 }}
+            style={{ borderColor: arcoColors.neutral.gray300, color: arcoColors.neutral.gray700 }}
           >
             Fechar
           </button>
@@ -1457,7 +1457,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
                 onClick={handleSave}
                 disabled={saving}
                 className="px-4 sm:px-6 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md text-sm sm:text-base"
-                style={{ backgroundColor: conktColors.status.success }}
+                style={{ backgroundColor: arcoColors.status.success }}
               >
                 {saving ? 'Salvando...' : 'Salvar'}
               </button>

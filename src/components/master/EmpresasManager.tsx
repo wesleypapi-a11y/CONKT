@@ -63,7 +63,7 @@ function EmpresasManagerContent() {
       const { data: legacyEmpresas, error: selectError } = await supabase
         .from('empresas')
         .select('id, nome, razao_social')
-        .or('nome.in.(OMEGA,BETA,ALPHA,CONKT),razao_social.in.(OMEGA,BETA,ALPHA,CONKT)');
+        .or('nome.in.(OMEGA,BETA,ALPHA,ARCO),razao_social.in.(OMEGA,BETA,ALPHA,ARCO)');
 
       if (selectError) {
         throw selectError;

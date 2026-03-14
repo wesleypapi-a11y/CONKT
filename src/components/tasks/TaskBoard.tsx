@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit, User, Building2, Calendar, X, Check } from 'lucide-react';
+import { Plus, Trash2, CreditCard as Edit, User, Building2, Calendar, X, Check } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { Task, TaskColumn, TaskBoard as TaskBoardType } from '../../types/task';
 import TaskModal from './TaskModal';
 import { useAuth } from '../../contexts/AuthContext';

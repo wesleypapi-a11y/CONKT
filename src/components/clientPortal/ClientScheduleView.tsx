@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Calendar } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 
 interface ScheduleTask {
@@ -162,7 +162,7 @@ export default function ClientScheduleView({ workId }: ClientScheduleViewProps) 
                             className="h-2 rounded-full"
                             style={{
                               width: `${task.progress}%`,
-                              backgroundColor: task.progress >= 100 ? '#10b981' : conktColors.primary.blue
+                              backgroundColor: task.progress >= 100 ? '#10b981' : arcoColors.primary.blue
                             }}
                           />
                         </div>

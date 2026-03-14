@@ -1,5 +1,5 @@
 import { AlertTriangle } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -56,7 +56,7 @@ export default function ConfirmModal({
       case 'danger':
         return '#ef4444';
       default:
-        return conktColors.primary.blue;
+        return arcoColors.primary.blue;
     }
   };
 

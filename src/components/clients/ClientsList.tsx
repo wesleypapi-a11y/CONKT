@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, CreditCard as Edit, Trash2, User, Home } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Client } from '../../types/client';
 import { useAuth } from '../../contexts/AuthContext';
@@ -135,7 +135,7 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
         onClick={onNavigateHome}
         className="absolute top-0 right-0 z-10 p-2 sm:p-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
         style={{
-          backgroundColor: conktColors.primary.blue,
+          backgroundColor: arcoColors.primary.blue,
           color: '#000000'
         }}
         title="Voltar ao Início"
@@ -161,7 +161,7 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
             onClick={handleAddClient}
             className="flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-md font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity text-sm"
             style={{
-              backgroundColor: conktColors.primary.blue,
+              backgroundColor: arcoColors.primary.blue,
               color: '#1F2937'
             }}
           >
@@ -225,7 +225,7 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
                           ) : (
                             <div
                               className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium border-2 border-gray-100"
-                              style={{ backgroundColor: conktColors.primary.blue }}
+                              style={{ backgroundColor: arcoColors.primary.blue }}
                             >
                               {client.name.charAt(0).toUpperCase()}
                             </div>
@@ -285,7 +285,7 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
                       ) : (
                         <div
                           className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-medium border-2 border-gray-100"
-                          style={{ backgroundColor: conktColors.primary.blue }}
+                          style={{ backgroundColor: arcoColors.primary.blue }}
                         >
                           {client.name.charAt(0).toUpperCase()}
                         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, CreditCard as Edit, Trash2, Calendar, ArrowLeft, FileDown } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Schedule } from '../../types/schedule';
 import { Work } from '../../types/work';
@@ -129,7 +129,7 @@ export default function SchedulesList({ onNavigateHome, onEditSchedule }: Schedu
         onClick={onNavigateHome}
         className="absolute top-0 left-0 z-10 px-4 py-2 rounded-md font-medium flex items-center gap-2 hover:opacity-90 transition-opacity"
         style={{
-          backgroundColor: conktColors.primary.blue,
+          backgroundColor: arcoColors.primary.blue,
           color: '#000000'
         }}
         title="Voltar"
@@ -156,7 +156,7 @@ export default function SchedulesList({ onNavigateHome, onEditSchedule }: Schedu
             onClick={() => setTemplateImportModalOpen(true)}
             className="px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-md text-sm"
             style={{
-              backgroundColor: conktColors.primary.amber,
+              backgroundColor: arcoColors.primary.amber,
               color: '#000000',
               border: '2px solid #000000'
             }}

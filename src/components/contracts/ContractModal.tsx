@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Printer } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Contract } from '../../types/contract';
 import { useAuth } from '../../contexts/AuthContext';
@@ -330,7 +330,7 @@ export default function ContractModal({ isOpen, onClose, contractId, onSave }: C
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
                 style={{
-                  backgroundColor: activeTab === tab.id ? conktColors.primary.blue : 'transparent'
+                  backgroundColor: activeTab === tab.id ? arcoColors.primary.blue : 'transparent'
                 }}
               >
                 {tab.label}

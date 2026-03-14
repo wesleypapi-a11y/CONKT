@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Users, Eye, TrendingUp, Calendar, FileText, BarChart3, DollarSign, Plus, Trash2, CreditCard as Edit, Lock, Unlock } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import ClientPortalAccessModal from './ClientPortalAccessModal';
 import ClientPortalView from './ClientPortalView';
@@ -175,7 +175,7 @@ export default function ClientPortalManager() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Users className="w-7 h-7" style={{ color: conktColors.primary.blue }} />
+              <Users className="w-7 h-7" style={{ color: arcoColors.primary.blue }} />
               Portal do Cliente
             </h1>
             <p className="text-sm text-gray-600 mt-1">
@@ -188,7 +188,7 @@ export default function ClientPortalManager() {
               setShowModal(true);
             }}
             className="px-4 py-2 rounded-md text-white flex items-center gap-2 font-medium"
-            style={{ backgroundColor: conktColors.primary.blue }}
+            style={{ backgroundColor: arcoColors.primary.blue }}
           >
             <Plus className="w-5 h-5" />
             Novo Acesso

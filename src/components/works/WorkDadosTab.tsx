@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Upload, Camera, UserPlus } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Work } from '../../types/work';
 import { Client } from '../../types/client';
@@ -295,7 +295,7 @@ export default function WorkDadosTab({ work, onChange}: WorkDadosTabProps) {
                 onClick={() => setShowQuickClientModal(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
                 style={{
-                  backgroundColor: conktColors.primary.green,
+                  backgroundColor: arcoColors.primary.green,
                   color: '#000000'
                 }}
                 title="Cadastrar cliente rápido"
@@ -370,7 +370,7 @@ export default function WorkDadosTab({ work, onChange}: WorkDadosTabProps) {
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-base font-semibold mb-3" style={{ color: arcoColors.text.primary }}>
           Período
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -420,7 +420,7 @@ export default function WorkDadosTab({ work, onChange}: WorkDadosTabProps) {
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-base font-semibold mb-3" style={{ color: arcoColors.text.primary }}>
           Outras informações
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -491,7 +491,7 @@ export default function WorkDadosTab({ work, onChange}: WorkDadosTabProps) {
       {showQuickClientModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <h3 className="text-lg font-bold mb-4" style={{ color: conktColors.primary.blue }}>
+            <h3 className="text-lg font-bold mb-4" style={{ color: arcoColors.primary.blue }}>
               Cadastro Rápido de Cliente
             </h3>
 
@@ -546,7 +546,7 @@ export default function WorkDadosTab({ work, onChange}: WorkDadosTabProps) {
                 disabled={savingClient || !quickClientName.trim()}
                 className="flex-1 px-4 py-2 rounded-md font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: conktColors.primary.green,
+                  backgroundColor: arcoColors.primary.green,
                   color: '#000000'
                 }}
               >

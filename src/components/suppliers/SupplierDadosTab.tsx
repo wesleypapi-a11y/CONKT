@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, Camera } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { Supplier, SupplierType } from '../../types/supplier';
 import { useAuth } from '../../contexts/AuthContext';
@@ -95,7 +95,7 @@ export default function SupplierDadosTab({ supplier, onChange }: SupplierDadosTa
                   checked={supplier.type === 'fisica'}
                   onChange={(e) => onChange({ type: e.target.value as SupplierType })}
                   className="w-4 h-4"
-                  style={{ accentColor: conktColors.primary.blue }}
+                  style={{ accentColor: arcoColors.primary.blue }}
                 />
                 <span className="text-sm text-gray-700">Pessoa física</span>
               </label>
@@ -107,7 +107,7 @@ export default function SupplierDadosTab({ supplier, onChange }: SupplierDadosTa
                   checked={supplier.type === 'juridica'}
                   onChange={(e) => onChange({ type: e.target.value as SupplierType })}
                   className="w-4 h-4"
-                  style={{ accentColor: conktColors.primary.blue }}
+                  style={{ accentColor: arcoColors.primary.blue }}
                 />
                 <span className="text-sm text-gray-700">Pessoa jurídica</span>
               </label>
@@ -181,7 +181,7 @@ export default function SupplierDadosTab({ supplier, onChange }: SupplierDadosTa
                 checked={supplier.recommended_partner || false}
                 onChange={(e) => onChange({ recommended_partner: e.target.checked })}
                 className="w-4 h-4"
-                style={{ accentColor: conktColors.primary.blue }}
+                style={{ accentColor: arcoColors.primary.blue }}
               />
               <span className="text-sm text-gray-700">
                 Parceiro recomendado (visível no Portal do cliente)
@@ -192,7 +192,7 @@ export default function SupplierDadosTab({ supplier, onChange }: SupplierDadosTa
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>Contato</h3>
+        <h3 className="text-base font-semibold mb-3" style={{ color: arcoColors.text.primary }}>Contato</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
@@ -238,7 +238,7 @@ export default function SupplierDadosTab({ supplier, onChange }: SupplierDadosTa
       </div>
 
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3" style={{ color: conktColors.text.primary }}>Localização</h3>
+        <h3 className="text-base font-semibold mb-3" style={{ color: arcoColors.text.primary }}>Localização</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>

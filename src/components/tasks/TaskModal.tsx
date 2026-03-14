@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { Task, TaskColumn } from '../../types/task';
 import { Work } from '../../types/work';
 import { useAuth } from '../../contexts/AuthContext';
@@ -192,7 +192,7 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
           {error && (
             <div
               className="p-4 rounded-lg text-sm text-white"
-              style={{ backgroundColor: conktColors.status.error }}
+              style={{ backgroundColor: arcoColors.status.error }}
             >
               {error}
             </div>
@@ -305,7 +305,7 @@ export default function TaskModal({ isOpen, onClose, onSave, task }: TaskModalPr
               type="submit"
               disabled={loading}
               className="flex-1 py-3 px-4 rounded-lg text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
-              style={{ backgroundColor: conktColors.sidebar.main }}
+              style={{ backgroundColor: arcoColors.sidebar.main }}
             >
               {loading ? 'Salvando...' : 'Salvar'}
             </button>

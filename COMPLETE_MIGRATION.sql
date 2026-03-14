@@ -1,5 +1,5 @@
 -- ============================================================================
--- CONKT MANAGER - SCRIPT DE MIGRAÇÃO COMPLETO
+-- ARCO MANAGER - SCRIPT DE MIGRAÇÃO COMPLETO
 -- Execute este script no SQL Editor do Supabase
 -- ============================================================================
 
@@ -119,7 +119,7 @@ BEGIN
     gen_random_uuid(),
     'authenticated',
     'authenticated',
-    'admin@conkt.com.br',
+    'admin@arco.com.br',
     crypt('Admin@123', gen_salt('bf')),
     now(),
     '{"provider":"email","providers":["email"],"role":"admin"}',
@@ -140,7 +140,7 @@ BEGIN
     VALUES (
       admin_user_id,
       'Administrador',
-      'admin@conkt.com.br',
+      'admin@arco.com.br',
       'admin',
       'Administrador'
     )
@@ -1499,5 +1499,5 @@ DO $$
 BEGIN
   RAISE NOTICE '✅ Migração completa executada com sucesso!';
   RAISE NOTICE '📊 Todas as tabelas, políticas RLS e triggers foram criados';
-  RAISE NOTICE '👤 Usuário admin criado: admin@conkt.com.br / Admin@123';
+  RAISE NOTICE '👤 Usuário admin criado: admin@arco.com.br / Admin@123';
 END $$;

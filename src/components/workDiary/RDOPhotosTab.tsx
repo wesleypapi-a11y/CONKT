@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2, Image as ImageIcon, Camera } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { WorkDiaryPhoto } from '../../types/workDiary';
 import { useAuth } from '../../contexts/AuthContext';
@@ -218,7 +218,7 @@ export default function RDOPhotosTab({ rdoId }: RDOPhotosTabProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: conktColors.text.primary }}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: arcoColors.text.primary }}>
           Fotos
         </h3>
 
@@ -356,7 +356,7 @@ export default function RDOPhotosTab({ rdoId }: RDOPhotosTabProps) {
                 onClick={handleUpdateDescription}
                 disabled={loading}
                 className="flex-1 px-4 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-                style={{ backgroundColor: conktColors.primary.blue }}
+                style={{ backgroundColor: arcoColors.primary.blue }}
               >
                 Salvar
               </button>

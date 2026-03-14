@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { Client } from '../../types/client';
 import { Work } from '../../types/work';
 import { useAuth } from '../../contexts/AuthContext';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import QuickWorkModal from '../works/QuickWorkModal';
 
 interface BudgetModalProps {
@@ -452,7 +452,7 @@ export default function BudgetModal({ isOpen, onClose, budgetId, onBudgetCreated
                     onClick={handleQuickClientSubmit}
                     disabled={loading}
                     className="px-4 py-2 rounded-lg text-white font-medium transition-all hover:opacity-90"
-                    style={{ backgroundColor: conktColors.primary.blue }}
+                    style={{ backgroundColor: arcoColors.primary.blue }}
                   >
                     Criar
                   </button>

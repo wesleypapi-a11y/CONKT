@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FileText, Save } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { ClientProduct, ProductType, PlanoStartCategory, ProductStatus } from '../../types/client';
 import { Client } from '../../types/client';
@@ -210,10 +210,10 @@ export default function ClientProdutoTab({ clientId, client}: ClientProdutoTabPr
 
   <div class="data-box">
     <h2>DADOS DO CONTRATADO</h2>
-    <p><strong>Nome:</strong> GESTÃO CONKT - Gerenciamento de obras e projetos LTDA</p>
+    <p><strong>Nome:</strong> GESTÃO ARCO - Gerenciamento de obras e projetos LTDA</p>
     <p><strong>CNPJ:</strong> 54.248.657/0001-00</p>
     <p><strong>Endereço:</strong> AV. Alfredo Ignácio Nogueira Penido, 335 Sala 706 - CEP 12246-000</p>
-    <p><strong>E-mail:</strong> financeiro@conkt.com.br</p>
+    <p><strong>E-mail:</strong> financeiro@arco.com.br</p>
   </div>
 
   <div class="clause">
@@ -349,7 +349,7 @@ export default function ClientProdutoTab({ clientId, client}: ClientProdutoTabPr
     </div>
     <div class="signature-line">
       <div>CONTRATADO</div>
-      <div>GESTÃO CONKT</div>
+      <div>GESTÃO ARCO</div>
       <div>CNPJ 54.248.657/0001-00</div>
     </div>
   </div>
@@ -387,10 +387,10 @@ export default function ClientProdutoTab({ clientId, client}: ClientProdutoTabPr
 
   <div class="data-box">
     <h2>Contratado</h2>
-    <p><strong>Nome:</strong> GESTÃO CONKT - Gerenciamento de obras e projetos LTDA</p>
+    <p><strong>Nome:</strong> GESTÃO ARCO - Gerenciamento de obras e projetos LTDA</p>
     <p><strong>CNPJ:</strong> 54.248.657/0001-00</p>
     <p><strong>Endereço:</strong> AV. Alfredo Ignácio Nogueira Penido, 335 Sala 706 - CEP 12246-000</p>
-    <p><strong>E-mail:</strong> financeiro@conkt.com.br</p>
+    <p><strong>E-mail:</strong> financeiro@arco.com.br</p>
   </div>
 
   <h2>1. Objeto do contrato</h2>
@@ -409,7 +409,7 @@ export default function ClientProdutoTab({ clientId, client}: ClientProdutoTabPr
       <div>CPF ${client.cpf_cnpj || ''}</div>
     </div>
     <div class="signature-line">
-      <div>GESTÃO CONKT</div>
+      <div>GESTÃO ARCO</div>
       <div>CNPJ 54.248.657/0001-00</div>
     </div>
   </div>
@@ -613,7 +613,7 @@ export default function ClientProdutoTab({ clientId, client}: ClientProdutoTabPr
           onClick={handleSave}
           disabled={saving}
           className="flex items-center gap-2 px-4 py-2 text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
-          style={{ backgroundColor: conktColors.primary.blue }}
+          style={{ backgroundColor: arcoColors.primary.blue }}
         >
           <Save className="w-4 h-4" />
           {saving ? 'Salvando...' : 'Salvar Produto'}
@@ -624,8 +624,8 @@ export default function ClientProdutoTab({ clientId, client}: ClientProdutoTabPr
           disabled={!hasProduct}
           className="flex items-center gap-2 px-4 py-2 border-2 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
-            borderColor: conktColors.primary.blue,
-            color: conktColors.primary.blue
+            borderColor: arcoColors.primary.blue,
+            color: arcoColors.primary.blue
           }}
           title={!hasProduct ? 'Salve o produto primeiro' : 'Gerar contrato em PDF'}
         >

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Trash2, FileText, ArrowLeft, User, Eye, Edit, Printer } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { Plus, Search, Trash2, FileText, ArrowLeft, User, Eye, CreditCard as Edit, Printer } from 'lucide-react';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { PurchaseRequest } from '../../types/purchase';
 import { Work } from '../../types/work';
@@ -398,7 +398,7 @@ export default function PurchaseRequestsList({ onNavigateHome }: PurchaseRequest
           onClick={onNavigateHome}
           className="mb-3 px-4 py-2 rounded-md font-medium text-white flex items-center gap-2 hover:opacity-90 transition-opacity"
           style={{
-            backgroundColor: conktColors.primary.blue
+            backgroundColor: arcoColors.primary.blue
           }}
           title="Voltar"
         >
@@ -604,7 +604,7 @@ export default function PurchaseRequestsList({ onNavigateHome }: PurchaseRequest
                         <button
                           onClick={() => handleViewRequest(request)}
                           className="p-2 hover:bg-blue-50 rounded transition-colors"
-                          style={{ color: conktColors.primary.blue }}
+                          style={{ color: arcoColors.primary.blue }}
                           title="Visualizar"
                         >
                           <Eye className="w-4 h-4" />
@@ -612,7 +612,7 @@ export default function PurchaseRequestsList({ onNavigateHome }: PurchaseRequest
                         <button
                           onClick={() => handleEditRequest(request)}
                           className="p-2 hover:bg-blue-50 rounded transition-colors"
-                          style={{ color: conktColors.primary.blue }}
+                          style={{ color: arcoColors.primary.blue }}
                           title="Editar"
                         >
                           <Edit className="w-4 h-4" />
@@ -620,7 +620,7 @@ export default function PurchaseRequestsList({ onNavigateHome }: PurchaseRequest
                         <button
                           onClick={() => handlePrintRequest(request.id)}
                           className="p-2 hover:bg-blue-50 rounded transition-colors"
-                          style={{ color: conktColors.primary.blue }}
+                          style={{ color: arcoColors.primary.blue }}
                           title="Imprimir PDF"
                         >
                           <Printer className="w-4 h-4" />

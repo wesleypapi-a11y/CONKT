@@ -1,5 +1,5 @@
 import { CheckCircle, AlertCircle, Info } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -68,7 +68,7 @@ export default function AlertModal({ isOpen, onClose, title, message, type = 'in
             <button
               onClick={onClose}
               className="w-full px-6 py-3 rounded-lg text-white font-semibold hover:opacity-90 transition-all shadow-md"
-              style={{ backgroundColor: conktColors.primary.blue }}
+              style={{ backgroundColor: arcoColors.primary.blue }}
             >
               OK
             </button>

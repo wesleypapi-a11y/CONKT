@@ -4,7 +4,7 @@ import {
   DollarSign, FileCheck, Menu, LogOut, User, Calendar, CalendarClock, LayoutDashboard, FileText, ListTodo, Settings, BarChart3, UserCog, Briefcase, Shield
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { conktColors } from '../styles/colors';
+import { arcoColors } from '../styles/colors';
 import { hasAccess, getRoleName, type PageKey } from '../utils/accessControl';
 import ProfileModal from './ProfileModal';
 import ClientsList from './clients/ClientsList';
@@ -84,7 +84,7 @@ export default function Dashboard() {
           className={`fixed lg:static inset-y-0 left-0 z-50 transition-all duration-300 ${
             sidebarOpen ? 'w-64' : 'w-0 lg:w-20'
           }`}
-          style={{ backgroundColor: conktColors.sidebar.main }}
+          style={{ backgroundColor: arcoColors.sidebar.main }}
         >
           <div className="h-full flex flex-col">
             <div className="p-4 flex items-center justify-center border-b border-white/10 relative">
@@ -122,7 +122,7 @@ export default function Dashboard() {
                     ) : (
                       <div
                         className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                        style={{ backgroundColor: conktColors.primary.cyan }}
+                        style={{ backgroundColor: arcoColors.primary.cyan }}
                       >
                         <User size={18} />
                       </div>
@@ -175,7 +175,7 @@ export default function Dashboard() {
                       >
                         <Icon
                           size={18}
-                          style={{ color: isActive ? conktColors.primary.blue : '#ffffff' }}
+                          style={{ color: isActive ? arcoColors.primary.blue : '#ffffff' }}
                         />
                         {sidebarOpen && (
                           <>
@@ -186,7 +186,7 @@ export default function Dashboard() {
                               <span
                                 className="px-2 py-0.5 text-xs rounded-full font-semibold"
                                 style={{
-                                  backgroundColor: item.id === 'painel-usuarios' ? '#9333ea' : conktColors.primary.lime,
+                                  backgroundColor: item.id === 'painel-usuarios' ? '#9333ea' : arcoColors.primary.lime,
                                   color: item.id === 'painel-usuarios' ? '#ffffff' : '#000000'
                                 }}
                               >
@@ -341,9 +341,9 @@ function DashboardContent({ activeMenu, onNavigateHome, homeImageUrl }: { active
       <div className="text-center py-12">
         <div
           className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-          style={{ backgroundColor: conktColors.primary.blue + '20' }}
+          style={{ backgroundColor: arcoColors.primary.blue + '20' }}
         >
-          <Building2 size={32} style={{ color: conktColors.primary.blue }} />
+          <Building2 size={32} style={{ color: arcoColors.primary.blue }} />
         </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
           Módulo em Desenvolvimento

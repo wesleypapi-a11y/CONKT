@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { WorkDiaryChecklist } from '../../types/workDiary';
 
@@ -123,14 +123,14 @@ export default function RDOChecklistTab({ rdoId }: RDOChecklistTabProps) {
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold" style={{ color: conktColors.text.primary }}>
+          <h3 className="text-lg font-semibold" style={{ color: arcoColors.text.primary }}>
             Checklist
           </h3>
           {!showForm && (
             <button
               onClick={() => setShowForm(true)}
               className="px-4 py-2 rounded-md font-medium flex items-center gap-2 hover:opacity-90 transition-opacity text-white"
-              style={{ backgroundColor: conktColors.primary.blue }}
+              style={{ backgroundColor: arcoColors.primary.blue }}
             >
               <Plus className="w-4 h-4" />
               Adicionar
@@ -176,7 +176,7 @@ export default function RDOChecklistTab({ rdoId }: RDOChecklistTabProps) {
                 onClick={handleAdd}
                 disabled={loading || !formData.item.trim()}
                 className="px-4 py-2 rounded-md text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-                style={{ backgroundColor: conktColors.primary.blue }}
+                style={{ backgroundColor: arcoColors.primary.blue }}
               >
                 Salvar
               </button>
@@ -232,7 +232,7 @@ export default function RDOChecklistTab({ rdoId }: RDOChecklistTabProps) {
                           onChange={() => handleToggle(item.id, item.checked)}
                           disabled={loading}
                           className="w-5 h-5 rounded"
-                          style={{ accentColor: conktColors.primary.blue }}
+                          style={{ accentColor: arcoColors.primary.blue }}
                         />
                       </label>
                     </td>

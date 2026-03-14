@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Package, Search, Eye, Printer, FileText, CreditCard as Edit, Trash2 } from 'lucide-react';
-import { conktColors } from '../../styles/colors';
+import { arcoColors } from '../../styles/colors';
 import { supabase } from '../../lib/supabase';
 import { PurchaseOrder } from '../../types/purchase';
 import { useAlert } from '../../hooks/useAlert';
@@ -378,7 +378,7 @@ export default function PurchaseOrdersManager({ onNavigateHome }: PurchaseOrders
                   value={selectedWorkId}
                   onChange={(e) => setSelectedWorkId(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  style={{ borderColor: conktColors.primary.blue }}
+                  style={{ borderColor: arcoColors.primary.blue }}
                 >
                   <option value="">Todas as obras</option>
                   {works.map(work => (
@@ -440,7 +440,7 @@ export default function PurchaseOrdersManager({ onNavigateHome }: PurchaseOrders
               <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4"
-                    style={{ borderColor: conktColors.primary.blue }}
+                    style={{ borderColor: arcoColors.primary.blue }}
                   ></div>
                   <p className="text-gray-600">Carregando pedidos...</p>
                 </div>
