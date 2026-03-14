@@ -177,7 +177,7 @@ export default function AppearanceSettings() {
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
             <p className="text-xs text-gray-600 leading-relaxed">
-              <span className="font-semibold text-gray-700">Recomendação:</span> utilize imagem em PNG, preferencialmente com fundo transparente, em formato horizontal e com boa resolução. Para melhor resultado no menu e nos PDFs, recomendamos largura mínima de 600px.
+              <span className="font-semibold text-gray-700">Recomendação:</span> utilize imagem em PNG, preferencialmente com fundo transparente, em formato horizontal e com boa resolução. Para melhor resultado no menu e nos PDFs, recomendamos dimensões de 1010x318 pixels.
             </p>
           </div>
 
