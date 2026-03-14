@@ -92,7 +92,7 @@ export default function Login() {
               <div className="flex flex-col items-center text-center mb-6">
                 <div className="mb-3">
                   <img
-                    src="/logo_conkt-removebg-preview.png"
+                    src="/lOGO_PRETO_SEM_FUNDO.png"
                     alt="ARCO Logo"
                     className="h-20 mx-auto"
                   />
