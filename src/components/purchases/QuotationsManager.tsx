@@ -673,12 +673,17 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
           console.log('[Frontend] ✅ Edge Function executada com sucesso:', result);
 
-          setShowComparison(false);
+          console.log('[Frontend] Aguardando propagação no banco de dados...');
+          await new Promise(resolve => setTimeout(resolve, 500));
 
+          console.log('[Frontend] Recarregando dados após aprovação...');
           await Promise.all([
             loadQuotations(selectedRequest.id),
             loadRequests()
           ]);
+          console.log('[Frontend] ✅ Dados recarregados');
+
+          setShowComparison(false);
 
           showSuccess(`${result.message || 'Pedido de Compra gerado com sucesso!'}\n\nO pedido foi criado com todos os dados (obra, fornecedor, centro de custo, itens e forma de pagamento) e os valores foram lançados automaticamente no Orçamento → Realizado por Centro de Custo.`);
 
