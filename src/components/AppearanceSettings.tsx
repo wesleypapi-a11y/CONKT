@@ -6,6 +6,7 @@ import { useAlert } from '../hooks/useAlert';
 
 interface AppearancePreferences {
   logo_menu: string | null;
+  logo_menu_scale: number;
 }
 
 export default function AppearanceSettings() {
@@ -15,10 +16,12 @@ export default function AppearanceSettings() {
 
   const [preferences, setPreferences] = useState<AppearancePreferences>({
     logo_menu: null,
+    logo_menu_scale: 100,
   });
 
   const [previewMenu, setPreviewMenu] = useState<string | null>(null);
   const [logoScale, setLogoScale] = useState(100);
+  const [hasScaleChanged, setHasScaleChanged] = useState(false);
 
   useEffect(() => {
     loadPreferences();
@@ -30,16 +33,19 @@ export default function AppearanceSettings() {
     try {
       const { data, error } = await supabase
         .from('empresas')
-        .select('logo_menu')
+        .select('logo_menu, logo_menu_scale')
         .eq('id', profile.empresa_id)
         .single();
 
       if (error) throw error;
 
       if (data) {
+        const scale = data.logo_menu_scale || 100;
         setPreferences({
           logo_menu: data.logo_menu || null,
+          logo_menu_scale: scale,
         });
+        setLogoScale(scale);
       }
     } catch (error: any) {
       console.error('Erro ao carregar preferências:', error);
@@ -98,13 +104,20 @@ export default function AppearanceSettings() {
 
       const { error } = await supabase
         .from('empresas')
-        .update({ logo_menu: data.publicUrl })
+        .update({
+          logo_menu: data.publicUrl,
+          logo_menu_scale: logoScale
+        })
         .eq('id', profile.empresa_id);
 
       if (error) throw error;
 
-      setPreferences({ logo_menu: data.publicUrl });
+      setPreferences({
+        logo_menu: data.publicUrl,
+        logo_menu_scale: logoScale
+      });
       setPreview(null);
+      setHasScaleChanged(false);
       showAlert('Logo do menu atualizado com sucesso!', 'success');
 
       setTimeout(() => {
@@ -115,6 +128,36 @@ export default function AppearanceSettings() {
       console.error(error);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveScale = async () => {
+    if (!profile?.empresa_id) return;
+
+    setSavingMenu(true);
+    try {
+      const { error } = await supabase
+        .from('empresas')
+        .update({ logo_menu_scale: logoScale })
+        .eq('id', profile.empresa_id);
+
+      if (error) throw error;
+
+      setPreferences({
+        ...preferences,
+        logo_menu_scale: logoScale
+      });
+      setHasScaleChanged(false);
+      showAlert('Tamanho do logo atualizado com sucesso!', 'success');
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error: any) {
+      showAlert('Erro ao salvar tamanho do logo', 'error');
+      console.error(error);
+    } finally {
+      setSavingMenu(false);
     }
   };
 
@@ -163,7 +206,10 @@ export default function AppearanceSettings() {
 
               <div className="flex items-center justify-center gap-4">
                 <button
-                  onClick={() => setLogoScale(Math.max(20, logoScale - 10))}
+                  onClick={() => {
+                    setLogoScale(Math.max(20, logoScale - 10));
+                    setHasScaleChanged(true);
+                  }}
                   disabled={logoScale <= 20}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   title="Diminuir tamanho"
@@ -177,7 +223,10 @@ export default function AppearanceSettings() {
                 </div>
 
                 <button
-                  onClick={() => setLogoScale(Math.min(200, logoScale + 10))}
+                  onClick={() => {
+                    setLogoScale(Math.min(200, logoScale + 10));
+                    setHasScaleChanged(true);
+                  }}
                   disabled={logoScale >= 200}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   title="Aumentar tamanho"
@@ -186,6 +235,17 @@ export default function AppearanceSettings() {
                   <span className="text-sm">+</span>
                 </button>
               </div>
+
+              {hasScaleChanged && !preview && (
+                <button
+                  onClick={handleSaveScale}
+                  disabled={saving}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+                >
+                  <Save size={18} />
+                  {saving ? 'Salvando...' : 'Salvar Tamanho'}
+                </button>
+              )}
             </div>
           )}
 

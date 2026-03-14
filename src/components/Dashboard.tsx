@@ -61,6 +61,7 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [empresaLogo, setEmpresaLogo] = useState<string | null>(null);
+  const [logoScale, setLogoScale] = useState(100);
   const { profile, signOut } = useAuth();
 
   console.log('📋 [DASHBOARD] Profile recebido:', profile ? {
@@ -87,13 +88,14 @@ export default function Dashboard() {
       try {
         const { data, error } = await supabase
           .from('empresas')
-          .select('logo_menu')
+          .select('logo_menu, logo_menu_scale')
           .eq('id', profile.empresa_id)
           .single();
 
         if (error) throw error;
         if (data?.logo_menu) {
           setEmpresaLogo(data.logo_menu);
+          setLogoScale(data.logo_menu_scale || 100);
         }
       } catch (error) {
         console.error('Erro ao carregar logo da empresa:', error);
@@ -132,7 +134,12 @@ export default function Dashboard() {
                 <img
                   src={empresaLogo || "/azul_marinho_sem_fundo.png"}
                   alt="Logo"
-                  className="h-12 mx-auto object-contain"
+                  style={{
+                    maxWidth: `${logoScale}%`,
+                    height: 'auto',
+                    maxHeight: '60px'
+                  }}
+                  className="mx-auto object-contain"
                 />
               )}
 
