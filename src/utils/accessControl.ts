@@ -46,9 +46,20 @@ const ACCESS_MATRIX: Record<PageKey, UserRole[]> = {
 };
 
 export function hasAccess(userRole: UserRole | undefined, pageKey: PageKey): boolean {
-  if (!userRole) return false;
+  console.log(`🔒 [ACCESS CONTROL] hasAccess(${userRole}, ${pageKey})`);
+
+  if (!userRole) {
+    console.log(`🔒 [ACCESS CONTROL] userRole é undefined/null - retornando FALSE`);
+    return false;
+  }
+
   const allowedRoles = ACCESS_MATRIX[pageKey];
-  return allowedRoles.includes(userRole);
+  console.log(`🔒 [ACCESS CONTROL] Roles permitidas para "${pageKey}":`, allowedRoles);
+
+  const hasPermission = allowedRoles.includes(userRole);
+  console.log(`🔒 [ACCESS CONTROL] ${userRole} tem acesso a "${pageKey}":`, hasPermission);
+
+  return hasPermission;
 }
 
 export function canAccessMultiplePages(userRole: UserRole | undefined, pageKeys: PageKey[]): boolean {

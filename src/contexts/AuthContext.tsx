@@ -45,14 +45,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
+    console.log('🔐 [FETCH PROFILE] Buscando perfil para user ID:', userId);
+
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .maybeSingle();
+      .single();
+
+    console.log('🔐 [FETCH PROFILE] Resultado da query:', { data, error });
 
     if (data) {
+      console.log('🔐 [FETCH PROFILE] Profile encontrado:', {
+        id: data.id,
+        email: data.email,
+        role: data.role,
+        is_active: data.is_active,
+        empresa_id: data.empresa_id,
+        avatar_url: data.avatar_url
+      });
       setProfile(data);
+    } else {
+      console.error('🔐 [FETCH PROFILE] Profile NÃO encontrado! Error:', error);
     }
   };
 
@@ -62,7 +76,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const initAuth = async () => {
       try {
+        console.log('🔐 [INIT AUTH] Iniciando autenticação...');
         const { data: { session } } = await supabase.auth.getSession();
+
+        console.log('🔐 [INIT AUTH] Session obtida:', session ? 'Existe' : 'Null');
+        console.log('🔐 [INIT AUTH] User:', session?.user ? {
+          id: session.user.id,
+          email: session.user.email
+        } : 'Null');
 
         if (!mounted) return;
 
@@ -70,12 +91,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(session?.user ?? null);
 
         if (session?.user) {
+          console.log('🔐 [INIT AUTH] Chamando fetchProfile para:', session.user.id);
           await fetchProfile(session.user.id);
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error('🔐 [INIT AUTH] Error:', error);
       } finally {
         if (mounted) {
+          console.log('🔐 [INIT AUTH] Finalizando loading...');
           setLoading(false);
         }
       }
@@ -153,10 +176,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    console.log('🔐 [SIGN IN] Tentando login com email:', email);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    console.log('🔐 [SIGN IN] Resultado do login:', {
+      user: data?.user ? {
+        id: data.user.id,
+        email: data.user.email
+      } : 'Null',
+      session: data?.session ? 'Existe' : 'Null',
+      error
+    });
+
+    if (data?.user) {
+      console.log('🔐 [SIGN IN] Buscando profile para user:', data.user.id);
+      await fetchProfile(data.user.id);
+    }
+
     return { error };
   };
 

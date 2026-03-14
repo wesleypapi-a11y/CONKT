@@ -61,7 +61,22 @@ export default function Dashboard() {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const { profile, signOut } = useAuth();
 
-  const menuItems = allMenuItems.filter(item => hasAccess(profile?.role, item.id));
+  console.log('📋 [DASHBOARD] Profile recebido:', profile ? {
+    id: profile.id,
+    email: profile.email,
+    role: profile.role,
+    is_active: profile.is_active,
+    empresa_id: profile.empresa_id
+  } : 'NULL');
+
+  const menuItems = allMenuItems.filter(item => {
+    const access = hasAccess(profile?.role, item.id);
+    console.log(`📋 [DASHBOARD] Menu item "${item.id}" - hasAccess(${profile?.role}):`, access);
+    return access;
+  });
+
+  console.log('📋 [DASHBOARD] Total de itens filtrados:', menuItems.length);
+  console.log('📋 [DASHBOARD] Menu items:', menuItems.map(i => i.id));
 
   useEffect(() => {
     const handleResize = () => {
