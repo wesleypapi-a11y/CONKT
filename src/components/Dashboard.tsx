@@ -61,7 +61,17 @@ export default function Dashboard() {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const { profile, signOut } = useAuth();
 
-  const menuItems = allMenuItems.filter(item => hasAccess(profile?.role, item.id));
+  console.log('📋 [DASHBOARD] Perfil do usuário logado:', profile);
+  console.log('📋 [DASHBOARD] Role do usuário:', profile?.role);
+
+  const menuItems = allMenuItems.filter(item => {
+    const access = hasAccess(profile?.role, item.id);
+    console.log(`📋 [DASHBOARD] Item ${item.id} - Tem acesso?`, access);
+    return access;
+  });
+
+  console.log('📋 [DASHBOARD] Total de itens no menu:', menuItems.length);
+  console.log('📋 [DASHBOARD] Itens do menu:', menuItems.map(i => i.id));
 
   useEffect(() => {
     const handleResize = () => {

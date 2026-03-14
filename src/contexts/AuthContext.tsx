@@ -45,14 +45,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
+    console.log('🔐 [AUTH] Buscando perfil do usuário:', userId);
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .maybeSingle();
 
+    console.log('🔐 [AUTH] Resultado da busca do perfil:', { data, error });
+
     if (data) {
+      console.log('🔐 [AUTH] Perfil carregado:', {
+        id: data.id,
+        email: data.email,
+        role: data.role,
+        empresa_id: data.empresa_id,
+        is_active: data.is_active
+      });
       setProfile(data);
+    } else {
+      console.error('🔐 [AUTH] Perfil não encontrado!');
     }
   };
 
