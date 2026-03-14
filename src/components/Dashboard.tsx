@@ -105,7 +105,7 @@ export default function Dashboard() {
             <div className="p-4 flex items-center justify-center border-b border-white/10 relative">
               {sidebarOpen && (
                 <img
-                  src="/lOGO_PRETO_SEM_FUNDO.png"
+                  src="/azul_marinho_sem_fundo.png"
                   alt="Logo"
                   className="h-16 mx-auto object-contain"
                 />
@@ -417,7 +417,7 @@ function HomeContent({ homeImageUrl }: { homeImageUrl: string | null }) {
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4">
       <div className="text-center">
         <img
-          src={homeImageUrl || "/lOGO_PRETO_SEM_FUNDO.png"}
+          src={homeImageUrl || "/azul_marinho_sem_fundo.png"}
           alt="Logo"
           className="w-[600px] sm:w-[800px] max-w-full mx-auto mb-6 sm:mb-8 object-contain"
         />

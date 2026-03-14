@@ -11,7 +11,7 @@ interface ClientsListProps {
 }
 
 export default function ClientsList({ onNavigateHome }: ClientsListProps) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
@@ -21,21 +21,21 @@ export default function ClientsList({ onNavigateHome }: ClientsListProps) {
 
   useEffect(() => {
     loadClients();
-  }, []);
+  }, [profile?.empresa_id]);
 
   useEffect(() => {
     filterClients();
   }, [searchTerm, clients]);
 
   const loadClients = async () => {
-    if (!user) return;
+    if (!user || !profile?.empresa_id) return;
 
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('clients')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('empresa_id', profile.empresa_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
