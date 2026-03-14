@@ -3,6 +3,7 @@ import { Users, Plus, CreditCard as Edit2, Trash2, X, Save, Shield, User as User
 import { arcoColors } from '../styles/colors';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { FunctionsHttpError, FunctionsRelayError, FunctionsFetchError } from '@supabase/supabase-js';
 
 type UserRole = 'master' | 'administrador' | 'financeiro' | 'colaborador' | 'cliente';
 
@@ -212,6 +213,21 @@ export default function UserManagement() {
 
     setSaving(true);
     try {
+      console.log('Validando sessão e autenticação...');
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { user: authUser }, error: userError } = await supabase.auth.getUser();
+
+      console.log('sessionError:', sessionError);
+      console.log('userError:', userError);
+      console.log('session:', session);
+      console.log('session?.access_token:', session?.access_token);
+      console.log('user:', authUser);
+
+      if (!session?.access_token || !authUser || sessionError || userError) {
+        alert('Usuário não autenticado. Faça login novamente.');
+        return;
+      }
+
       if (editingUser) {
         let avatarUrl = formData.avatar_url;
 
@@ -236,23 +252,21 @@ export default function UserManagement() {
         if (profileError) throw profileError;
 
         if (formData.password) {
-          const { error: passwordError } = await supabase.auth.admin.updateUserById(
-            editingUser.id,
-            { password: formData.password }
-          );
-          if (passwordError) console.error('Erro ao atualizar senha:', passwordError);
+          const { error: updatePasswordError } = await supabase.functions.invoke('update-user-password', {
+            body: {
+              user_id: editingUser.id,
+              new_password: formData.password
+            }
+          });
+
+          if (updatePasswordError) {
+            console.error('Erro ao atualizar senha:', updatePasswordError);
+            alert('Usuário atualizado, mas houve erro ao alterar a senha.');
+          }
         }
 
         alert('Usuário atualizado com sucesso!');
       } else {
-        console.log('Obtendo sessão...');
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log('Sessão obtida:', session ? 'OK' : 'FALHOU');
-
-        if (!session) {
-          throw new Error('Sessão inválida');
-        }
-
         const payload = {
           email: formData.email,
           password: formData.password,
@@ -278,7 +292,20 @@ export default function UserManagement() {
 
         if (functionError) {
           console.error('Erro ao chamar edge function:', functionError);
-          throw new Error(functionError.message || 'Erro ao criar usuário');
+
+          if (functionError instanceof FunctionsHttpError) {
+            const errorBody = await functionError.context.json();
+            console.error('Corpo do erro HTTP:', errorBody);
+            throw new Error(errorBody.error || errorBody.message || 'Erro HTTP ao criar usuário');
+          } else if (functionError instanceof FunctionsRelayError) {
+            console.error('Erro de relay:', functionError.message);
+            throw new Error('Erro de comunicação com o servidor');
+          } else if (functionError instanceof FunctionsFetchError) {
+            console.error('Erro de fetch:', functionError.message);
+            throw new Error('Erro de rede ao criar usuário');
+          } else {
+            throw new Error(functionError.message || 'Erro ao criar usuário');
+          }
         }
 
         if (!result || !result.success) {
@@ -339,13 +366,32 @@ export default function UserManagement() {
     if (!window.confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) return;
 
     try {
-      const { error } = await supabase.auth.admin.deleteUser(userId);
-      if (error) throw error;
+      console.log('Validando sessão antes de deletar usuário...');
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const { data: { user: authUser }, error: userError } = await supabase.auth.getUser();
+
+      if (!session?.access_token || !authUser || sessionError || userError) {
+        alert('Usuário não autenticado. Faça login novamente.');
+        return;
+      }
+
+      const { error: functionError } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: userId }
+      });
+
+      if (functionError) {
+        if (functionError instanceof FunctionsHttpError) {
+          const errorBody = await functionError.context.json();
+          throw new Error(errorBody.error || errorBody.message || 'Erro ao excluir usuário');
+        }
+        throw functionError;
+      }
+
       loadUsers();
       alert('Usuário excluído com sucesso!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao excluir usuário:', error);
-      alert('Erro ao excluir usuário');
+      alert(`Erro ao excluir usuário: ${error.message}`);
     }
   };
 
