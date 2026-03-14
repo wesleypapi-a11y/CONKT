@@ -207,7 +207,7 @@ export default function Dashboard() {
                   const isActive = activeMenu === item.id;
 
                   return (
-                    <li key={item.id}>
+                    <li key={item.id} className="relative">
                       <button
                         onClick={() => {
                           setActiveMenu(item.id);
@@ -217,17 +217,22 @@ export default function Dashboard() {
                             setSidebarOpen(false);
                           }
                         }}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-white/10'
+                            ? 'bg-white/15 shadow-lg scale-[1.02]'
                             : 'hover:bg-white/5'
                         }`}
-                        style={{ color: '#ffffff' }}
+                        style={{
+                          color: '#ffffff',
+                          position: 'relative',
+                          zIndex: isActive ? 10 : 1,
+                          transform: isActive ? 'translateX(2px)' : 'none'
+                        }}
                         title={item.label}
                       >
                         <Icon
                           size={18}
-                          style={{ color: '#ffffff' }}
+                          style={{ color: isActive ? arcoColors.primary.gold : '#ffffff' }}
                         />
                         {sidebarOpen && (
                           <>
