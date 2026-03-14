@@ -9,7 +9,7 @@ type UserRole = 'master' | 'administrador' | 'financeiro' | 'colaborador' | 'cli
 interface UserProfile {
   id: string;
   email: string;
-  nome: string;
+  nome_completo: string;
   telefone?: string;
   funcao?: string;
   role: UserRole;
@@ -93,7 +93,7 @@ export default function UserManagement() {
       setFormData({
         email: userToEdit.email,
         password: '',
-        nome: userToEdit.nome,
+        nome: userToEdit.nome_completo,
         telefone: userToEdit.telefone || '',
         funcao: userToEdit.funcao || '',
         role: userToEdit.role,
@@ -219,7 +219,7 @@ export default function UserManagement() {
         const { error: profileError } = await supabase
           .from('profiles')
           .update({
-            nome: formData.nome,
+            nome_completo: formData.nome,
             telefone: formData.telefone,
             funcao: formData.funcao,
             role: formData.role,
@@ -420,7 +420,7 @@ export default function UserManagement() {
                         {userItem.avatar_url ? (
                           <img
                             src={userItem.avatar_url}
-                            alt={userItem.nome}
+                            alt={userItem.nome_completo}
                             className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
                           />
                         ) : (
@@ -429,7 +429,7 @@ export default function UserManagement() {
                           </div>
                         )}
                         <div>
-                          <div className="font-semibold text-gray-900">{userItem.nome}</div>
+                          <div className="font-semibold text-gray-900">{userItem.nome_completo}</div>
                           <div className="text-sm text-gray-500">{userItem.email}</div>
                         </div>
                       </div>

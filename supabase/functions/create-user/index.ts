@@ -100,7 +100,7 @@ Deno.serve(async (req: Request) => {
       password: requestData.password,
       email_confirm: true,
       user_metadata: {
-        nome: requestData.nome,
+        nome_completo: requestData.nome,
         telefone: requestData.telefone || '',
         funcao: requestData.funcao || '',
       },
