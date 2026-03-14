@@ -31,12 +31,13 @@ export default function ReceitasView() {
         .from('empresas')
         .select(`
           id,
-          nome_fantasia,
+          nome,
           status,
-          data_inicio_vigencia,
-          data_fim_vigencia
+          data_inicio,
+          data_fim
         `)
-        .order('nome_fantasia');
+        .is('deleted_at', null)
+        .order('nome');
 
       if (error) throw error;
 
@@ -56,12 +57,12 @@ export default function ReceitasView() {
 
         receitasData.push({
           empresa_id: empresa.id,
-          empresa_nome: empresa.nome_fantasia,
+          empresa_nome: empresa.nome,
           plano: 'Personalizado',
           valor_mensal: 0,
           status: empresa.status,
-          data_inicio: empresa.data_inicio_vigencia,
-          data_fim: empresa.data_fim_vigencia,
+          data_inicio: empresa.data_inicio,
+          data_fim: empresa.data_fim,
           total_usuarios: totalUsuarios || 0,
           usuarios_ativos: usuariosAtivos || 0,
         });

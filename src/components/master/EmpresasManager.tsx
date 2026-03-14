@@ -17,13 +17,15 @@ function EmpresasManagerContent() {
 
   const [formData, setFormData] = useState({
     razao_social: '',
-    nome_fantasia: '',
+    nome: '',
     cnpj: '',
     telefone: '',
     email: '',
-    data_inicio_vigencia: new Date().toISOString().split('T')[0],
-    data_fim_vigencia: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    endereco: '',
+    data_inicio: new Date().toISOString().split('T')[0],
+    data_fim: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     status: 'ativa' as 'ativa' | 'inativa' | 'bloqueada',
+    responsavel: '',
   });
 
   useEffect(() => {
@@ -60,8 +62,8 @@ function EmpresasManagerContent() {
     try {
       const { data: legacyEmpresas, error: selectError } = await supabase
         .from('empresas')
-        .select('id, nome_fantasia, razao_social')
-        .or('nome_fantasia.in.(OMEGA,BETA,ALPHA,CONKT),razao_social.in.(OMEGA,BETA,ALPHA,CONKT)');
+        .select('id, nome, razao_social')
+        .or('nome.in.(OMEGA,BETA,ALPHA,CONKT),razao_social.in.(OMEGA,BETA,ALPHA,CONKT)');
 
       if (selectError) {
         throw selectError;
@@ -88,7 +90,7 @@ function EmpresasManagerContent() {
           .eq('id', empresa.id);
 
         if (deleteError) {
-          console.error(`Erro ao deletar ${empresa.nome_fantasia}:`, deleteError);
+          console.error(`Erro ao deletar ${empresa.nome}:`, deleteError);
           throw deleteError;
         }
       }
@@ -105,7 +107,7 @@ function EmpresasManagerContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.razao_social || !formData.nome_fantasia || !formData.cnpj) {
+    if (!formData.razao_social || !formData.nome || !formData.cnpj) {
       showAlert('Preencha todos os campos obrigatórios', 'error');
       return;
     }
@@ -113,13 +115,15 @@ function EmpresasManagerContent() {
     try {
       const dbData = {
         razao_social: formData.razao_social,
-        nome_fantasia: formData.nome_fantasia,
+        nome: formData.nome,
         cnpj: formData.cnpj,
         telefone: formData.telefone || null,
         email: formData.email || null,
-        data_inicio_vigencia: formData.data_inicio_vigencia,
-        data_fim_vigencia: formData.data_fim_vigencia,
+        endereco: formData.endereco || null,
+        data_inicio: formData.data_inicio,
+        data_fim: formData.data_fim,
         status: formData.status,
+        responsavel: formData.responsavel || null,
       };
 
       if (editingEmpresa) {
@@ -162,13 +166,15 @@ function EmpresasManagerContent() {
     setEditingEmpresa(empresa);
     setFormData({
       razao_social: empresa.razao_social || '',
-      nome_fantasia: empresa.nome_fantasia || '',
+      nome: empresa.nome || '',
       cnpj: empresa.cnpj,
       telefone: empresa.telefone || '',
       email: empresa.email || '',
-      data_inicio_vigencia: empresa.data_inicio_vigencia || '',
-      data_fim_vigencia: empresa.data_fim_vigencia || '',
+      endereco: empresa.endereco || '',
+      data_inicio: empresa.data_inicio || '',
+      data_fim: empresa.data_fim || '',
       status: empresa.status as any,
+      responsavel: empresa.responsavel || '',
     });
     setShowModal(true);
   };
@@ -227,18 +233,20 @@ function EmpresasManagerContent() {
   const resetForm = () => {
     setFormData({
       razao_social: '',
-      nome_fantasia: '',
+      nome: '',
       cnpj: '',
       telefone: '',
       email: '',
-      data_inicio_vigencia: new Date().toISOString().split('T')[0],
-      data_fim_vigencia: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      endereco: '',
+      data_inicio: new Date().toISOString().split('T')[0],
+      data_fim: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       status: 'ativa',
+      responsavel: '',
     });
   };
 
   const calculateDaysRemaining = (empresa: Empresa) => {
-    const dataFim = empresa.data_fim_vigencia;
+    const dataFim = empresa.data_fim;
     if (!dataFim) return null;
 
     const today = new Date();
@@ -253,11 +261,11 @@ function EmpresasManagerContent() {
 
     const searchLower = searchTerm.toLowerCase();
     const razaoSocial = (empresa.razao_social || '').toLowerCase();
-    const nomeFantasia = (empresa.nome_fantasia || '').toLowerCase();
+    const nome = (empresa.nome || '').toLowerCase();
     const cnpj = empresa.cnpj || '';
 
     return razaoSocial.includes(searchLower) ||
-           nomeFantasia.includes(searchLower) ||
+           nome.includes(searchLower) ||
            cnpj.includes(searchTerm);
   });
 
@@ -270,9 +278,9 @@ function EmpresasManagerContent() {
     }
   };
 
-  const isVigenciaExpired = (empresa: Empresa) => {
-    if (!empresa.data_fim_vigencia) return false;
-    return new Date(empresa.data_fim_vigencia) < new Date();
+  const isVigenciaExpired = (dataFim: string | undefined) => {
+    if (!dataFim) return false;
+    return new Date(dataFim) < new Date();
   };
 
   if (loading) {
@@ -398,7 +406,7 @@ function EmpresasManagerContent() {
                         {empresa.razao_social || '-'}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-600">
-                        {empresa.nome_fantasia || '-'}
+                        {empresa.nome || '-'}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-600 font-mono">
                         {empresa.cnpj || '-'}
@@ -406,17 +414,17 @@ function EmpresasManagerContent() {
                       <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-600">
                         <div className="flex flex-col">
                           <span>
-                            {empresa.data_inicio_vigencia
-                              ? new Date(empresa.data_inicio_vigencia).toLocaleDateString('pt-BR')
+                            {empresa.data_inicio
+                              ? new Date(empresa.data_inicio).toLocaleDateString('pt-BR')
                               : '-'}
                           </span>
                           <span className={`text-[10px] ${
-                            isVigenciaExpired(empresa)
+                            isVigenciaExpired(empresa.data_fim)
                               ? 'text-red-600 font-semibold'
                               : 'text-gray-500'
                           }`}>
-                            até {empresa.data_fim_vigencia
-                              ? new Date(empresa.data_fim_vigencia).toLocaleDateString('pt-BR')
+                            até {empresa.data_fim
+                              ? new Date(empresa.data_fim).toLocaleDateString('pt-BR')
                               : '-'}
                           </span>
                         </div>
@@ -503,12 +511,12 @@ function EmpresasManagerContent() {
 
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nome Fantasia *
+                    Nome *
                   </label>
                   <input
                     type="text"
-                    value={formData.nome_fantasia}
-                    onChange={(e) => setFormData({ ...formData, nome_fantasia: e.target.value })}
+                    value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
@@ -551,14 +559,26 @@ function EmpresasManagerContent() {
                   />
                 </div>
 
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Endereço
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.endereco}
+                    onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Data Início Vigência *
+                    Data Início *
                   </label>
                   <input
                     type="date"
-                    value={formData.data_inicio_vigencia}
-                    onChange={(e) => setFormData({ ...formData, data_inicio_vigencia: e.target.value })}
+                    value={formData.data_inicio}
+                    onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
@@ -566,14 +586,26 @@ function EmpresasManagerContent() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Data Fim Vigência *
+                    Data Fim *
                   </label>
                   <input
                     type="date"
-                    value={formData.data_fim_vigencia}
-                    onChange={(e) => setFormData({ ...formData, data_fim_vigencia: e.target.value })}
+                    value={formData.data_fim}
+                    onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Responsável
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.responsavel}
+                    onChange={(e) => setFormData({ ...formData, responsavel: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
