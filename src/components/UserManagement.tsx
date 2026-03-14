@@ -76,9 +76,9 @@ export default function UserManagement() {
     try {
       const { data, error } = await supabase
         .from('empresas')
-        .select('id, nome')
-        .eq('is_active', true)
-        .order('nome');
+        .select('id, nome_fantasia')
+        .eq('status', 'ativa')
+        .order('nome_fantasia');
 
       if (error) throw error;
       setEmpresas(data || []);
@@ -689,7 +689,7 @@ export default function UserManagement() {
                       <option value="">Selecione uma empresa</option>
                       {empresas.map((empresa) => (
                         <option key={empresa.id} value={empresa.id}>
-                          {empresa.nome}
+                          {empresa.nome_fantasia}
                         </option>
                       ))}
                     </select>

@@ -82,10 +82,9 @@ export default function UsuariosManager() {
     try {
       const { data, error } = await supabase
         .from('empresas')
-        .select('id, nome')
+        .select('id, nome_fantasia')
         .eq('status', 'ativa')
-        .is('deleted_at', null)
-        .order('nome');
+        .order('nome_fantasia');
 
       if (error) throw error;
       setEmpresas(data || []);
@@ -551,7 +550,7 @@ export default function UsuariosManager() {
                   <option value="">Selecione uma empresa</option>
                   {empresas.map(empresa => (
                     <option key={empresa.id} value={empresa.id}>
-                      {empresa.nome}
+                      {empresa.nome_fantasia}
                     </option>
                   ))}
                 </select>

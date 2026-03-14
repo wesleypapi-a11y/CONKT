@@ -1,15 +1,13 @@
 export interface Empresa {
   id: string;
   razao_social: string;
-  nome: string;
+  nome_fantasia: string;
   cnpj: string;
   telefone?: string;
   email?: string;
-  endereco?: string;
-  data_inicio: string;
-  data_fim: string;
+  data_inicio_vigencia: string;
+  data_fim_vigencia: string;
   status: 'ativa' | 'inativa' | 'bloqueada';
-  responsavel?: string;
   created_at?: string;
   updated_at?: string;
 }
