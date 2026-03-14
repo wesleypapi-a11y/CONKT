@@ -185,8 +185,9 @@ export default function UserManagement() {
   };
 
   const handleSave = async () => {
-    console.log('=== INICIANDO CRIAÇÃO DE USUÁRIO ===');
+    console.log('=== INICIANDO SALVAR USUÁRIO ===');
     console.log('FormData:', formData);
+    console.log('EditingUser:', editingUser);
 
     if (!formData.email || !formData.nome) {
       alert('Email e nome são obrigatórios');
@@ -211,6 +212,7 @@ export default function UserManagement() {
       }
     }
 
+    console.log('Todas as validações passaram. Iniciando operação...');
     setSaving(true);
     try {
       console.log('Validando sessão e autenticação...');
