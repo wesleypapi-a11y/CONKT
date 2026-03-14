@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Image, Upload, Save, Menu as MenuIcon } from 'lucide-react';
+import { Image, Upload, Save, Menu as MenuIcon, ZoomIn, ZoomOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { useAlert } from '../hooks/useAlert';
@@ -18,6 +18,7 @@ export default function AppearanceSettings() {
   });
 
   const [previewMenu, setPreviewMenu] = useState<string | null>(null);
+  const [logoScale, setLogoScale] = useState(100);
 
   useEffect(() => {
     loadPreferences();
@@ -150,12 +151,41 @@ export default function AppearanceSettings() {
       <div className="p-6">
         <div className="space-y-4">
           {(preview || currentImage) && (
-            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <img
-                src={preview || currentImage || ''}
-                alt={title}
-                className="max-h-24 object-contain"
-              />
+            <div className="space-y-3">
+              <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[200px]">
+                <img
+                  src={preview || currentImage || ''}
+                  alt={title}
+                  style={{ maxWidth: `${logoScale}%`, height: 'auto' }}
+                  className="object-contain transition-all duration-200"
+                />
+              </div>
+
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setLogoScale(Math.max(20, logoScale - 10))}
+                  disabled={logoScale <= 20}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  title="Diminuir tamanho"
+                >
+                  <ZoomOut size={18} />
+                  <span className="text-sm">-</span>
+                </button>
+
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg border border-gray-200 min-w-[100px] justify-center">
+                  <span className="text-sm font-semibold text-gray-700">{logoScale}%</span>
+                </div>
+
+                <button
+                  onClick={() => setLogoScale(Math.min(200, logoScale + 10))}
+                  disabled={logoScale >= 200}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  title="Aumentar tamanho"
+                >
+                  <ZoomIn size={18} />
+                  <span className="text-sm">+</span>
+                </button>
+              </div>
             </div>
           )}
 
