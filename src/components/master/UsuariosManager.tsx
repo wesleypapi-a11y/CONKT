@@ -20,7 +20,7 @@ interface Usuario {
 
 interface EmpresaSelect {
   id: string;
-  nome: string;
+  razao_social: string;
 }
 
 interface NovoUsuarioForm {
@@ -98,13 +98,13 @@ export default function UsuariosManager() {
           if (user.empresa_id) {
             const { data: empresaData } = await supabase
               .from('empresas')
-              .select('nome')
+              .select('razao_social')
               .eq('id', user.empresa_id)
               .maybeSingle();
 
             return {
               ...user,
-              empresa: empresaData ? { nome: empresaData.nome } : null,
+              empresa: empresaData ? { nome: empresaData.razao_social } : null,
             };
           }
           return { ...user, empresa: null };
@@ -130,10 +130,10 @@ export default function UsuariosManager() {
     try {
       const { data, error } = await supabase
         .from('empresas')
-        .select('id, nome')
+        .select('id, razao_social')
         .eq('status', 'ativa')
         .is('deleted_at', null)
-        .order('nome');
+        .order('razao_social');
 
       if (error) throw error;
       setEmpresas(data || []);
@@ -667,7 +667,7 @@ export default function UsuariosManager() {
                   <option value="">Selecione uma empresa</option>
                   {empresas.map(empresa => (
                     <option key={empresa.id} value={empresa.id}>
-                      {empresa.nome}
+                      {empresa.razao_social}
                     </option>
                   ))}
                 </select>

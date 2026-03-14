@@ -21,7 +21,7 @@ interface UserProfile {
 
 interface Empresa {
   id: string;
-  nome: string;
+  razao_social: string;
 }
 
 export default function CompanyProfiles() {
@@ -43,7 +43,7 @@ export default function CompanyProfiles() {
     try {
       const { data, error } = await supabase
         .from('empresas')
-        .select('id, nome')
+        .select('id, razao_social')
         .eq('id', profile.empresa_id)
         .single();
 
@@ -120,7 +120,7 @@ export default function CompanyProfiles() {
           </h2>
           {empresa && (
             <p className="text-sm text-gray-500 mt-1">
-              {empresa.nome} - {users.length} {users.length === 1 ? 'usuário' : 'usuários'}
+              {empresa.razao_social} - {users.length} {users.length === 1 ? 'usuário' : 'usuários'}
             </p>
           )}
         </div>
