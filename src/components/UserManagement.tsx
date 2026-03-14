@@ -252,9 +252,6 @@ export default function UserManagement() {
           throw new Error('Sessão inválida');
         }
 
-        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
-        console.log('URL da edge function:', apiUrl);
-
         const payload = {
           email: formData.email,
           password: formData.password,
@@ -269,41 +266,23 @@ export default function UserManagement() {
         };
 
         console.log('Payload sendo enviado:', payload);
-        console.log('Fazendo requisição para edge function...');
+        console.log('Chamando edge function create-user...');
 
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
+        const { data: result, error: functionError } = await supabase.functions.invoke('create-user', {
+          body: payload,
         });
 
-        console.log('Status da resposta:', response.status);
-        console.log('Headers da resposta:', response.headers);
+        console.log('Resposta da função:', result);
+        console.log('Erro da função:', functionError);
 
-        const responseText = await response.text();
-        console.log('Resposta (texto):', responseText);
-
-        let result;
-        try {
-          result = JSON.parse(responseText);
-          console.log('Resposta (JSON):', result);
-        } catch (e) {
-          console.error('Erro ao fazer parse do JSON:', e);
-          throw new Error(`Resposta inválida do servidor: ${responseText}`);
+        if (functionError) {
+          console.error('Erro ao chamar edge function:', functionError);
+          throw new Error(functionError.message || 'Erro ao criar usuário');
         }
 
-        if (!response.ok) {
-          const errorMessage = result.error || result.message || `Erro HTTP ${response.status}`;
-          console.error('Erro ao criar usuário:', errorMessage);
-          throw new Error(errorMessage);
-        }
-
-        if (!result.success) {
-          const errorMessage = result.error || 'Erro desconhecido ao criar usuário';
-          console.error('Erro ao criar usuário:', errorMessage);
+        if (!result || !result.success) {
+          const errorMessage = result?.error || 'Erro desconhecido ao criar usuário';
+          console.error('Erro retornado pela função:', errorMessage);
           throw new Error(errorMessage);
         }
 
