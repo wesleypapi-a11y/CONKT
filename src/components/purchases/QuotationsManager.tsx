@@ -633,6 +633,8 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
           console.log('[Frontend] ✅ Edge Function executada com sucesso:', result);
 
+          setShowComparison(false);
+
           await Promise.all([
             loadQuotations(selectedRequest.id),
             loadRequests()
