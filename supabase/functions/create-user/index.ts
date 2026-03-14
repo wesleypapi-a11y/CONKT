@@ -87,6 +87,17 @@ Deno.serve(async (req: Request) => {
       if (requestData.empresa_id !== profile.empresa_id) {
         throw new Error('Você só pode criar usuários da sua empresa');
       }
+
+      const { count, error: countError } = await supabaseAdmin
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .eq('empresa_id', profile.empresa_id);
+
+      if (countError) throw countError;
+
+      if (count && count >= 10) {
+        throw new Error('Sua empresa atingiu o limite máximo de 10 usuários');
+      }
     }
 
     if (profile.role === 'master' && requestData.role === 'administrador' && !requestData.empresa_id) {

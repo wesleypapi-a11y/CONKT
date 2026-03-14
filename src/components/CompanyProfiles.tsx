@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Users, Shield, User as UserIcon, Mail, Phone, Briefcase, CheckCircle, XCircle } from 'lucide-react';
+import { Users, Shield, User as UserIcon, Mail, Phone, Briefcase, CheckCircle, XCircle, Plus } from 'lucide-react';
 import { arcoColors } from '../styles/colors';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useAlert } from '../hooks/useAlert';
 
 type UserRole = 'master' | 'administrador' | 'financeiro' | 'colaborador' | 'cliente';
 
@@ -26,9 +27,11 @@ interface Empresa {
 
 export default function CompanyProfiles() {
   const { profile } = useAuth();
+  const { showAlert } = useAlert();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [empresa, setEmpresa] = useState<Empresa | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (profile?.empresa_id) {
@@ -114,6 +117,19 @@ export default function CompanyProfiles() {
     return UserIcon;
   };
 
+  const handleAddUser = () => {
+    if (users.length >= 10) {
+      showAlert('Sua empresa atingiu o limite máximo de 10 usuários', 'error');
+      return;
+    }
+    setModalOpen(true);
+  };
+
+  const handleUserCreated = () => {
+    loadUsers();
+    setModalOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -124,18 +140,31 @@ export default function CompanyProfiles() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Users size={32} style={{ color: arcoColors.primary.blue }} />
-        <div>
-          <h2 className="text-2xl font-bold" style={{ color: arcoColors.text.primary }}>
-            Perfis da Minha Empresa
-          </h2>
-          {empresa && (
-            <p className="text-sm text-gray-500 mt-1">
-              {empresa.razao_social} - {users.length} {users.length === 1 ? 'usuário' : 'usuários'}
-            </p>
-          )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Users size={32} style={{ color: arcoColors.primary.blue }} />
+          <div>
+            <h2 className="text-2xl font-bold" style={{ color: arcoColors.text.primary }}>
+              Perfis da Minha Empresa
+            </h2>
+            {empresa && (
+              <p className="text-sm text-gray-500 mt-1">
+                {empresa.razao_social} - {users.length} {users.length === 1 ? 'usuário' : 'usuários'}
+                {users.length < 10 && <span className="text-blue-600 font-medium"> (máximo 10)</span>}
+              </p>
+            )}
+          </div>
         </div>
+        {profile?.role === 'administrador' && (
+          <button
+            onClick={handleAddUser}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-all hover:opacity-90"
+            style={{ backgroundColor: arcoColors.primary.blue }}
+          >
+            <Plus size={20} />
+            Adicionar Usuário
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
@@ -262,12 +291,228 @@ export default function CompanyProfiles() {
         <div className="flex gap-3">
           <Shield size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-blue-900 mb-1">Gerenciar Usuários</h3>
+            <h3 className="font-semibold text-blue-900 mb-1">Limite de Usuários</h3>
             <p className="text-sm text-blue-700">
-              Para criar, editar ou excluir usuários da sua empresa, acesse a aba <strong>Usuários</strong> no menu acima.
+              Cada empresa pode ter no máximo <strong>10 usuários</strong>. Atualmente você tem <strong>{users.length} de 10</strong> usuários cadastrados.
             </p>
           </div>
         </div>
+      </div>
+
+      {modalOpen && (
+        <AddUserModal
+          onClose={() => setModalOpen(false)}
+          onSuccess={handleUserCreated}
+          empresaId={profile?.empresa_id || ''}
+        />
+      )}
+    </div>
+  );
+}
+
+interface AddUserModalProps {
+  onClose: () => void;
+  onSuccess: () => void;
+  empresaId: string;
+}
+
+function AddUserModal({ onClose, onSuccess, empresaId }: AddUserModalProps) {
+  const { showAlert } = useAlert();
+  const { profile } = useAuth();
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    telefone: '',
+    funcao: '',
+    role: 'colaborador' as 'cliente' | 'colaborador' | 'financeiro',
+    senha: '',
+    confirmarSenha: '',
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.senha !== formData.confirmarSenha) {
+      showAlert('As senhas não coincidem', 'error');
+      return;
+    }
+
+    if (formData.senha.length < 6) {
+      showAlert('A senha deve ter no mínimo 6 caracteres', 'error');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Sessão não encontrada');
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.senha,
+            nome: formData.nome,
+            telefone: formData.telefone,
+            funcao: formData.funcao,
+            role: formData.role,
+            is_active: true,
+            empresa_id: empresaId,
+            created_by: profile?.id,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Erro ao criar usuário');
+      }
+
+      showAlert('Usuário criado com sucesso!', 'success');
+      onSuccess();
+    } catch (error: any) {
+      showAlert(error.message || 'Erro ao criar usuário', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+          <h2 className="text-xl font-bold text-gray-900">Adicionar Novo Usuário</h2>
+          <p className="text-sm text-gray-500 mt-1">Preencha os dados do novo usuário</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nome Completo *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.nome}
+              onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email *
+            </label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Telefone
+            </label>
+            <input
+              type="tel"
+              value={formData.telefone}
+              onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Função/Cargo
+            </label>
+            <input
+              type="text"
+              value={formData.funcao}
+              onChange={(e) => setFormData({ ...formData, funcao: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Perfil *
+            </label>
+            <select
+              required
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="colaborador">Colaborador</option>
+              <option value="financeiro">Financeiro</option>
+              <option value="cliente">Cliente</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Senha *
+            </label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={formData.senha}
+              onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirmar Senha *
+            </label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={formData.confirmarSenha}
+              onChange={(e) => setFormData({ ...formData, confirmarSenha: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <p className="text-xs text-blue-700">
+              O usuário será criado vinculado à sua empresa e receberá acesso ao sistema com o perfil selecionado.
+            </p>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 px-4 py-2 rounded-lg text-white font-medium transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: arcoColors.primary.blue }}
+            >
+              {saving ? 'Criando...' : 'Criar Usuário'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
