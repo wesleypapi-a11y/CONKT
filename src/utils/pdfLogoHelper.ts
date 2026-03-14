@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabase';
 import { jsPDF } from 'jspdf';
 
-const DEFAULT_LOGO_PATH = '/azul_marinho_sem_fundo.png';
+const DEFAULT_LOGO_PATH = '/Sem_titulo-removebg-previewsemf.png';
 
 export async function getCurrentUserEmpresaId(): Promise<string | null> {
   try {

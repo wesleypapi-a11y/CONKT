@@ -5,11 +5,11 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#D81B60",
+  "theme_color": "#3A3F4D",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/baixa_logomarca.jpg-removebg-preview copy.png",
+      "src": "/Sem_titulo-removebg-previewsemf.png",
       "sizes": "any",
       "type": "image/png",
       "purpose": "any maskable"

@@ -842,7 +842,7 @@ export default function RDOModal({ isOpen, onClose, rdoId, preSelectedWorkId, vi
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-white border-b border-gray-200 rounded-t-lg sm:rounded-t-xl">
           <div className="flex items-center gap-2 sm:gap-4">
             <img
-              src="/logo_conkt-removebg-preview.png"
+              src="/Sem_titulo-removebg-previewsemf.png"
               alt="ARCO"
               className="h-8 sm:h-10"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}

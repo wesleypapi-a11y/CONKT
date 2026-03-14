@@ -7,7 +7,7 @@ export default function PlanosPage() {
         <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
           <div className="mb-8">
             <img
-              src="/azul_marinho_sem_fundo.png"
+              src="/Sem_titulo-removebg-previewsemf.png"
               alt="ARCO Logo"
               className="h-24 mx-auto mb-6"
             />
