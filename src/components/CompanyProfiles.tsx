@@ -55,10 +55,15 @@ export default function CompanyProfiles() {
   };
 
   const loadUsers = async () => {
-    if (!profile?.empresa_id) return;
+    if (!profile?.empresa_id) {
+      console.log('⚠️ CompanyProfiles: profile.empresa_id está vazio!', profile);
+      return;
+    }
 
     setLoading(true);
     try {
+      console.log('🔍 CompanyProfiles: Buscando usuários com empresa_id:', profile.empresa_id);
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -66,6 +71,13 @@ export default function CompanyProfiles() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+
+      console.log('✅ CompanyProfiles: Usuários carregados:', data?.length);
+      console.log('📋 CompanyProfiles: Detalhes:', data?.map(u => ({
+        email: u.email,
+        empresa_id: u.empresa_id
+      })));
+
       setUsers(data || []);
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
