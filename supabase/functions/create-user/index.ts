@@ -64,9 +64,11 @@ Deno.serve(async (req: Request) => {
       throw new Error('Não autorizado');
     }
 
+    const requestData: CreateUserRequest = await req.json();
+
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('role')
+      .select('role, empresa_id')
       .eq('id', currentUser.id)
       .single();
 
@@ -78,7 +80,9 @@ Deno.serve(async (req: Request) => {
       throw new Error('Sem permissão para criar usuários');
     }
 
-    const requestData: CreateUserRequest = await req.json();
+    if (profile.role === 'administrador' && requestData.empresa_id !== profile.empresa_id) {
+      throw new Error('Você só pode criar usuários da sua empresa');
+    }
 
     if (!requestData.email || !requestData.password || !requestData.nome) {
       throw new Error('Email, senha e nome são obrigatórios');

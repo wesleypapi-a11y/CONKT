@@ -236,33 +236,51 @@ export default function UserManagement() {
           if (uploadedUrl) avatarUrl = uploadedUrl;
         }
 
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            nome_completo: formData.nome,
-            telefone: formData.telefone,
-            funcao: formData.funcao,
-            role: formData.role,
-            is_active: formData.is_active,
-            avatar_url: avatarUrl,
-            empresa_id: formData.role === 'master' ? null : formData.empresa_id
-          })
-          .eq('id', editingUser.id);
-
-        if (profileError) throw profileError;
+        const updatePayload: any = {
+          user_id: editingUser.id,
+          nome: formData.nome,
+          telefone: formData.telefone,
+          funcao: formData.funcao,
+          role: formData.role,
+          is_active: formData.is_active,
+          avatar_url: avatarUrl,
+          empresa_id: formData.role === 'master' ? null : formData.empresa_id
+        };
 
         if (formData.password) {
-          const { error: updatePasswordError } = await supabase.functions.invoke('update-user-password', {
-            body: {
-              user_id: editingUser.id,
-              new_password: formData.password
-            }
-          });
+          updatePayload.new_password = formData.password;
+        }
 
-          if (updatePasswordError) {
-            console.error('Erro ao atualizar senha:', updatePasswordError);
-            alert('Usuário atualizado, mas houve erro ao alterar a senha.');
+        console.log('Chamando edge function update-user...');
+        const { data: updateResult, error: updateFunctionError } = await supabase.functions.invoke('update-user', {
+          body: updatePayload,
+        });
+
+        console.log('Resposta da função update-user:', updateResult);
+        console.log('Erro da função update-user:', updateFunctionError);
+
+        if (updateFunctionError) {
+          console.error('Erro ao chamar edge function update-user:', updateFunctionError);
+
+          if (updateFunctionError instanceof FunctionsHttpError) {
+            const errorBody = await updateFunctionError.context.json();
+            console.error('Corpo do erro HTTP:', errorBody);
+            throw new Error(errorBody.error || errorBody.message || 'Erro HTTP ao atualizar usuário');
+          } else if (updateFunctionError instanceof FunctionsRelayError) {
+            console.error('Erro de relay:', updateFunctionError.message);
+            throw new Error('Erro de comunicação com o servidor');
+          } else if (updateFunctionError instanceof FunctionsFetchError) {
+            console.error('Erro de fetch:', updateFunctionError.message);
+            throw new Error('Erro de rede ao atualizar usuário');
+          } else {
+            throw new Error(updateFunctionError.message || 'Erro ao atualizar usuário');
           }
+        }
+
+        if (!updateResult || !updateResult.success) {
+          const errorMessage = updateResult?.error || 'Erro desconhecido ao atualizar usuário';
+          console.error('Erro retornado pela função update-user:', errorMessage);
+          throw new Error(errorMessage);
         }
 
         alert('Usuário atualizado com sucesso!');
