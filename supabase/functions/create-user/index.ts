@@ -76,12 +76,21 @@ Deno.serve(async (req: Request) => {
       throw new Error('Perfil não encontrado');
     }
 
-    if (!['master', 'administrador', 'financeiro'].includes(profile.role)) {
+    if (!['master', 'administrador'].includes(profile.role)) {
       throw new Error('Sem permissão para criar usuários');
     }
 
-    if (profile.role === 'administrador' && requestData.empresa_id !== profile.empresa_id) {
-      throw new Error('Você só pode criar usuários da sua empresa');
+    if (profile.role === 'administrador') {
+      if (!['cliente', 'colaborador', 'financeiro'].includes(requestData.role)) {
+        throw new Error('Administradores só podem criar usuários do tipo: Cliente, Colaborador ou Financeiro');
+      }
+      if (requestData.empresa_id !== profile.empresa_id) {
+        throw new Error('Você só pode criar usuários da sua empresa');
+      }
+    }
+
+    if (profile.role === 'master' && requestData.role === 'administrador' && !requestData.empresa_id) {
+      throw new Error('Administradores devem ter uma empresa vinculada');
     }
 
     if (!requestData.email || !requestData.password || !requestData.nome) {

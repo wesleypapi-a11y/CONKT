@@ -27,7 +27,7 @@ interface Empresa {
 }
 
 export default function UserManagement() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,17 +52,22 @@ export default function UserManagement() {
   });
 
   useEffect(() => {
-    loadUsers();
-    loadEmpresas();
-  }, []);
+    if (profile) {
+      loadUsers();
+      loadEmpresas();
+    }
+  }, [profile?.id]);
 
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let query = supabase.from('profiles').select('*');
+
+      if (profile?.role === 'administrador' && profile?.empresa_id) {
+        query = query.eq('empresa_id', profile.empresa_id);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
       setUsers(data || []);
@@ -106,6 +111,7 @@ export default function UserManagement() {
       setAvatarPreview(userToEdit.avatar_url || '');
     } else {
       setEditingUser(null);
+      const defaultEmpresaId = profile?.role === 'administrador' ? (profile.empresa_id || '') : '';
       setFormData({
         email: '',
         password: '',
@@ -115,7 +121,7 @@ export default function UserManagement() {
         role: 'colaborador',
         is_active: true,
         avatar_url: '',
-        empresa_id: ''
+        empresa_id: defaultEmpresaId
       });
       setAvatarPreview('');
     }
@@ -197,6 +203,24 @@ export default function UserManagement() {
     if (!editingUser && !formData.password) {
       alert('Senha é obrigatória para novos usuários');
       return;
+    }
+
+    if (profile?.role === 'administrador') {
+      if (!['cliente', 'colaborador', 'financeiro'].includes(formData.role)) {
+        alert('Administradores só podem criar usuários do tipo: Cliente, Colaborador ou Financeiro');
+        return;
+      }
+      if (formData.empresa_id !== profile.empresa_id) {
+        alert('Você só pode criar usuários da sua própria empresa');
+        return;
+      }
+    }
+
+    if (profile?.role === 'master') {
+      if (formData.role === 'administrador' && !formData.empresa_id) {
+        alert('Administradores devem ter uma empresa vinculada');
+        return;
+      }
     }
 
     if (formData.role !== 'master' && !formData.empresa_id) {
@@ -741,11 +765,21 @@ export default function UserManagement() {
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="colaborador">Colaborador</option>
-                    <option value="administrador">Administrador</option>
-                    <option value="financeiro">Financeiro</option>
-                    <option value="cliente">Cliente</option>
-                    <option value="master">Master</option>
+                    {profile?.role === 'administrador' ? (
+                      <>
+                        <option value="colaborador">Colaborador</option>
+                        <option value="financeiro">Financeiro</option>
+                        <option value="cliente">Cliente</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="colaborador">Colaborador</option>
+                        <option value="administrador">Administrador</option>
+                        <option value="financeiro">Financeiro</option>
+                        <option value="cliente">Cliente</option>
+                        {profile?.role === 'master' && <option value="master">Master</option>}
+                      </>
+                    )}
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
                     {formData.role === 'master' && 'Acesso global ao sistema e todas as empresas'}
@@ -764,7 +798,8 @@ export default function UserManagement() {
                     <select
                       value={formData.empresa_id}
                       onChange={(e) => setFormData({ ...formData, empresa_id: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={profile?.role === 'administrador'}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     >
                       <option value="">Selecione uma empresa</option>
                       {empresas.map((empresa) => (
@@ -773,6 +808,11 @@ export default function UserManagement() {
                         </option>
                       ))}
                     </select>
+                    {profile?.role === 'administrador' && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        A empresa está vinculada automaticamente à sua empresa
+                      </p>
+                    )}
                   </div>
                 )}
 
