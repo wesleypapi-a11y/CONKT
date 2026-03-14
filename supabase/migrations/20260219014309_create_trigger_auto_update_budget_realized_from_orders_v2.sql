@@ -40,7 +40,7 @@ BEGIN
     INTO v_budget_id, v_work_id, v_responsible_id
     FROM purchase_orders po
     WHERE po.id = OLD.order_id;
-    
+
     -- If this was the last item for this phase/subphase, remove budget_realized
     IF OLD.phase_id IS NOT NULL THEN
       -- Check if there are other items with same phase/subphase
@@ -53,12 +53,12 @@ BEGIN
       ) THEN
         -- Remove budget_realized entry
         DELETE FROM budget_realized
-        WHERE order_id = OLD.order_id
+        WHERE purchase_order_id = OLD.order_id
           AND phase_id = OLD.phase_id
           AND COALESCE(subphase_id::text, '') = COALESCE(OLD.subphase_id::text, '');
       END IF;
     END IF;
-    
+
     RETURN OLD;
   END IF;
 
@@ -68,6 +68,15 @@ BEGIN
   INTO v_budget_id, v_work_id, v_responsible_id
   FROM purchase_orders po
   WHERE po.id = NEW.order_id;
+
+  -- If budget_id is null, try to fetch from work_id
+  IF v_budget_id IS NULL AND v_work_id IS NOT NULL THEN
+    SELECT b.id INTO v_budget_id
+    FROM budgets b
+    WHERE b.work_id = v_work_id
+    ORDER BY b.created_at DESC
+    LIMIT 1;
+  END IF;
 
   -- Only proceed if we have budget_id and phase_id
   IF v_budget_id IS NULL OR NEW.phase_id IS NULL THEN
@@ -89,30 +98,31 @@ BEGIN
   -- Insert or update budget_realized
   INSERT INTO budget_realized (
     budget_id,
-    work_id,
     phase_id,
     subphase_id,
-    order_id,
-    realized_value,
-    responsible_id,
-    created_at,
-    updated_at
+    purchase_order_id,
+    purchase_order_item_id,
+    amount,
+    description,
+    created_by,
+    created_at
   )
   VALUES (
     v_budget_id,
-    v_work_id,
     v_phase_id,
     v_subphase_id,
     NEW.order_id,
-    v_realized_value,
+    NEW.id,
+    NEW.total_price,
+    NEW.item_name,
     v_responsible_id,
-    NOW(),
     NOW()
   )
-  ON CONFLICT (budget_id, phase_id, COALESCE(subphase_id, '00000000-0000-0000-0000-000000000000'::uuid), order_id)
+  ON CONFLICT (budget_id, phase_id, COALESCE(subphase_id, '00000000-0000-0000-0000-000000000000'::uuid), purchase_order_id)
   DO UPDATE SET
-    realized_value = v_realized_value,
-    updated_at = NOW();
+    amount = EXCLUDED.amount,
+    description = EXCLUDED.description,
+    created_at = NOW();
 
   RETURN NEW;
 END;

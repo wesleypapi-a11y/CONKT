@@ -122,6 +122,20 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
     }
 
     try {
+      let budgetId = contract.budget_id;
+
+      if (!budgetId) {
+        const { data: budgetData } = await supabase
+          .from('budgets')
+          .select('id')
+          .eq('work_id', contract.work_id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        budgetId = budgetData?.id || null;
+      }
+
       const { count } = await supabase
         .from('purchase_orders')
         .select('id', { count: 'exact', head: true })
@@ -129,13 +143,13 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
 
       const orderNumber = `PC-${String((count || 0) + 1).padStart(5, '0')}`;
 
-      // Criar pedido com fase e subfase do contrato
       const { data: newOrder, error: orderError } = await supabase
         .from('purchase_orders')
         .insert({
           order_number: orderNumber,
           supplier_id: contract.supplier_id,
           work_id: contract.work_id,
+          budget_id: budgetId,
           phase_id: contract.budget_phase_id,
           subphase_id: contract.budget_subphase_id,
           total_value: installment.amount,
@@ -155,13 +169,11 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
         throw orderError;
       }
 
-      // Atualizar parcela com o número do PC
       await supabase
         .from('contract_installments')
         .update({ purchase_order_number: orderNumber })
         .eq('id', installment.id);
 
-      // Criar item do pedido
       const { error: itemError } = await supabase
         .from('purchase_order_items')
         .insert({
@@ -180,34 +192,6 @@ export default function ContractParcelasTab({ contractId, refreshKey }: Contract
       if (itemError) {
         console.error('[CreateOrder] Erro ao criar item:', itemError);
         throw itemError;
-      }
-
-      // Criar lançamento no realizado (se houver orçamento)
-      if (contract.budget_id && contract.budget_phase_id && contract.budget_subphase_id) {
-        const { data: orderItemData } = await supabase
-          .from('purchase_order_items')
-          .select('id')
-          .eq('order_id', newOrder.id)
-          .single();
-
-        if (orderItemData) {
-          const { error: realizedError } = await supabase
-            .from('budget_realized')
-            .insert({
-              budget_id: contract.budget_id,
-              phase_id: contract.budget_phase_id,
-              subphase_id: contract.budget_subphase_id,
-              purchase_order_id: newOrder.id,
-              purchase_order_item_id: orderItemData.id,
-              amount: installment.amount,
-              description: `Contrato ${contract.contract_number} - Parcela ${installment.installment_number}`,
-              created_by: contract.user_id
-            });
-
-          if (realizedError) {
-            console.error('[CreateOrder] Erro ao lançar no realizado:', realizedError);
-          }
-        }
       }
 
       alert(`✅ Parcela marcada como paga e Pedido ${orderNumber} criado com sucesso!`);
