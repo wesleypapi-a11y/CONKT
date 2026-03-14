@@ -183,6 +183,9 @@ export default function UserManagement() {
   };
 
   const handleSave = async () => {
+    console.log('=== INICIANDO CRIAÇÃO DE USUÁRIO ===');
+    console.log('FormData:', formData);
+
     if (!formData.email || !formData.nome) {
       alert('Email e nome são obrigatórios');
       return;
@@ -241,12 +244,32 @@ export default function UserManagement() {
 
         alert('Usuário atualizado com sucesso!');
       } else {
+        console.log('Obtendo sessão...');
         const { data: { session } } = await supabase.auth.getSession();
+        console.log('Sessão obtida:', session ? 'OK' : 'FALHOU');
+
         if (!session) {
           throw new Error('Sessão inválida');
         }
 
         const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
+        console.log('URL da edge function:', apiUrl);
+
+        const payload = {
+          email: formData.email,
+          password: formData.password,
+          nome: formData.nome,
+          telefone: formData.telefone,
+          funcao: formData.funcao,
+          role: formData.role,
+          is_active: formData.is_active,
+          empresa_id: formData.role === 'master' ? null : formData.empresa_id,
+          avatar_url: '',
+          created_by: user?.id,
+        };
+
+        console.log('Payload sendo enviado:', payload);
+        console.log('Fazendo requisição para edge function...');
 
         const response = await fetch(apiUrl, {
           method: 'POST',
@@ -254,30 +277,40 @@ export default function UserManagement() {
             'Authorization': `Bearer ${session.access_token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            nome: formData.nome,
-            telefone: formData.telefone,
-            funcao: formData.funcao,
-            role: formData.role,
-            is_active: formData.is_active,
-            empresa_id: formData.empresa_id,
-            avatar_url: '',
-            created_by: user?.id,
-          }),
+          body: JSON.stringify(payload),
         });
 
-        const result = await response.json();
-        console.log('Resposta da edge function create-user:', result);
+        console.log('Status da resposta:', response.status);
+        console.log('Headers da resposta:', response.headers);
 
-        if (!response.ok || !result.success) {
-          const errorMessage = result.error || `Erro HTTP ${response.status}`;
+        const responseText = await response.text();
+        console.log('Resposta (texto):', responseText);
+
+        let result;
+        try {
+          result = JSON.parse(responseText);
+          console.log('Resposta (JSON):', result);
+        } catch (e) {
+          console.error('Erro ao fazer parse do JSON:', e);
+          throw new Error(`Resposta inválida do servidor: ${responseText}`);
+        }
+
+        if (!response.ok) {
+          const errorMessage = result.error || result.message || `Erro HTTP ${response.status}`;
           console.error('Erro ao criar usuário:', errorMessage);
           throw new Error(errorMessage);
         }
 
+        if (!result.success) {
+          const errorMessage = result.error || 'Erro desconhecido ao criar usuário';
+          console.error('Erro ao criar usuário:', errorMessage);
+          throw new Error(errorMessage);
+        }
+
+        console.log('Usuário criado com sucesso:', result.user);
+
         if (avatarFile && result.user?.id) {
+          console.log('Fazendo upload do avatar...');
           const uploadedUrl = await uploadAvatar(result.user.id);
           if (uploadedUrl) {
             await supabase
@@ -293,10 +326,15 @@ export default function UserManagement() {
       handleCloseModal();
       await loadUsers();
     } catch (error: any) {
-      console.error('Erro ao salvar usuário:', error);
-      alert(error.message || 'Erro ao salvar usuário');
+      console.error('=== ERRO AO SALVAR USUÁRIO ===');
+      console.error('Tipo do erro:', error.constructor.name);
+      console.error('Mensagem:', error.message);
+      console.error('Stack:', error.stack);
+      console.error('Erro completo:', error);
+      alert(`Erro ao salvar usuário: ${error.message}`);
     } finally {
       setSaving(false);
+      console.log('=== FIM DA CRIAÇÃO DE USUÁRIO ===');
     }
   };
 
