@@ -129,7 +129,7 @@ export default function Dashboard() {
           style={{ backgroundColor: arcoColors.sidebar.main }}
         >
           <div className="h-full flex flex-col">
-            <div className="p-6 flex items-center justify-center border-b border-white/10 relative">
+            <div className="p-6 pb-8 flex items-center justify-center border-b border-white/10 relative">
               {sidebarOpen && (
                 <img
                   src={empresaLogo || "/Sem_titulo-removebg-previewsemf.png"}
@@ -153,7 +153,7 @@ export default function Dashboard() {
             </div>
 
             {sidebarOpen && (
-              <div className="px-4 py-4 border-b border-white/10">
+              <div className="px-4 py-4 pb-6 border-b border-white/10">
                 <div className="bg-white/5 rounded-2xl p-3">
                   <div className="flex items-center gap-2">
                     <button
@@ -199,7 +199,7 @@ export default function Dashboard() {
               </div>
             )}
 
-            <nav className="flex-1 p-3 overflow-y-auto scrollbar-hide">
+            <nav className="flex-1 p-3 pt-5 overflow-y-auto scrollbar-hide">
               {console.log('📋 [MENU RENDER] Renderizando menu com', menuItems.length, 'itens')}
               <ul className="space-y-1">
                 {menuItems.map((item) => {
