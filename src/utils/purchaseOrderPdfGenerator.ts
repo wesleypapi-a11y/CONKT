@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { supabase } from '../lib/supabase';
+import { addLogoToPdf } from './pdfLogoHelper';
 
 interface PurchaseOrderData {
   order: any;
@@ -172,6 +173,8 @@ export async function generatePurchaseOrderPDF(orderId: string): Promise<Blob | 
 
   doc.setFillColor(26, 115, 232);
   doc.rect(0, 0, pageWidth, 28, 'F');
+
+  await addLogoToPdf(doc, margin, y, 35, 10);
 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);

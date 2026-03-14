@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { supabase } from '../lib/supabase';
+import { addLogoToPdf } from './pdfLogoHelper';
 
 interface QuotationData {
   quotation: any;
@@ -95,6 +96,8 @@ export async function generateQuotationPDF(quotationId: string): Promise<Blob | 
 
   doc.setFillColor(26, 115, 232);
   doc.rect(0, 0, pageWidth, 40, 'F');
+
+  await addLogoToPdf(doc, margin, y, 50, 15);
 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);

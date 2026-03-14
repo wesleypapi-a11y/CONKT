@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { supabase } from '../lib/supabase';
+import { addLogoToPdf } from './pdfLogoHelper';
 
 interface RDOData {
   work_diary: any;
@@ -140,9 +141,10 @@ export async function generateRDOPDF(rdoId: string): Promise<void> {
   const margin = 15;
   let y = 10;
 
-  // Cabeçalho com fundo colorido
-  doc.setFillColor(26, 115, 232); // Azul profissional
+  doc.setFillColor(26, 115, 232);
   doc.rect(0, 0, pageWidth, 35, 'F');
+
+  await addLogoToPdf(doc, margin, y, 40, 12);
 
   // Título em branco
   doc.setTextColor(255, 255, 255);
@@ -554,9 +556,10 @@ export async function generateBatchRDOPDF(rdoIds: string[]): Promise<void> {
     const { work_diary, work, labor, activities, occurrences, comments, photosCount } = data;
     let y = 10;
 
-    // Cabeçalho com fundo colorido
     doc.setFillColor(26, 115, 232);
     doc.rect(0, 0, pageWidth, 35, 'F');
+
+    await addLogoToPdf(doc, margin, y, 40, 12);
 
     // Título em branco
     doc.setTextColor(255, 255, 255);

@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { addLogoToPdf } from './pdfLogoHelper';
 
 interface ContractData {
   id: string;
@@ -80,6 +81,9 @@ export async function generateContractPdf(
   const margin = 20;
   const contentWidth = pageWidth - 2 * margin;
   let yPosition = margin;
+
+  await addLogoToPdf(doc, margin, yPosition, 50, 15);
+  yPosition += 20;
 
   const addText = (text: string, x: number, y: number, options: any = {}) => {
     doc.text(text, x, y, options);

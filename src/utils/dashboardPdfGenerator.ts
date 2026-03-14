@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import { Work } from '../types/work';
 import { supabase } from '../lib/supabase';
+import { addLogoToPdf } from './pdfLogoHelper';
 
 interface DateRange {
   start: string;
@@ -28,9 +29,11 @@ export async function generateDashboardPdf(
     return false;
   };
 
-  const addHeader = () => {
+  const addHeader = async () => {
     pdf.setFillColor(41, 128, 185);
     pdf.rect(0, 0, pageWidth, 40, 'F');
+
+    await addLogoToPdf(pdf, margin, 10, 40, 12);
 
     pdf.setFontSize(20);
     pdf.setTextColor(255, 255, 255);
@@ -66,7 +69,7 @@ export async function generateDashboardPdf(
     return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
-  addHeader();
+  await addHeader();
 
   try {
     const { data: budgetData } = await supabase

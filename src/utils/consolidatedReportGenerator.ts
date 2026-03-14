@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { supabase } from '../lib/supabase';
+import { addLogoToPdf } from './pdfLogoHelper';
 
 interface ReportOptions {
   workId: string;
@@ -32,7 +33,7 @@ export async function generateConsolidatedReport(options: ReportOptions) {
   const pageWidth = pdf.internal.pageSize.width;
   const pageHeight = pdf.internal.pageSize.height;
 
-  addCoverPage(pdf, work, client, startDate, endDate, mode, pageWidth, pageHeight);
+  await addCoverPage(pdf, work, client, startDate, endDate, mode, pageWidth, pageHeight);
 
   pdf.addPage();
   const tocPageNumbers = await addTableOfContents(pdf, modules, pageWidth);
@@ -72,7 +73,7 @@ export async function generateConsolidatedReport(options: ReportOptions) {
   pdf.save(fileName);
 }
 
-function addCoverPage(
+async function addCoverPage(
   pdf: jsPDF,
   work: any,
   client: any,
@@ -84,6 +85,8 @@ function addCoverPage(
 ) {
   pdf.setFillColor(41, 128, 185);
   pdf.rect(0, 0, pageWidth, pageHeight / 3, 'F');
+
+  await addLogoToPdf(pdf, 15, 10, 50, 15);
 
   pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(32);
