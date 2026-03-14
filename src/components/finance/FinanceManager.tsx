@@ -68,11 +68,11 @@ export default function FinanceManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg" style={{ backgroundColor: `${arcoColors.primary.blue}15` }}>
-            <DollarSign className="w-8 h-8" style={{ color: arcoColors.primary.blue }} />
+          <div className="p-3 rounded-lg" style={{ backgroundColor: `${arcoColors.primary.gold}15` }}>
+            <DollarSign className="w-8 h-8" style={{ color: arcoColors.primary.gold }} />
           </div>
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: arcoColors.primary.blue }}>
+            <h1 className="text-3xl font-bold" style={{ color: arcoColors.text.primary }}>
               Financeiro
             </h1>
             <p className="text-gray-600">Gestão financeira completa</p>
@@ -114,8 +114,8 @@ export default function FinanceManager() {
                   style={
                     activeTab === tab.id
                       ? {
-                          color: arcoColors.primary.blue,
-                          borderBottomColor: arcoColors.primary.blue,
+                          color: arcoColors.primary.gold,
+                          borderBottomColor: arcoColors.primary.gold,
                         }
                       : {}
                   }
