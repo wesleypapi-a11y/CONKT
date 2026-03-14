@@ -269,9 +269,12 @@ export default function UserManagement() {
         });
 
         const result = await response.json();
+        console.log('Resposta da edge function create-user:', result);
 
-        if (!result.success) {
-          throw new Error(result.error || 'Erro ao criar usuário');
+        if (!response.ok || !result.success) {
+          const errorMessage = result.error || `Erro HTTP ${response.status}`;
+          console.error('Erro ao criar usuário:', errorMessage);
+          throw new Error(errorMessage);
         }
 
         if (avatarFile && result.user?.id) {

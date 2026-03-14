@@ -132,41 +132,41 @@ export default function UsuariosManager() {
           return;
         }
 
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.senha,
-          options: {
-            data: {
-              nome_completo: formData.nome_completo,
-              role: formData.role,
-              empresa_id: formData.empresa_id,
-            }
-          }
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          throw new Error('Sessão inválida');
+        }
+
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.senha,
+            nome: formData.nome_completo,
+            telefone: '',
+            funcao: '',
+            role: formData.role,
+            is_active: true,
+            empresa_id: formData.empresa_id,
+            avatar_url: '',
+            created_by: session.user.id,
+          }),
         });
 
-        if (authError) {
-          if (authError.message.includes('already registered')) {
-            showAlert('Email já cadastrado', 'error');
-            return;
-          }
-          throw authError;
+        const result = await response.json();
+        console.log('Resposta da edge function create-user:', result);
+
+        if (!response.ok || !result.success) {
+          const errorMessage = result.error || `Erro HTTP ${response.status}`;
+          console.error('Erro ao criar usuário:', errorMessage);
+          throw new Error(errorMessage);
         }
-
-        if (!authData.user) {
-          throw new Error('Erro ao criar usuário');
-        }
-
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            nome_completo: formData.nome_completo,
-            role: formData.role,
-            empresa_id: formData.empresa_id,
-            status: 'ativo'
-          })
-          .eq('id', authData.user.id);
-
-        if (profileError) throw profileError;
 
         showAlert('Usuário cadastrado com sucesso!', 'success');
       }
