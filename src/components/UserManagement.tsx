@@ -309,6 +309,8 @@ export default function UserManagement() {
 
         console.log('Resposta da função:', result);
         console.log('Erro da função:', functionError);
+        console.log('Result tipo:', typeof result);
+        console.log('Result.success:', result?.success);
 
         if (functionError) {
           console.error('Erro ao chamar edge function:', functionError);
@@ -328,10 +330,21 @@ export default function UserManagement() {
           }
         }
 
-        if (!result || !result.success) {
+        console.log('Verificando result.success...');
+        if (!result) {
+          console.error('Result é null/undefined');
+          throw new Error('Resposta vazia da função');
+        }
+
+        if (result.success === false) {
           const errorMessage = result?.error || 'Erro desconhecido ao criar usuário';
           console.error('Erro retornado pela função:', errorMessage);
           throw new Error(errorMessage);
+        }
+
+        if (result.success !== true) {
+          console.error('Success não é true:', result.success);
+          throw new Error('Resposta inesperada da função: ' + JSON.stringify(result));
         }
 
         console.log('Usuário criado com sucesso:', result.user);
