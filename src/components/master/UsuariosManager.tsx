@@ -66,13 +66,10 @@ export default function UsuariosManager() {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          empresa:empresas(nome)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('1️⃣ RESULTADO BRUTO DA QUERY:');
+      console.log('1️⃣ QUERY SIMPLIFICADA (SEM JOIN):');
       console.log('   - Error:', error);
       console.log('   - Data recebida:', data);
       console.log('   - Total de registros:', data?.length || 0);
@@ -86,7 +83,6 @@ export default function UsuariosManager() {
             nome_completo: user.nome_completo,
             role: user.role,
             empresa_id: user.empresa_id,
-            empresa_nome: user.empresa?.nome,
             is_active: user.is_active,
           });
         });
@@ -97,9 +93,30 @@ export default function UsuariosManager() {
         throw error;
       }
 
-      console.log('3️⃣ ANTES DE setUsuarios - Array que será salvo:', data || []);
-      setUsuarios(data || []);
-      console.log('4️⃣ DEPOIS de setUsuarios - Chamada concluída');
+      const usuariosComEmpresa = await Promise.all(
+        (data || []).map(async (user) => {
+          if (user.empresa_id) {
+            const { data: empresaData } = await supabase
+              .from('empresas')
+              .select('nome')
+              .eq('id', user.empresa_id)
+              .maybeSingle();
+
+            return {
+              ...user,
+              empresa: empresaData ? { nome: empresaData.nome } : null,
+            };
+          }
+          return { ...user, empresa: null };
+        })
+      );
+
+      console.log('3️⃣ DEPOIS DE BUSCAR EMPRESAS SEPARADAMENTE:', usuariosComEmpresa);
+      console.log('   - Total após enriquecimento:', usuariosComEmpresa.length);
+
+      console.log('4️⃣ ANTES DE setUsuarios - Array que será salvo:', usuariosComEmpresa);
+      setUsuarios(usuariosComEmpresa);
+      console.log('5️⃣ DEPOIS de setUsuarios - Chamada concluída');
     } catch (error: any) {
       showAlert(error.message || 'Erro ao carregar usuários', 'error');
       console.error('❌ EXCEPTION ao carregar usuários:', error);
@@ -316,7 +333,7 @@ export default function UsuariosManager() {
 
   console.log('========================================');
   console.log('=== APLICANDO FILTROS ===');
-  console.log('5️⃣ ESTADO usuarios ANTES DO FILTRO:');
+  console.log('6️⃣ ESTADO usuarios ANTES DO FILTRO:');
   console.log('   - Total no estado:', usuarios.length);
   console.log('   - Array completo:', usuarios);
 
@@ -336,7 +353,7 @@ export default function UsuariosManager() {
     return matchesSearch && matchesEmpresa && matchesRole;
   });
 
-  console.log('6️⃣ RESULTADO APÓS FILTROS:');
+  console.log('7️⃣ RESULTADO APÓS FILTROS:');
   console.log('   - searchTerm:', searchTerm);
   console.log('   - filterEmpresa:', filterEmpresa);
   console.log('   - filterRole:', filterRole);
