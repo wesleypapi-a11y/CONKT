@@ -137,15 +137,8 @@ export default function UsuariosManager() {
           throw new Error('Sessão inválida');
         }
 
-        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
-
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        const { data, error: fnError } = await supabase.functions.invoke('create-user', {
+          body: {
             email: formData.email,
             password: formData.senha,
             nome: formData.nome_completo,
@@ -156,14 +149,11 @@ export default function UsuariosManager() {
             empresa_id: formData.empresa_id,
             avatar_url: '',
             created_by: session.user.id,
-          }),
+          },
         });
 
-        const result = await response.json();
-        console.log('Resposta da edge function create-user:', result);
-
-        if (!response.ok || !result.success) {
-          const errorMessage = result.error || `Erro HTTP ${response.status}`;
+        if (fnError || !data?.success) {
+          const errorMessage = data?.error || fnError?.message || 'Erro ao criar usuário';
           console.error('Erro ao criar usuário:', errorMessage);
           throw new Error(errorMessage);
         }
