@@ -152,17 +152,29 @@ export default function UsuariosManager() {
 
     try {
       if (editingUserId) {
-        const { error } = await supabase
+        console.log('🔄 EDITANDO USUÁRIO:', {
+          editingUserId,
+          formData
+        });
+
+        const { data, error } = await supabase
           .from('profiles')
           .update({
             nome_completo: formData.nome_completo,
             role: formData.role,
             empresa_id: formData.empresa_id,
           })
-          .eq('id', editingUserId);
+          .eq('id', editingUserId)
+          .select();
+
+        console.log('✅ RESULTADO UPDATE:', { data, error });
 
         if (error) throw error;
         showAlert('Usuário atualizado com sucesso!', 'success');
+        setShowModal(false);
+        setEditingUserId(null);
+        resetForm();
+        await loadUsuarios();
       } else {
         if (!formData.senha) {
           showAlert('Senha é obrigatória para novo usuário', 'error');
@@ -266,8 +278,14 @@ export default function UsuariosManager() {
       }
     } catch (error: any) {
       const errorMsg = error.message || 'Erro ao salvar usuário';
+      console.error('❌ ERRO COMPLETO em handleSubmit:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        error: error
+      });
       showAlert(errorMsg, 'error');
-      console.error('Error in handleSubmit:', error);
     }
   };
 
