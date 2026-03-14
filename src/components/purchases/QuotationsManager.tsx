@@ -32,7 +32,14 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
   const [quotationItems, setQuotationItems] = useState<{ [quotationId: string]: { [itemId: string]: { unit_price: number; total_price: number } } }>({});
   const [loading, setLoading] = useState(true);
 
+  console.log('🗺️ [MAPA] QuotationComparison renderizado');
+  console.log('🗺️ [MAPA] Props recebidas - quotations:', quotations.length, 'cotações');
+  console.log('🗺️ [MAPA] Props - cotações com approved:', quotations.map(q => ({ id: q.id, approved: q.approved, status: q.status })));
+  console.log('🗺️ [MAPA] Props - processing:', processing);
+
   useEffect(() => {
+    console.log('🗺️ [MAPA] useEffect disparado, quotations mudou');
+    console.log('🗺️ [MAPA] useEffect - quotations.length:', quotations.length);
     loadQuotationItems();
   }, [quotations]);
 
@@ -224,40 +231,46 @@ function QuotationComparison({ quotations, requestItems, handleApproveQuotation,
                 Ações:
               </td>
               <td className="px-3 py-3 text-center border" style={{ color: '#000000' }}>-</td>
-              {quotations.map(quot => (
-                <td key={quot.id} className="px-3 py-3 text-center border">
-                  {!quot.approved && (
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          handleApproveQuotation(quot.id);
-                        }}
-                        disabled={processing}
-                        className="px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-                        title="Aprovar e Gerar PC"
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                        Aprovar
-                      </button>
-                      <button
-                        onClick={() => handleRejectQuotation(quot.id)}
-                        disabled={processing}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Rejeitar"
-                      >
-                        <XCircle className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                  {quot.approved && (
-                    <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
-                      Aprovada
-                    </span>
-                  )}
-                </td>
-              ))}
+              {quotations.map(quot => {
+                console.log('🎨 [RENDER] Renderizando botão para cotação ID:', quot.id, 'approved:', quot.approved, 'status:', quot.status);
+                return (
+                  <td key={quot.id} className="px-3 py-3 text-center border">
+                    {!quot.approved && (
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            console.log('🔘 [BOTÃO] onClick disparado no botão Aprovar');
+                            e.stopPropagation();
+                            e.preventDefault();
+                            console.log('🔘 [BOTÃO] Chamando handleApproveQuotation com ID:', quot.id);
+                            handleApproveQuotation(quot.id);
+                            console.log('🔘 [BOTÃO] handleApproveQuotation chamado');
+                          }}
+                          disabled={processing}
+                          className="px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                          title="Aprovar e Gerar PC"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          Aprovar
+                        </button>
+                        <button
+                          onClick={() => handleRejectQuotation(quot.id)}
+                          disabled={processing}
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Rejeitar"
+                        >
+                          <XCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    {quot.approved && (
+                      <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                        Aprovada
+                      </span>
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           </tbody>
         </table>
@@ -401,7 +414,9 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
   };
 
   const loadQuotations = async (requestId: string) => {
+    console.log('📥 [loadQuotations] INICIANDO para requestId:', requestId);
     try {
+      console.log('📥 [loadQuotations] Fazendo query no Supabase...');
       const { data, error } = await supabase
         .from('quotations')
         .select(`
@@ -413,6 +428,10 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
         .neq('status', 'aprovada')
         .order('created_at', { ascending: false });
 
+      console.log('📥 [loadQuotations] Query concluída');
+      console.log('📥 [loadQuotations] Error:', error);
+      console.log('📥 [loadQuotations] Data recebida:', data);
+
       if (error) throw error;
 
       const quotationsWithSupplier = (data || []).map(quot => ({
@@ -420,9 +439,14 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
         supplier_name: quot.suppliers?.fantasy_name || quot.suppliers?.name
       }));
 
+      console.log('📥 [loadQuotations] Cotações processadas:', quotationsWithSupplier.length, 'encontradas');
+      console.log('📥 [loadQuotations] IDs das cotações:', quotationsWithSupplier.map(q => q.id));
+      console.log('📥 [loadQuotations] Status das cotações:', quotationsWithSupplier.map(q => ({ id: q.id, approved: q.approved, status: q.status })));
+      console.log('📥 [loadQuotations] Chamando setQuotations...');
       setQuotations(quotationsWithSupplier);
+      console.log('📥 [loadQuotations] setQuotations chamado');
     } catch (error) {
-      console.error('Erro ao carregar cotações:', error);
+      console.error('📥 [loadQuotations] ❌ Erro ao carregar cotações:', error);
     }
   };
 
@@ -560,21 +584,35 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
   };
 
   const handleApproveQuotation = (quotationId: string) => {
+    console.log('🚀 [HANDLER] handleApproveQuotation INICIADO com quotationId:', quotationId);
+    console.log('🚀 [HANDLER] processing atual:', processing);
+    console.log('🚀 [HANDLER] selectedRequest:', selectedRequest);
+
     if (processing) {
+      console.log('⚠️ [HANDLER] BLOQUEADO: já está processando');
       showError('Já está processando outra operação. Aguarde.');
       return;
     }
 
     if (!selectedRequest) {
+      console.log('⚠️ [HANDLER] BLOQUEADO: nenhuma solicitação selecionada');
       showError('Nenhuma solicitação selecionada');
       return;
     }
 
+    console.log('🔔 [HANDLER] Mostrando modal de confirmação...');
     showConfirm(
       'Você deseja aprovar esse orçamento?',
       async () => {
-        if (processing) return;
+        console.log('✅ [CONFIRM] Callback do modal INICIADO');
+        console.log('✅ [CONFIRM] processing antes de verificar:', processing);
 
+        if (processing) {
+          console.log('⚠️ [CONFIRM] ABORTADO: processing=true');
+          return;
+        }
+
+        console.log('🔒 [CONFIRM] Setando processing=true');
         setProcessing(true);
 
         try {
@@ -586,6 +624,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
             throw new Error('Usuário não autenticado');
           }
 
+          console.log('📡 [EDGE] Iniciando chamada Edge Function...');
           console.log('[Frontend] Chamando Edge Function para aprovar cotação...', {
             quotation_id: quotationId,
             request_id: selectedRequest.id,
@@ -612,6 +651,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
           const edgeFunctionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/approve-quotation-and-create-order`;
 
+          console.log('📡 [EDGE] Fazendo fetch...');
           const response = await fetch(edgeFunctionUrl, {
             method: 'POST',
             headers: {
@@ -626,6 +666,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
               user_id: user.id
             })
           });
+          console.log('📡 [EDGE] Fetch concluído, lendo resposta...');
 
           let result;
           const responseText = await response.text();
@@ -674,34 +715,51 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
 
           console.log('[Frontend] ✅ Edge Function executada com sucesso:', result);
 
-          console.log('[Frontend] Aguardando propagação no banco de dados...');
+          console.log('⏳ [PROPAGAÇÃO] Aguardando 500ms para propagação...');
           await new Promise(resolve => setTimeout(resolve, 500));
+          console.log('⏳ [PROPAGAÇÃO] Delay concluído');
 
-          console.log('[Frontend] Recarregando dados após aprovação...');
-          await Promise.all([
-            loadQuotations(selectedRequest.id),
-            loadRequests()
-          ]);
-          console.log('[Frontend] ✅ Dados recarregados');
+          console.log('🔄 [RELOAD] Iniciando reload de dados...');
+          console.log('🔄 [RELOAD] Antes de loadQuotations, selectedRequest.id:', selectedRequest.id);
+          const loadPromise1 = loadQuotations(selectedRequest.id);
+          console.log('🔄 [RELOAD] loadQuotations disparado');
+          const loadPromise2 = loadRequests();
+          console.log('🔄 [RELOAD] loadRequests disparado');
 
-          console.log('[Frontend] Executando navegação Voltar (fecha mapa + volta para lista)...');
+          await Promise.all([loadPromise1, loadPromise2]);
+          console.log('🔄 [RELOAD] ✅ Dados recarregados com sucesso');
+
+          console.log('🔄 [RELOAD] Estado das cotações APÓS reload:', quotations.length, 'cotações');
+          console.log('🔄 [RELOAD] Estado das solicitações APÓS reload:', requests.length, 'solicitações');
+
+          console.log('🏠 [NAV] Executando navegação Voltar (fecha mapa + volta para lista)...');
+          console.log('🏠 [NAV] Antes: showComparison=', showComparison, ', selectedRequest=', selectedRequest);
           setShowComparison(false);
+          console.log('🏠 [NAV] setShowComparison(false) chamado');
           setSelectedRequest(null);
+          console.log('🏠 [NAV] setSelectedRequest(null) chamado');
           setComparisonKey(prev => prev + 1);
+          console.log('🏠 [NAV] setComparisonKey incrementado');
 
           showSuccess(`${result.message || 'Pedido de Compra gerado com sucesso!'}\n\nO pedido foi criado com todos os dados (obra, fornecedor, centro de custo, itens e forma de pagamento) e os valores foram lançados automaticamente no Orçamento → Realizado por Centro de Custo.`);
 
           if (onNavigateToOrders) {
+            console.log('🏠 [NAV] onNavigateToOrders disponível, executando em 1.5s...');
             setTimeout(() => {
+              console.log('🏠 [NAV] Executando onNavigateToOrders agora');
               onNavigateToOrders();
             }, 1500);
+          } else {
+            console.log('🏠 [NAV] onNavigateToOrders NÃO disponível');
           }
         } catch (error: any) {
           console.error('[Frontend] ❌ Erro ao aprovar cotação:', error);
           const errorMessage = error.message || 'Não foi possível aprovar a cotação';
           showError(`Erro ao aprovar: ${errorMessage}`);
         } finally {
+          console.log('🔓 [FINALLY] Setando processing=false');
           setProcessing(false);
+          console.log('🔓 [FINALLY] processing agora é false');
         }
       },
       {
@@ -710,6 +768,7 @@ export default function QuotationsManager({ onNavigateHome, onNavigateToOrders }
         cancelText: 'Cancelar'
       }
     );
+    console.log('🔔 [HANDLER] showConfirm executado, aguardando resposta do usuário');
   };
 
   const handleRejectQuotation = (quotationId: string) => {
