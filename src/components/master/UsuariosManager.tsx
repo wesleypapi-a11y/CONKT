@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users, Plus, CreditCard as Edit, Trash2, Search, Eye, EyeOff, Power, PowerOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { FunctionsHttpError, FunctionsRelayError, FunctionsFetchError } from '@supabase/supabase-js';
 import { useAlert } from '../../hooks/useAlert';
 import ConfirmModal from '../common/ConfirmModal';
 
@@ -168,38 +169,52 @@ export default function UsuariosManager() {
         }
 
         console.log('=== CHAMANDO EDGE FUNCTION ===');
+        const payload = {
+          email: formData.email,
+          password: formData.senha,
+          nome: formData.nome_completo,
+          telefone: '',
+          funcao: '',
+          role: formData.role,
+          is_active: true,
+          empresa_id: formData.empresa_id,
+          avatar_url: '',
+          created_by: user.id,
+        };
+
+        console.log('payload:', payload);
+
         const { data, error: fnError } = await supabase.functions.invoke('create-user', {
-          body: {
-            email: formData.email,
-            password: formData.senha,
-            nome: formData.nome_completo,
-            telefone: '',
-            funcao: '',
-            role: formData.role,
-            is_active: true,
-            empresa_id: formData.empresa_id,
-            avatar_url: '',
-            created_by: user.id,
-          },
+          body: payload,
         });
 
-        console.log('=== RESPOSTA EDGE FUNCTION ===');
         console.log('fnError:', fnError);
         console.log('data:', data);
 
-        if (fnError || !data?.success) {
-          const errorMessage = data?.error || fnError?.message || 'Erro ao criar usuário';
-          console.error('Erro completo ao criar usuário:', { data, fnError, errorMessage });
-          throw new Error(errorMessage);
+        if (fnError) {
+          if (fnError instanceof FunctionsHttpError) {
+            const errorBody = await fnError.context.json();
+            console.error('Erro HTTP real da função:', errorBody);
+            throw new Error(errorBody?.error || errorBody?.message || 'Erro HTTP na Edge Function');
+          } else if (fnError instanceof FunctionsRelayError) {
+            throw new Error(fnError.message);
+          } else if (fnError instanceof FunctionsFetchError) {
+            throw new Error(fnError.message);
+          } else {
+            throw new Error(fnError.message || 'Erro desconhecido na Edge Function');
+          }
+        }
+
+        if (data?.success !== true) {
+          throw new Error(data?.error || 'Erro desconhecido ao criar usuário');
         }
 
         showAlert('Usuário cadastrado com sucesso!', 'success');
+        setShowModal(false);
+        setEditingUserId(null);
+        resetForm();
+        await loadUsuarios();
       }
-
-      setShowModal(false);
-      setEditingUserId(null);
-      resetForm();
-      await loadUsuarios();
     } catch (error: any) {
       const errorMsg = error.message || 'Erro ao salvar usuário';
       showAlert(errorMsg, 'error');
