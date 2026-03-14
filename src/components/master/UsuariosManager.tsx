@@ -13,8 +13,8 @@ interface Usuario {
   empresa_id: string | null;
   empresa?: {
     nome: string;
-  };
-  status: string;
+  } | null;
+  is_active: boolean;
   created_at: string;
 }
 
@@ -60,7 +60,9 @@ export default function UsuariosManager() {
   const loadUsuarios = async () => {
     try {
       setLoading(true);
-      console.log('=== CARREGANDO USUÁRIOS ===');
+      console.log('========================================');
+      console.log('=== INICIANDO CARREGAMENTO USUÁRIOS ===');
+      console.log('========================================');
 
       const { data, error } = await supabase
         .from('profiles')
@@ -70,19 +72,40 @@ export default function UsuariosManager() {
         `)
         .order('created_at', { ascending: false });
 
-      console.log('Query error:', error);
-      console.log('Query data (total de usuários):', data?.length);
-      console.log('Query data completa:', data);
+      console.log('1️⃣ RESULTADO BRUTO DA QUERY:');
+      console.log('   - Error:', error);
+      console.log('   - Data recebida:', data);
+      console.log('   - Total de registros:', data?.length || 0);
 
-      if (error) throw error;
+      if (data && data.length > 0) {
+        console.log('2️⃣ DETALHAMENTO DOS USUÁRIOS RETORNADOS:');
+        data.forEach((user, index) => {
+          console.log(`   Usuário ${index + 1}:`, {
+            id: user.id,
+            email: user.email,
+            nome_completo: user.nome_completo,
+            role: user.role,
+            empresa_id: user.empresa_id,
+            empresa_nome: user.empresa?.nome,
+            is_active: user.is_active,
+          });
+        });
+      }
 
+      if (error) {
+        console.error('❌ ERRO NA QUERY:', error);
+        throw error;
+      }
+
+      console.log('3️⃣ ANTES DE setUsuarios - Array que será salvo:', data || []);
       setUsuarios(data || []);
-      console.log('Estado usuarios após setUsuarios:', data || []);
+      console.log('4️⃣ DEPOIS de setUsuarios - Chamada concluída');
     } catch (error: any) {
       showAlert(error.message || 'Erro ao carregar usuários', 'error');
-      console.error('Erro ao carregar usuários:', error);
+      console.error('❌ EXCEPTION ao carregar usuários:', error);
     } finally {
       setLoading(false);
+      console.log('========================================');
     }
   };
 
@@ -220,7 +243,9 @@ export default function UsuariosManager() {
         setShowModal(false);
         setEditingUserId(null);
         resetForm();
+        console.log('=== RECARREGANDO USUÁRIOS APÓS CRIAÇÃO ===');
         await loadUsuarios();
+        console.log('=== USUÁRIOS RECARREGADOS - ESTADO FINAL:', usuarios);
       }
     } catch (error: any) {
       const errorMsg = error.message || 'Erro ao salvar usuário';
@@ -289,21 +314,35 @@ export default function UsuariosManager() {
     setEditingUserId(null);
   };
 
+  console.log('========================================');
+  console.log('=== APLICANDO FILTROS ===');
+  console.log('5️⃣ ESTADO usuarios ANTES DO FILTRO:');
+  console.log('   - Total no estado:', usuarios.length);
+  console.log('   - Array completo:', usuarios);
+
   const filteredUsuarios = usuarios.filter(usuario => {
     const matchesSearch = usuario.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          usuario.nome_completo?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesEmpresa = !filterEmpresa || usuario.empresa_id === filterEmpresa;
     const matchesRole = !filterRole || usuario.role === filterRole;
+
+    console.log(`   Filtrando ${usuario.email}:`, {
+      matchesSearch,
+      matchesEmpresa,
+      matchesRole,
+      passa: matchesSearch && matchesEmpresa && matchesRole
+    });
+
     return matchesSearch && matchesEmpresa && matchesRole;
   });
 
-  console.log('=== FILTROS APLICADOS ===');
-  console.log('Total de usuários no estado:', usuarios.length);
-  console.log('searchTerm:', searchTerm);
-  console.log('filterEmpresa:', filterEmpresa);
-  console.log('filterRole:', filterRole);
-  console.log('Usuários após filtro:', filteredUsuarios.length);
-  console.log('Usuários filtrados:', filteredUsuarios);
+  console.log('6️⃣ RESULTADO APÓS FILTROS:');
+  console.log('   - searchTerm:', searchTerm);
+  console.log('   - filterEmpresa:', filterEmpresa);
+  console.log('   - filterRole:', filterRole);
+  console.log('   - Total após filtro:', filteredUsuarios.length);
+  console.log('   - Array filtrado:', filteredUsuarios);
+  console.log('========================================');
 
   const getRoleLabel = (role: string) => {
     switch (role) {
@@ -440,6 +479,11 @@ export default function UsuariosManager() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
+              {console.log('=== RENDERIZANDO TABELA ===', {
+                totalUsuarios: usuarios.length,
+                filteredUsuarios: filteredUsuarios.length,
+                usuariosParaRenderizar: filteredUsuarios
+              })}
               {filteredUsuarios.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center">
