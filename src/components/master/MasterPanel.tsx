@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Building2, Users, Shield, Bug, AlertCircle } from 'lucide-react';
+import { Building2, Users, Shield, Bug, AlertCircle, DollarSign } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import EmpresasManager from './EmpresasManager';
 import UsuariosManager from './UsuariosManager';
 import PerfisInfo from './PerfisInfo';
 import DebugPanel from './DebugPanel';
+import ReceitasView from './ReceitasView';
 
-type MasterTab = 'empresas' | 'usuarios' | 'perfis' | 'debug';
+type MasterTab = 'receitas' | 'empresas' | 'usuarios' | 'perfis' | 'debug';
 
 export default function MasterPanel() {
   const { profile, loading } = useAuth();
@@ -69,6 +70,7 @@ export default function MasterPanel() {
 
   const tabs = [
     { id: 'debug' as MasterTab, label: 'Debug', icon: Bug },
+    { id: 'receitas' as MasterTab, label: 'Receitas', icon: DollarSign },
     { id: 'empresas' as MasterTab, label: 'Empresas', icon: Building2 },
     { id: 'usuarios' as MasterTab, label: 'Usuários', icon: Users },
     { id: 'perfis' as MasterTab, label: 'Perfis', icon: Shield },
@@ -112,6 +114,7 @@ export default function MasterPanel() {
 
       <div className="flex-1 overflow-auto p-6 bg-gray-50">
         {activeTab === 'debug' && <DebugPanel />}
+        {activeTab === 'receitas' && <ReceitasView />}
         {activeTab === 'empresas' && <EmpresasManager />}
         {activeTab === 'usuarios' && <UsuariosManager />}
         {activeTab === 'perfis' && <PerfisInfo />}
