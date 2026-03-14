@@ -60,6 +60,8 @@ export default function UsuariosManager() {
   const loadUsuarios = async () => {
     try {
       setLoading(true);
+      console.log('=== CARREGANDO USUÁRIOS ===');
+
       const { data, error } = await supabase
         .from('profiles')
         .select(`
@@ -68,12 +70,17 @@ export default function UsuariosManager() {
         `)
         .order('created_at', { ascending: false });
 
+      console.log('Query error:', error);
+      console.log('Query data (total de usuários):', data?.length);
+      console.log('Query data completa:', data);
+
       if (error) throw error;
 
       setUsuarios(data || []);
+      console.log('Estado usuarios após setUsuarios:', data || []);
     } catch (error: any) {
       showAlert(error.message || 'Erro ao carregar usuários', 'error');
-      console.error(error);
+      console.error('Erro ao carregar usuários:', error);
     } finally {
       setLoading(false);
     }
@@ -289,6 +296,14 @@ export default function UsuariosManager() {
     const matchesRole = !filterRole || usuario.role === filterRole;
     return matchesSearch && matchesEmpresa && matchesRole;
   });
+
+  console.log('=== FILTROS APLICADOS ===');
+  console.log('Total de usuários no estado:', usuarios.length);
+  console.log('searchTerm:', searchTerm);
+  console.log('filterEmpresa:', filterEmpresa);
+  console.log('filterRole:', filterRole);
+  console.log('Usuários após filtro:', filteredUsuarios.length);
+  console.log('Usuários filtrados:', filteredUsuarios);
 
   const getRoleLabel = (role: string) => {
     switch (role) {
